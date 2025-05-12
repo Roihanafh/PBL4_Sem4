@@ -346,7 +346,7 @@ body {
 
 .main-panel {
   position: relative;
-  width: calc(100% - 265px);
+  width: calc(100% - 350px);
   height: 100vh;
   min-height: 100%;
   float: right;
@@ -552,7 +552,7 @@ body {
   top: 0;
   bottom: 0;
   left: 0;
-  width: 265px;
+  width: 350px;
   display: block;
   z-index: 1002;
   color: #ffffff;
@@ -841,7 +841,7 @@ body {
 
 .logo-header {
   float: left;
-  width: 265px;
+  width: 350px;
   height: 70px;
   line-height: 60px;
   color: #333333;
@@ -1062,12 +1062,12 @@ body {
     .sidebar_minimize .sidebar .menubars {
       display: none; }
   .sidebar_minimize.sidebar_minimize_hover .sidebar {
-    width: 265px;
+    width: 350px;
     position: fixed;
     height: 100vh;
     top: 0; }
     .sidebar_minimize.sidebar_minimize_hover .sidebar .logo-header {
-      width: 265px;
+      width: 350px;
       padding-left: 25px;
       padding-right: 25px;
       text-align: left; }
@@ -1082,7 +1082,7 @@ body {
         transform: translateX(0%) !important;
         left: unset !important; }
     .sidebar_minimize.sidebar_minimize_hover .sidebar .sidebar-wrapper {
-      width: 265px; }
+      width: 350px; }
       .sidebar_minimize.sidebar_minimize_hover .sidebar .sidebar-wrapper .user {
         padding-left: 15px;
         padding-right: 15px; }
@@ -4663,7 +4663,7 @@ label.error {
 /*      jQVMap     */
 .vmap {
   width: 100%;
-  min-height: 265px; }
+  min-height: 350px; }
   .vmap > svg {
     margin: auto;
     display: flex;
@@ -5825,11 +5825,11 @@ label.error {
     .nav_open .wrapper {
       overflow-x: hidden; }
     .nav_open .main-panel {
-      -webkit-transform: translate3d(265px, 0, 0);
-      -moz-transform: translate3d(265px, 0, 0);
-      -o-transform: translate3d(265px, 0, 0);
-      -ms-transform: translate3d(265px, 0, 0);
-      transform: translate3d(265px, 0, 0) !important; }
+      -webkit-transform: translate3d(350px, 0, 0);
+      -moz-transform: translate3d(350px, 0, 0);
+      -o-transform: translate3d(350px, 0, 0);
+      -ms-transform: translate3d(350px, 0, 0);
+      transform: translate3d(350px, 0, 0) !important; }
 
   .quick_sidebar_open .quick-sidebar {
     max-width: 350px;
@@ -5930,7 +5930,7 @@ label.error {
     margin-top: 0px !important; }
 
   .nav_open.topbar_open .main-panel {
-    transform: translate3d(265px, 0, 0) !important; }
+    transform: translate3d(350px, 0, 0) !important; }
 
   .navbar-header .navbar-nav {
     width: 100%;
