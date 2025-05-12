@@ -61,12 +61,12 @@
                 </div>
               </li>
               <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#base">
+                <a data-bs-toggle="collapse" href="#perusahaan">
                   <i class="fas fa-building"></i>
                   <p>Manajemen Perusahaan Magang</p>
                   <span class="caret"></span>
                 </a>
-                <div class="collapse" id="base">
+                <div class="collapse" id="perusahaan">
                   <ul class="nav nav-collapse">
                     <li>
                       <a href="components/avatars.html">
