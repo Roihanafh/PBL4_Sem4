@@ -49,12 +49,13 @@
                   <ul class="nav nav-collapse">
                     <li>
                       <a href="components/avatars.html">
-                        <span class="sub-item">Data Pengguna</span>
+                        <span class="sub-item">Data Dosen</span>
                       </a>
                     </li>
                     <li>
-                      <a href="components/buttons.html">
-                        <span class="sub-item">Tambah Pengguna</span>
+                    <li>
+                      <a href="components/avatars.html">
+                        <span class="sub-item">Data Mahasiswa</span>
                       </a>
                     </li>
                   </ul>
@@ -161,12 +162,43 @@
                 </div>
               </li>
               <li class="nav-item">
+                <a data-bs-toggle="collapse" href="#charts">
+                  <i class="fas fa-laptop-code"></i>
+                  <p>Manajemen Akun & Profile</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a data-bs-toggle="collapse" href="#charts">
+                  <i class="fas fa-laptop-code"></i>
+                  <p>Rekomendasi Magang</p>
+                </a>
+              </li>
+               <li class="nav-item">
+                <a data-bs-toggle="collapse" href="#charts">
+                  <i class="fas fa-laptop-code"></i>
+                  <p>Pengajuan Magang</p>
+                </a>
+              </li>
+               <li class="nav-item">
+                <a data-bs-toggle="collapse" href="#charts">
+                  <i class="fas fa-laptop-code"></i>
+                  <p>Monitoring dan Evaluasi Magang</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a data-bs-toggle="collapse" href="#charts">
+                  <i class="fas fa-laptop-code"></i>
+                  <p>Mahasiswa Bimbingan</p>
+                </a>
+              </li>
+              <li class="nav-item">
                 <a href="widgets.html">
                   <i class="fas fa-chart-bar"></i>
                   <p>Monitoring dan Statistik</p>
                   <span class="badge badge-success"></span>
                 </a>
               </li>
+              
                 <div class="collapse" id="submenu">
                   <ul class="nav nav-collapse">
                     <li>
