@@ -198,14 +198,6 @@
                   <span class="badge badge-success"></span>
                 </a>
             </ul>
-             <div class="sidebar-footer p-3">
-                <form action="{{ route('logout') }}" method="POST" id="logout-form">
-                  @csrf
-                  <button type="submit" class="btn btn-danger btn-block d-flex align-items-center justify-content-center">
-                    <i class="fas fa-sign-out-alt me-2"></i> Logout
-                  </button>
-                </form>
-              </div>
           </div>
         </div>
       </div>
