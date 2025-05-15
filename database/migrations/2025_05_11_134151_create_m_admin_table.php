@@ -14,7 +14,7 @@ class CreateMAdminTable extends Migration
             $table->string('nama', 100);
             $table->string('email', 100);
             $table->string('telp', 20)->nullable();
-
+            
             $table->foreign('user_id')
                   ->references('user_id')->on('m_users')
                   ->onDelete('restrict')->onUpdate('cascade');

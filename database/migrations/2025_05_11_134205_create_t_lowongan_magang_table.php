@@ -12,11 +12,12 @@ class CreateTLowonganMagangTable extends Migration
             $table->bigIncrements('lowongan_id');
             $table->string('judul', 200);
             $table->text('deskripsi')->nullable();
-            $table->time('durasi')->nullable();
+            $table->datetime('tanggal_mulai_magang')->nullable();
+            $table->datetime('deadline_lowongan')->nullable();
             $table->string('lokasi', 100)->nullable();
-            $table->timestamp('deadline')->nullable();
             $table->unsignedBigInteger('perusahaan_id');
             $table->unsignedBigInteger('periode_id')->nullable();
+            $table->string('sylabus_path', 255)->nullable();
 
             $table->foreign('perusahaan_id')
                   ->references('perusahaan_id')->on('m_perusahaan_mitra');

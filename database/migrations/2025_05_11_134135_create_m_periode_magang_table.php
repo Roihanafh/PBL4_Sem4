@@ -10,8 +10,7 @@ class CreateMPeriodeMagangTable extends Migration
     {
         Schema::create('m_periode_magang', function (Blueprint $table) {
             $table->bigIncrements('periode_id');
-            $table->date('tanggal_mulai');
-            $table->date('tanggal_selesai');
+            $table->string('periode');
             $table->string('keterangan', 255)->nullable();
         });
     }

@@ -9,6 +9,7 @@ return new class extends Migration {
     {
         Schema::create('m_users', function (Blueprint $table) {
             $table->bigIncrements('user_id');
+            $table->string('username', 100)->unique();
             $table->string('password', 255);
             $table->unsignedTinyInteger('level_id');
             $table->foreign('level_id')
