@@ -6,10 +6,10 @@
           <div class="logo-header" data-background-color="dark">
             <a href="index.html" class="logo">
               <img
-                src="assets/img/kaiadmin/logo_light.svg"
+                src="img/MagangIn.png"
                 alt="navbar brand"
                 class="navbar-brand"
-                height="20"
+                height="100"
               />
             </a>
             <div class="nav-toggle">
@@ -197,54 +197,15 @@
                   <p>Monitoring dan Statistik</p>
                   <span class="badge badge-success"></span>
                 </a>
-              </li>
-              
-                <div class="collapse" id="submenu">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a data-bs-toggle="collapse" href="#subnav1">
-                        <span class="sub-item">Level 1</span>
-                        <span class="caret"></span>
-                      </a>
-                      <div class="collapse" id="subnav1">
-                        <ul class="nav nav-collapse subnav">
-                          <li>
-                            <a href="#">
-                              <span class="sub-item">Level 2</span>
-                            </a>
-                          </li>
-                          <li>
-                            <a href="#">
-                              <span class="sub-item">Level 2</span>
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                    </li>
-                    <li>
-                      <a data-bs-toggle="collapse" href="#subnav2">
-                        <span class="sub-item">Level 1</span>
-                        <span class="caret"></span>
-                      </a>
-                      <div class="collapse" id="subnav2">
-                        <ul class="nav nav-collapse subnav">
-                          <li>
-                            <a href="#">
-                              <span class="sub-item">Level 2</span>
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                    </li>
-                    <li>
-                      <a href="#">
-                        <span class="sub-item">Level 1</span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </li>
             </ul>
+             <div class="sidebar-footer p-3">
+                <form action="{{ route('logout') }}" method="POST" id="logout-form">
+                  @csrf
+                  <button type="submit" class="btn btn-danger btn-block d-flex align-items-center justify-content-center">
+                    <i class="fas fa-sign-out-alt me-2"></i> Logout
+                  </button>
+                </form>
+              </div>
           </div>
         </div>
       </div>

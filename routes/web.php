@@ -20,6 +20,8 @@ Route::get('/', function () {
 });
 Route::get('login', [AuthController::class,'login'])->name('login');
 Route::post('login', [AuthController::class,'postlogin']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
 Route::get('/dashboard', function () {
     return view('layouts.template');
 });
