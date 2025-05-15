@@ -11,12 +11,14 @@ class CreateDKomentarLogAktivitasTable extends Migration
         Schema::create('d_komentar_log_aktivitas', function (Blueprint $table) {
             $table->bigIncrements('komentar_id');
             $table->unsignedBigInteger('aktivitas_id');
-            $table->unsignedBigInteger('pengirim_id');
+            $table->unsignedBigInteger('dosen_id');
             $table->text('komentar');
             $table->timestamp('created_at')->useCurrent();
 
             $table->foreign('aktivitas_id')
                   ->references('aktivitas_id')->on('t_log_aktivitas_mhs');
+            $table->foreign('dosen_id')
+                  ->references('dosen_id')->on('m_dosen');
         });
     }
 
@@ -24,6 +26,7 @@ class CreateDKomentarLogAktivitasTable extends Migration
     {
         Schema::table('d_komentar_log_aktivitas', function (Blueprint $table) {
             $table->dropForeign(['aktivitas_id']);
+            $table->dropForeign(['dosen_id']);
         });
         Schema::dropIfExists('d_komentar_log_aktivitas');
     }

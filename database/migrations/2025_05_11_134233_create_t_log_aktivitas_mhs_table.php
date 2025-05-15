@@ -10,19 +10,19 @@ class CreateTLogAktivitasMhsTable extends Migration
     {
         Schema::create('t_log_aktivitas_mhs', function (Blueprint $table) {
             $table->bigIncrements('aktivitas_id');
-            $table->string('mhs_nim', 20);
+            $table->unsignedBigInteger('lamaran_id');
             $table->text('keterangan');
             $table->timestamp('waktu')->useCurrent();
 
-            $table->foreign('mhs_nim')
-                  ->references('mhs_nim')->on('m_mahasiswa');
+            $table->foreign('lamaran_id')
+                  ->references('lamaran_id')->on('t_lamaran_magang');
         });
     }
 
     public function down()
     {
         Schema::table('t_log_aktivitas_mhs', function (Blueprint $table) {
-            $table->dropForeign(['mhs_nim']);
+            $table->dropForeign(['lamaran_id']);
         });
         Schema::dropIfExists('t_log_aktivitas_mhs');
     }

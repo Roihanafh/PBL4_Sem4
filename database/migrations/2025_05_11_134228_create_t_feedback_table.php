@@ -12,13 +12,15 @@ class CreateTFeedbackTable extends Migration
             $table->bigIncrements('feedback_id');
             $table->string('mhs_nim', 20);
             $table->enum('target_type', ['riwayat','perusahaan','lowongan']);
-            $table->unsignedBigInteger('target_id');
+            $table->unsignedBigInteger('lowongan_id');
             $table->tinyInteger('rating')->nullable();
             $table->text('komentar');
             $table->timestamp('created_at')->useCurrent();
 
             $table->foreign('mhs_nim')
                   ->references('mhs_nim')->on('m_mahasiswa');
+            $table->foreign('lowongan_id')
+                  ->references('lowongan_id')->on('t_lowongan_magang');
         });
     }
 
@@ -26,6 +28,7 @@ class CreateTFeedbackTable extends Migration
     {
         Schema::table('t_feedback', function (Blueprint $table) {
             $table->dropForeign(['mhs_nim']);
+            $table->dropForeign(['lowongan_id']);
         });
         Schema::dropIfExists('t_feedback');
     }
