@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MahasiswaController;
+use App\Http\Controllers\DosenController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -33,5 +34,12 @@ Route::get('/dashboard', [WelcomeController::class, 'index']);
 Route::group(['prefix' => 'mahasiswa'], function () {
     Route::get('/', [MahasiswaController::class, 'index']);
     Route::post('/list', [MahasiswaController::class, 'list']);
+
+});
+
+
+Route::group(['prefix' => 'dosen'], function () {
+    Route::get('/', [DosenController::class, 'index']);
+    Route::post('/list', [DosenController::class, 'list']);
 
 });
