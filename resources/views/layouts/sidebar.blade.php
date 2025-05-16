@@ -36,6 +36,7 @@
                   class="collapsed"
                   aria-expanded="false"
                 >
+                  <a href="{{ url('dashboard') }}">
                   <i class="fas fa-home"></i>
                   <p>Dashboard</p>
                 </a>
@@ -54,7 +55,7 @@
                     </li>
                     <li>
                     <li>
-                      <a href="components/avatars.html">
+                      <a href="{{ url('mahasiswa') }}">
                         <span class="sub-item">Data Mahasiswa</span>
                       </a>
                     </li>

@@ -30,3 +30,8 @@ Route::get('/dashboard', function () {
 
 Route::get('/dashboard', [WelcomeController::class, 'index']);
 
+Route::group(['prefix' => 'mahasiswa'], function () {
+    Route::get('/', [MahasiswaController::class, 'index']);
+    Route::post('/list', [MahasiswaController::class, 'list']);
+
+});

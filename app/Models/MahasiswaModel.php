@@ -12,6 +12,7 @@ class MahasiswaModel extends Model
     protected $table = 'm_mahasiswa';
     protected $primaryKey = 'mhs_nim';
     public $incrementing = false; // karena primary key bertipe varchar
+    protected $keyType = 'string';
     public $timestamps = false;
 
     protected $fillable = [
@@ -36,8 +37,9 @@ class MahasiswaModel extends Model
 
     public function prodi()
     {
-        return $this->belongsTo(UserModel::class, 'prodi_id', 'prodi_id');
+        return $this->belongsTo(ProdiModel::class, 'prodi_id', 'prodi_id');
     }
+
     
     public function lowongan()
     {
