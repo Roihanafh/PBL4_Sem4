@@ -55,4 +55,9 @@ class MahasiswaModel extends Model
     {
         return $this->hasMany(LamaranMagangModel::class, 'mhs_nim', 'mhs_nim');
     }
+
+    public function dosen()
+    {
+        return $this->belongsTo(DosenModel::class, 'dosen_id', 'dosen_id');
+    }
 }
