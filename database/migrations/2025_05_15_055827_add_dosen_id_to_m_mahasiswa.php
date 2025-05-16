@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('m_mahasiswa', function (Blueprint $table) {
-            $table->unsignedBigInteger('dosen_id')->after('user_id'); // tambahkan kolom
+            $table->unsignedBigInteger('dosen_id')->nullable()->after('user_id'); // tambahkan kolom
             $table->foreign('dosen_id')->references('dosen_id')->on('m_dosen');
         });
     }
@@ -23,6 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('m_mahasiswa', function (Blueprint $table) {
+            $table->dropColumn('dosen_id');
             $table->dropForeign(['dosen_id']);
         });
     }
