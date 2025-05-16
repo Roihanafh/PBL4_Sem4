@@ -18,9 +18,9 @@ class PeriodeMagangModel extends Model
         'keterangan',
     ];
 
-    // Relasi one-to-one ke Lowongan
+    // Relasi one-to-many ke Lowongan
     public function lowongan()
     {
-        return $this->hasOne(LowonganModel::class, 'periode_id', 'periode_id');
+        return $this->hasMany(LowonganModel::class, 'periode_id', 'periode_id');
     }
 }
