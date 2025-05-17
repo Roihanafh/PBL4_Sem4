@@ -51,9 +51,15 @@ class MahasiswaController extends Controller
                     return $mhs->prodi ? $mhs->prodi->nama_prodi : '-';
                 })
                 ->addColumn('aksi', function ($mhs) {
-                    $btn = '<button onclick="modalAction(\'' . url('/mahasiswa/' . $mhs->nim . '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
-                    $btn .= '<button onclick="modalAction(\'' . url('/mahasiswa/' . $mhs->nim . '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
-                    $btn .= '<button onclick="modalAction(\'' . url('/mahasiswa/' . $mhs->nim . '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button>';
+                    $btn  = '<div class="btn-group" role="group">';
+                    $btn .= '<button onclick="modalAction(\''.url('/mahasiswa/' . $mhs->nim . '/show_ajax').'\')" class="btn btn-primary btn-sm" style="margin-right: 5px;" title="Detail Data">';
+                    $btn .= '<i class="fas fa-info-circle"></i></button>';
+                    $btn .= '<button onclick="modalAction(\''.url('/mahasiswa/' . $mhs->nim . '/edit_ajax').'\')" class="btn btn-warning btn-sm" style="margin-right: 5px;" title="Edit Data">';
+                    $btn .= '<i class="fas fa-edit"></i></button>';
+                    $btn .= '<button onclick="modalAction(\''.url('/mahasiswa/' . $mhs->nim . '/delete_ajax').'\')" class="btn btn-danger btn-sm" title="Hapus Data">';
+                    $btn .= '<i class="fas fa-trash-alt"></i></button>';
+                    $btn .= '</div>';
+
                     return $btn;
                 })
                 ->rawColumns(['aksi'])

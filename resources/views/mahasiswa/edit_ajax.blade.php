@@ -1,10 +1,9 @@
 @empty($mahasiswa)
-    <div id="modal-crud" class="modal-dialog modal-lg" role="document">
+    <div id="myModal" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Kesalahan</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
@@ -23,7 +22,6 @@
         <div class="modal-header">
             <h5 class="modal-title">Edit Data Mahasiswa</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
             </button>
         </div>
         <div class="modal-body">
@@ -116,7 +114,7 @@ $(document).ready(function () {
                 data: $(form).serialize(),
                success: function(response) {
                     if(response.status) {
-                        $('#modal-crud').modal('hide'); // Tutup modal
+                        $('#myModal').modal('hide'); // Tutup modal
 
                         Swal.fire({
                             icon: 'success',

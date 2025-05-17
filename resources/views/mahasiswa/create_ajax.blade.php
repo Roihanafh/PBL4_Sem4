@@ -3,7 +3,6 @@
     <div class="modal-header">
         <h5 class="modal-title">Tambah Data Mahasiswa</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
         </button>
     </div>
     <div class="modal-body">
@@ -83,7 +82,7 @@ $(document).ready(function() {
                 data: $(form).serialize(),
                success: function(response) {
                     if(response.status) {
-                        $('#modal-crud').modal('hide'); // Tutup modal
+                        $('#myModal').modal('hide'); // Tutup modal
 
                         Swal.fire({
                             icon: 'success',
