@@ -4,7 +4,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>MagangIn - JTI Polinema</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
-  
+  <link
+      rel="icon"
+      href="img/MagangIn.png"
+      type="image/x-icon"
+    />
   <!-- ✅ Tambahkan CSRF Token -->
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -77,7 +81,7 @@
   <script src="assets/js/setting-demo.js"></script>
   <script src="assets/js/demo.js"></script>
 
-  
+
   <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
