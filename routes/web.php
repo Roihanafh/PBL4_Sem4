@@ -79,6 +79,7 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('/export_pdf', [AdminController::class, 'export_pdf']);
     Route::get('/export_excel', [AdminController::class, 'export_excel']);
     Route::post('/import_ajax', [AdminController::class, 'import_ajax']);
+    
 
 });
 

@@ -11,6 +11,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use Illuminate\Support\Facades\Storage;
 
 
 class AdminController extends Controller
@@ -299,5 +300,110 @@ class AdminController extends Controller
 
         $writer->save('php://output');
         exit;
+    }
+
+
+    public function import_ajax(Request $request)
+    {
+        try {
+            $rules = [
+                'file_admin' => ['required', 'mimes:xlsx', 'max:1024']
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validasi Gagal',
+                    'msgField' => $validator->errors()
+                ]);
+            }
+
+            $file = $request->file('file_admin');
+
+            if (!$file->isValid()) {
+                return response()->json(['status' => false, 'message' => 'File tidak valid'], 400);
+            }
+
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $destinationPath = storage_path('app/public/file_admin');
+
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0775, true);
+            }
+
+            $file->move($destinationPath, $filename);
+            $filePathRelative = "file_admin/$filename";
+            $filePath = storage_path("app/public/file_admin/$filename");
+
+            $reader = IOFactory::createReader('Xlsx');
+            $reader->setReadDataOnly(true);
+            $spreadsheet = $reader->load($filePath);
+            $sheet = $spreadsheet->getActiveSheet();
+            $data = $sheet->toArray(null, false, true, true); // Ambil semua baris data
+
+            // Hapus file setelah dibaca
+            if (Storage::disk('public')->exists($filePathRelative)) {
+                Storage::disk('public')->delete($filePathRelative);
+            }
+
+            $existingUsernames = UserModel::pluck('username')->toArray();
+            $existingEmails = AdminModel::pluck('email')->toArray();
+
+            $insertedCount = 0;
+
+            foreach ($data as $index => $row) {
+                if ($index <= 1) continue; // Lewati header
+
+                $username = trim($row['A']);
+                $password = trim($row['B']);
+                $nama     = trim($row['C']);
+                $email    = trim($row['D']);
+                $telp     = trim($row['E'] ?? '');
+
+                if (!$username || !$password || !$nama || !$email) continue;
+
+                if (in_array($username, $existingUsernames) || in_array($email, $existingEmails)) {
+                    continue;
+                }
+
+                // Simpan ke tabel m_users
+                $user = UserModel::create([
+                    'username' => $username,
+                    'password' => bcrypt($password),
+                    'level_id' => 1, // level 1 = admin
+                    'created_at' => now()
+                ]);
+
+                // Simpan ke tabel m_admin
+                AdminModel::create([
+                    'user_id' => $user->user_id,
+                    'nama'    => $nama,
+                    'email'   => $email,
+                    'telp'    => $telp ?: null,
+                    'created_at' => now()
+                ]);
+
+                $insertedCount++;
+            }
+
+            if ($insertedCount > 0) {
+                return response()->json([
+                    'status' => true,
+                    'message' => "$insertedCount admin berhasil diimport"
+                ]);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Tidak ada data admin yang diimport'
+                ]);
+            }
+
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Terjadi kesalahan saat import: ' . $e->getMessage()
+            ]);
+        }
     }
 }
