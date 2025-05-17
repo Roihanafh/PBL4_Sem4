@@ -50,61 +50,69 @@
         $(document).ready(function () {
             $("#form-delete").validate({
                 rules: {},
-                 submitHandler: function(form) {
-            $.ajax({
-                url: form.action,
-                type: form.method,
-                data: $(form).serialize(),
-               success: function(response) {
-                    if(response.status) {
-                        $('#myModal').modal('hide'); // Tutup modal
+                submitHandler: function(form) {
+                    $.ajax({
+                        url: form.action,
+                        type: form.method,
+                        data: $(form).serialize(),
+                        success: function(response) {
+                            if (response.status) {
+                                $('#myModal').modal('hide'); // Tutup modal
 
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil',
-                            text: response.message
-                        });
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Berhasil',
+                                    text: response.message
+                                });
 
-                        // Reload DataTable
-                        if ($.fn.DataTable.isDataTable('#periode-table')) {
-                            $('#periode-table').DataTable().ajax.reload(null, false);
-                        }
-                    } else {
-                        $('.text-danger').text(''); // reset error text
-                        if(response.msgField){
-                            $.each(response.msgField, function(prefix, val) {
-                                $('#error-' + prefix).text(val[0]);
+                                // Reload DataTable
+                                if ($.fn.DataTable.isDataTable('#periode-table')) {
+                                    $('#periode-table').DataTable().ajax.reload(null, false);
+                                }
+                            } else {
+                                $('.text-danger').text(''); // reset error text
+                                if (response.msgField) {
+                                    $.each(response.msgField, function(prefix, val) {
+                                        $('#error-' + prefix).text(val[0]);
+                                    });
+                                }
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Terjadi Kesalahan',
+                                    text: response.message || 'Mohon cek kembali inputan anda.'
+                                });
+                            }
+                        },
+                        error: function(xhr) {
+                            let errorMsg = 'Terjadi kesalahan pada server.';
+                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                if (xhr.responseJSON.message.includes('Integrity constraint violation')) {
+                                    errorMsg = 'Data gagal dihapus karena masih digunakan pada data lain.';
+                                } else {
+                                    errorMsg = xhr.responseJSON.message;
+                                }
+                            }
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal',
+                                text: errorMsg
                             });
                         }
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Terjadi Kesalahan',
-                            text: response.message || 'Mohon cek kembali inputan anda.'
-                        });
-                    }
-                },
-                error: function() {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Terjadi kesalahan pada server.'
                     });
+                    return false; // prevent default submit
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
                 }
             });
-            return false; // prevent default submit
-        },
-        errorElement: 'span',
-        errorPlacement: function(error, element) {
-            error.addClass('invalid-feedback');
-            element.closest('.form-group').append(error);
-        },
-        highlight: function(element) {
-            $(element).addClass('is-invalid');
-        },
-        unhighlight: function(element) {
-            $(element).removeClass('is-invalid');
-        }
-    });
-});
+        });
     </script>
 @endempty
