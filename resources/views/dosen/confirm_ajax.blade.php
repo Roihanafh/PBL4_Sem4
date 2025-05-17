@@ -42,68 +42,71 @@
             </table>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-warning" data-bs-dismiss="modal" aria-label="Batal">Batal</button>
+            <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Batal</button>
             <button type="submit" class="btn btn-danger">Ya, Hapus</button>
         </div>
     </form>
 
     <script>
-        $(document).ready(function () {
-            $("#form-delete").validate({
-                rules: {},
-                submitHandler: function(form) {
-                    $.ajax({
-                        url: form.action,
-                        type: form.method,
-                        data: $(form).serialize(),
-                        success: function(response) {
-                            if (response.status) {
-                                $('#myModal').modal('hide');
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Berhasil',
-                                    text: response.message
-                                });
+    $(document).ready(function () {
+        $("#form-delete").validate({
+            rules: {},
+            submitHandler: function(form) {
+                $.ajax({
+                    url: form.action,
+                    type: form.method,
+                    data: $(form).serialize(),
+                    success: function(response) {
+                        if(response.status) {
+                            $('#myModal').modal('hide'); // Tutup modal
 
-                                if ($.fn.DataTable.isDataTable('#dosen-table')) {
-                                    $('#dosen-table').DataTable().ajax.reload(null, false);
-                                }
-                            } else {
-                                $('.text-danger').text('');
-                                if (response.msgField) {
-                                    $.each(response.msgField, function(prefix, val) {
-                                        $('#error-' + prefix).text(val[0]);
-                                    });
-                                }
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Terjadi Kesalahan',
-                                    text: response.message || 'Mohon cek kembali inputan anda.'
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil',
+                                text: response.message
+                            });
+
+                            // Reload DataTable untuk dosen
+                            if ($.fn.DataTable.isDataTable('#dosen-table')) {
+                                $('#dosen-table').DataTable().ajax.reload(null, false);
+                            }
+                        } else {
+                            $('.text-danger').text(''); // Reset pesan error
+                            if(response.msgField){
+                                $.each(response.msgField, function(prefix, val) {
+                                    $('#error-' + prefix).text(val[0]);
                                 });
                             }
-                        },
-                        error: function() {
                             Swal.fire({
                                 icon: 'error',
-                                title: 'Error',
-                                text: 'Terjadi kesalahan pada server.'
+                                title: 'Terjadi Kesalahan',
+                                text: response.message || 'Mohon cek kembali inputan Anda.'
                             });
                         }
-                    });
-                    return false;
-                },
-                errorElement: 'span',
-                errorPlacement: function(error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.form-group').append(error);
-                },
-                highlight: function(element) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function(element) {
-                    $(element).removeClass('is-invalid');
-                }
-            });
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Terjadi kesalahan pada server.'
+                        });
+                    }
+                });
+                return false; // Cegah submit default
+            },
+            errorElement: 'span',
+            errorPlacement: function(error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight: function(element) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function(element) {
+                $(element).removeClass('is-invalid');
+            }
         });
-    </script>
+    });
+</script>
+
 @endempty

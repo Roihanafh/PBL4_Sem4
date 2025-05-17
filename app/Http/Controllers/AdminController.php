@@ -302,10 +302,14 @@ class AdminController extends Controller
         exit;
     }
 
+    public function import()
+    {
+        return view('admin.import'); // Pastikan view-nya tersedia di resources/views/admin/import.blade.php
+    }
 
     public function import_ajax(Request $request)
     {
-        try {
+        if ($request->ajax() || $request->wantsJson()) {
             $rules = [
                 'file_admin' => ['required', 'mimes:xlsx', 'max:1024']
             ];
@@ -319,91 +323,68 @@ class AdminController extends Controller
                 ]);
             }
 
-            $file = $request->file('file_admin');
+            try {
+                $file = $request->file('file_admin');
+                $reader = IOFactory::createReader('Xlsx');
+                $reader->setReadDataOnly(true);
+                $spreadsheet = $reader->load($file->getRealPath());
+                $sheet = $spreadsheet->getActiveSheet();
+                $data = $sheet->toArray(null, false, true, true);
 
-            if (!$file->isValid()) {
-                return response()->json(['status' => false, 'message' => 'File tidak valid'], 400);
-            }
+                $insertedCount = 0;
+                $existingUsernames = UserModel::pluck('username')->toArray();
+                $existingEmails = AdminModel::pluck('email')->toArray();
 
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $destinationPath = storage_path('app/public/file_admin');
+                if (count($data) > 1) {
+                    foreach ($data as $index => $row) {
+                        if ($index <= 1) continue; // Skip header
 
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0775, true);
-            }
+                        $username = trim($row['A']);
+                        $password = trim($row['B']);
+                        $nama     = trim($row['C']);
+                        $email    = trim($row['D']);
+                        $telp     = trim($row['E'] ?? '');
 
-            $file->move($destinationPath, $filename);
-            $filePathRelative = "file_admin/$filename";
-            $filePath = storage_path("app/public/file_admin/$filename");
+                        if (!$username || !$password || !$nama || !$email) continue;
+                        if (in_array($username, $existingUsernames) || in_array($email, $existingEmails)) continue;
 
-            $reader = IOFactory::createReader('Xlsx');
-            $reader->setReadDataOnly(true);
-            $spreadsheet = $reader->load($filePath);
-            $sheet = $spreadsheet->getActiveSheet();
-            $data = $sheet->toArray(null, false, true, true); // Ambil semua baris data
+                        $user = UserModel::create([
+                            'username' => $username,
+                            'password' => bcrypt($password),
+                            'level_id' => 1, // level 1 = admin
+                            'created_at' => now()
+                        ]);
 
-            // Hapus file setelah dibaca
-            if (Storage::disk('public')->exists($filePathRelative)) {
-                Storage::disk('public')->delete($filePathRelative);
-            }
+                        AdminModel::create([
+                            'user_id' => $user->user_id,
+                            'nama' => $nama,
+                            'email' => $email,
+                            'telp' => $telp ?: null,
+                            'created_at' => now()
+                        ]);
 
-            $existingUsernames = UserModel::pluck('username')->toArray();
-            $existingEmails = AdminModel::pluck('email')->toArray();
+                        $insertedCount++;
+                    }
 
-            $insertedCount = 0;
-
-            foreach ($data as $index => $row) {
-                if ($index <= 1) continue; // Lewati header
-
-                $username = trim($row['A']);
-                $password = trim($row['B']);
-                $nama     = trim($row['C']);
-                $email    = trim($row['D']);
-                $telp     = trim($row['E'] ?? '');
-
-                if (!$username || !$password || !$nama || !$email) continue;
-
-                if (in_array($username, $existingUsernames) || in_array($email, $existingEmails)) {
-                    continue;
+                    return response()->json([
+                        'status' => true,
+                        'message' => "$insertedCount admin berhasil diimport"
+                    ]);
                 }
 
-                // Simpan ke tabel m_users
-                $user = UserModel::create([
-                    'username' => $username,
-                    'password' => bcrypt($password),
-                    'level_id' => 1, // level 1 = admin
-                    'created_at' => now()
-                ]);
-
-                // Simpan ke tabel m_admin
-                AdminModel::create([
-                    'user_id' => $user->user_id,
-                    'nama'    => $nama,
-                    'email'   => $email,
-                    'telp'    => $telp ?: null,
-                    'created_at' => now()
-                ]);
-
-                $insertedCount++;
-            }
-
-            if ($insertedCount > 0) {
-                return response()->json([
-                    'status' => true,
-                    'message' => "$insertedCount admin berhasil diimport"
-                ]);
-            } else {
                 return response()->json([
                     'status' => false,
                     'message' => 'Tidak ada data admin yang diimport'
                 ]);
-            }
 
-        } catch (\Throwable $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Terjadi kesalahan saat import: ' . $e->getMessage()
-            ]);
+            } catch (\Throwable $e) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Terjadi kesalahan saat import: ' . $e->getMessage()
+                ]);
+            }
         }
+
+        return redirect('/');
     }
 }

@@ -298,14 +298,20 @@ class DosenController extends Controller
         exit;
     }
 
+    public function import()
+    {
+        return view('dosen.import'); // Pastikan view-nya sesuai
+    }
+
     public function import_ajax(Request $request)
     {
-        try {
+        if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'file_admin' => ['required', 'mimes:xlsx', 'max:1024']
+                'file_dosen' => ['required', 'mimes:xlsx', 'max:1024']
             ];
 
             $validator = Validator::make($request->all(), $rules);
+
             if ($validator->fails()) {
                 return response()->json([
                     'status' => false,
@@ -314,92 +320,68 @@ class DosenController extends Controller
                 ]);
             }
 
-            $file = $request->file('file_admin');
+            try {
+                $file = $request->file('file_dosen');
+                $reader = IOFactory::createReader('Xlsx');
+                $reader->setReadDataOnly(true);
+                $spreadsheet = $reader->load($file->getRealPath());
+                $sheet = $spreadsheet->getActiveSheet();
+                $data = $sheet->toArray(null, false, true, true);
 
-            if (!$file->isValid()) {
-                return response()->json(['status' => false, 'message' => 'File tidak valid'], 400);
-            }
+                $insertedCount = 0;
+                $existingUsernames = UserModel::pluck('username')->toArray();
+                $existingEmails = DosenModel::pluck('email')->toArray();
 
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $destinationPath = storage_path('app/public/file_dosen');
+                if (count($data) > 1) {
+                    foreach ($data as $index => $row) {
+                        if ($index <= 1) continue; // Skip header
 
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0775, true);
-            }
+                        $username = trim($row['A']);
+                        $password = trim($row['B']);
+                        $nama     = trim($row['C']);
+                        $email    = trim($row['D']);
+                        $telp     = trim($row['E'] ?? '');
 
-            $file->move($destinationPath, $filename);
-            $filePathRelative = "file_dosen/$filename";
-            $filePath = storage_path("app/public/file_dosen/$filename");
+                        if (!$username || !$password || !$nama || !$email) continue;
+                        if (in_array($username, $existingUsernames) || in_array($email, $existingEmails)) continue;
 
-            $reader = IOFactory::createReader('Xlsx');
-            $reader->setReadDataOnly(true);
-            $spreadsheet = $reader->load($filePath);
-            $sheet = $spreadsheet->getActiveSheet();
-            $data = $sheet->toArray(null, false, true, true); // Ambil semua baris data
+                        $user = UserModel::create([
+                            'username' => $username,
+                            'password' => bcrypt($password),
+                            'level_id' => 2, // level 2 = dosen
+                            'created_at' => now()
+                        ]);
 
-            // Hapus file setelah dibaca
-            if (Storage::disk('public')->exists($filePathRelative)) {
-                Storage::disk('public')->delete($filePathRelative);
-            }
+                        DosenModel::create([
+                            'user_id' => $user->user_id,
+                            'nama' => $nama,
+                            'email' => $email,
+                            'telp' => $telp ?: null,
+                            'created_at' => now()
+                        ]);
 
-            $existingUsernames = UserModel::pluck('username')->toArray();
-            $existingEmails = DosenModel::pluck('email')->toArray();
+                        $insertedCount++;
+                    }
 
-            $insertedCount = 0;
-
-            foreach ($data as $index => $row) {
-                if ($index <= 1) continue; // Lewati header (baris ke-1 dan ke-2)
-
-                $username = trim($row['A']);
-                $password = trim($row['B']);
-                $nama     = trim($row['C']);
-                $email    = trim($row['D']);
-                $telp     = trim($row['E'] ?? '');
-
-                if (!$username || !$password || !$nama || !$email) continue;
-
-                if (in_array($username, $existingUsernames) || in_array($email, $existingEmails)) {
-                    continue;
+                    return response()->json([
+                        'status' => true,
+                        'message' => "$insertedCount dosen berhasil diimport"
+                    ]);
                 }
 
-                // Simpan ke tabel m_users
-                $user = UserModel::create([
-                    'username' => $username,
-                    'password' => bcrypt($password),
-                    'level_id' => 2, // level 2 = dosen
-                    'created_at' => now()
-                ]);
-
-                // Simpan ke tabel m_dosen
-                DosenModel::create([
-                    'user_id' => $user->user_id,
-                    'nama'    => $nama,
-                    'email'   => $email,
-                    'telp'    => $telp ?: null,
-                    'created_at' => now()
-                ]);
-
-                $insertedCount++;
-            }
-
-            if ($insertedCount > 0) {
-                return response()->json([
-                    'status' => true,
-                    'message' => "$insertedCount dosen berhasil diimport"
-                ]);
-            } else {
                 return response()->json([
                     'status' => false,
                     'message' => 'Tidak ada data dosen yang diimport'
                 ]);
+            } catch (\Throwable $e) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Terjadi kesalahan saat import: ' . $e->getMessage()
+                ]);
             }
-
-        } catch (\Throwable $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Terjadi kesalahan saat import: ' . $e->getMessage()
-            ]);
         }
+
+        return redirect('/');
     }
 
 }

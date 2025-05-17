@@ -46,6 +46,7 @@ Route::group(['prefix' => 'mahasiswa'], function () {
     Route::put('/{nim}/update_ajax', [MahasiswaController::class, 'update_ajax']);
     Route::get('/export_pdf', [MahasiswaController::class, 'export_pdf']);
     Route::get('/export_excel', [MahasiswaController::class, 'export_excel']);
+    Route::get('import', [MahasiswaController::class, 'import']);
     Route::post('/import_ajax', [MahasiswaController::class, 'import_ajax']);
 
 });
@@ -63,6 +64,7 @@ Route::group(['prefix' => 'dosen'], function () {
     Route::put('/{dosen_id}/update_ajax', [DosenController::class, 'update_ajax']);
     Route::get('/export_pdf', [DosenController::class, 'export_pdf']);
     Route::get('/export_excel', [DosenController::class, 'export_excel']);
+    Route::get('import', [DosenController::class, 'import']);
     Route::post('/import_ajax', [DosenController::class, 'import_ajax']);
 
 });
@@ -79,6 +81,7 @@ Route::group(['prefix' => 'admin'], function () {
     Route::put('/{admin_id}/update_ajax', [AdminController::class, 'update_ajax']);
     Route::get('/export_pdf', [AdminController::class, 'export_pdf']);
     Route::get('/export_excel', [AdminController::class, 'export_excel']);
+    Route::get('import', [AdminController::class, 'import']);
     Route::post('/import_ajax', [AdminController::class, 'import_ajax']);
     
 

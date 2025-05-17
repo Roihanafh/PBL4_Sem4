@@ -13,8 +13,6 @@ use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use Illuminate\Support\Facades\Storage;
-
-
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -316,14 +314,21 @@ class MahasiswaController extends Controller
         exit;
     }
 
+    public function import()
+    {
+        return view('mahasiswa.import'); // Pastikan view-nya benar
+    }
+
     public function import_ajax(Request $request)
     {
-        try {
+        if ($request->ajax() || $request->wantsJson()) {
             $rules = [
+                // Validasi file Excel
                 'file_mahasiswa' => ['required', 'mimes:xlsx', 'max:1024']
             ];
 
             $validator = Validator::make($request->all(), $rules);
+
             if ($validator->fails()) {
                 return response()->json([
                     'status' => false,
@@ -333,95 +338,65 @@ class MahasiswaController extends Controller
             }
 
             $file = $request->file('file_mahasiswa');
-
-            if (!$file->isValid()) {
-                return response()->json(['status' => false, 'message' => 'File tidak valid'], 400);
-            }
-
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $destinationPath = storage_path('app/public/file_mahasiswa');
-
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0775, true);
-            }
-
-            $file->move($destinationPath, $filename);
-            $filePathRelative = "file_mahasiswa/$filename";
-            $filePath = storage_path("app/public/file_mahasiswa/$filename");
-
             $reader = IOFactory::createReader('Xlsx');
             $reader->setReadDataOnly(true);
-            $spreadsheet = $reader->load($filePath);
+            $spreadsheet = $reader->load($file->getRealPath());
             $sheet = $spreadsheet->getActiveSheet();
             $data = $sheet->toArray(null, false, true, true);
 
-            if (Storage::disk('public')->exists($filePathRelative)) {
-                Storage::disk('public')->delete($filePathRelative);
-            }
-
+            $insertedCount = 0;
             $existingUsernames = UserModel::pluck('username')->toArray();
             $existingNIMs = MahasiswaModel::pluck('mhs_nim')->toArray();
 
-            $insertedCount = 0;
+            if (count($data) > 1) {
+                foreach ($data as $baris => $row) {
+                    if ($baris <= 1) continue; // Skip header
 
-            foreach ($data as $index => $row) {
-                if ($index <= 1) continue; // skip header
+                    $username = trim($row['A']);
+                    $password = trim($row['B']);
+                    $mhs_nim  = trim($row['C']);
+                    $nama     = trim($row['D']);
+                    $alamat   = trim($row['E'] ?? '');
+                    $telp     = trim($row['F'] ?? '');
+                    $prodi_id = trim($row['G']);
 
-                $username = trim($row['A']);
-                $password = trim($row['B']);
-                $mhs_nim  = trim($row['C']);
-                $nama     = trim($row['D']);
-                $alamat   = trim($row['E'] ?? '');
-                $telp     = trim($row['F'] ?? '');
-                $prodi_id = trim($row['G']);
+                    if (!$username || !$password || !$mhs_nim || !$nama || !$prodi_id) continue;
+                    if (in_array($username, $existingUsernames) || in_array($mhs_nim, $existingNIMs)) continue;
 
-                if (!$username || !$password || !$mhs_nim || !$nama || !$prodi_id) continue;
+                    $user = UserModel::create([
+                        'username' => $username,
+                        'password' => bcrypt($password),
+                        'level_id' => 3,
+                        'created_at' => now()
+                    ]);
 
-                if (in_array($username, $existingUsernames) || in_array($mhs_nim, $existingNIMs)) {
-                    continue;
+                    MahasiswaModel::create([
+                        'user_id' => $user->user_id,
+                        'mhs_nim' => $mhs_nim,
+                        'full_name' => $nama,
+                        'alamat' => $alamat ?: null,
+                        'telp' => $telp ?: null,
+                        'prodi_id' => $prodi_id,
+                        'status_magang' => 'belum magang',
+                        'created_at' => now()
+                    ]);
+
+                    $insertedCount++;
                 }
 
-                // Create user
-                $user = UserModel::create([
-                    'username' => $username,
-                    'password' => bcrypt($password),
-                    'level_id' => 3,
-                    'created_at' => now()
-                ]);
-
-                // Create mahasiswa
-                MahasiswaModel::create([
-                    'user_id' => $user->user_id,
-                    'mhs_nim' => $mhs_nim,
-                    'full_name' => $nama,
-                    'alamat' => $alamat ?: null,
-                    'telp' => $telp ?: null,
-                    'prodi_id' => $prodi_id,
-                    'status_magang' => 'belum magang', // set default
-                    'created_at' => now()
-                ]);
-
-                $insertedCount++;
-            }
-
-            if ($insertedCount > 0) {
                 return response()->json([
                     'status' => true,
                     'message' => "$insertedCount mahasiswa berhasil diimport"
                 ]);
-            } else {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Tidak ada data mahasiswa yang diimport'
-                ]);
             }
 
-        } catch (\Throwable $e) {
             return response()->json([
                 'status' => false,
-                'message' => 'Terjadi kesalahan saat import: ' . $e->getMessage()
+                'message' => 'Tidak ada data yang diimport'
             ]);
         }
+
+        return redirect('/');
     }
 }
 
