@@ -48,6 +48,13 @@ Route::group(['prefix' => 'mahasiswa'], function () {
 Route::group(['prefix' => 'dosen'], function () {
     Route::get('/', [DosenController::class, 'index']);
     Route::post('/list', [DosenController::class, 'list']);
+    Route::get('/create_ajax', [DosenController::class, 'create_ajax']);
+    Route::post('/ajax', [DosenController::class, 'store_ajax']);
+    Route::get('/{dosen_id}/delete_ajax', [DosenController::class, 'confirm_ajax']); // Tampilkan modal konfirmasi
+    Route::delete('/{dosen_id}/delete_ajax', [DosenController::class, 'delete_ajax']);
+    Route::get('/{dosen_id}/show_ajax', [DosenController::class, 'show_ajax']);
+    Route::get('/{dosen_id}/edit_ajax', [DosenController::class, 'edit_ajax']);
+    Route::put('/{dosen_id}/update_ajax', [DosenController::class, 'update_ajax']);
 
 });
 
