@@ -186,7 +186,6 @@ class ProdiController extends Controller
                             'prodi_id' => $value['A'],
                             'nama_prodi' => $value['B'],
                             'jurusan' => $value['C'],
-                            'created_at' => now(),
                         ];
                     }
                 }
