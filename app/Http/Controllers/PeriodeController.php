@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\PeriodeMagangModel;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Yajra\DataTables\Facades\DataTables;
@@ -176,4 +178,154 @@ class PeriodeController extends Controller
             ]);
         }
     }
+
+    public function export_pdf()
+    {
+        $periode = DB::table('m_periode_magang')
+            ->orderBy('periode_id', 'asc')
+            ->get();
+
+        $pdf = Pdf::loadView('periode.export_pdf', ['periode' => $periode]);
+        $pdf->setPaper('a4', 'portrait');
+        $pdf->setOption("isRemoteEnabled", true);
+        $pdf->render();
+
+        return $pdf->stream('Data Periode Magang ' . date('Y-m-d H:i:s') . '.pdf');
+    }
+
+
+    public function export_excel()
+    {
+        $periode = DB::table('m_periode_magang')
+            ->orderBy('periode_id', 'asc')
+            ->get();
+
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Header kolom
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Periode');
+        $sheet->setCellValue('C1', 'Keterangan');
+        $sheet->getStyle('A1:C1')->getFont()->setBold(true);
+
+        $no = 1;
+        $baris = 2;
+
+        foreach ($periode as $data) {
+            $sheet->setCellValue('A' . $baris, $no);
+            $sheet->setCellValue('B' . $baris, $data->periode);
+            $sheet->setCellValue('C' . $baris, $data->keterangan);
+            $no++;
+            $baris++;
+        }
+
+        foreach (range('A', 'C') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+        $sheet->setTitle('Data Periode Magang');
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $filename = 'Data_Periode_Magang_' . date('Y-m-d_H-i-s') . '.xlsx';
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+        header('Cache-Control: max-age=1');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+        header('Cache-Control: cache, must-revalidate');
+        header('Pragma: public');
+
+        $writer->save('php://output');
+        exit;
+    }
+
+    public function import_ajax(Request $request)
+    {
+        try {
+            $rules = [
+                'file_periode' => ['required', 'mimes:xlsx', 'max:1024']
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validasi Gagal',
+                    'msgField' => $validator->errors()
+                ]);
+            }
+
+            $file = $request->file('file_periode');
+
+            if (!$file->isValid()) {
+                return response()->json(['status' => false, 'message' => 'File tidak valid'], 400);
+            }
+
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $destinationPath = storage_path('app/public/file_periode');
+
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0775, true);
+            }
+
+            $file->move($destinationPath, $filename);
+            $filePath = storage_path("app/public/file_periode/$filename");
+
+            $reader = IOFactory::createReader('Xlsx');
+            $reader->setReadDataOnly(true);
+            $spreadsheet = $reader->load($filePath);
+            $sheet = $spreadsheet->getActiveSheet();
+            $data = $sheet->toArray(null, false, true, true);
+
+            // hapus file setelah digunakan
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+
+            $existingPeriode = DB::table('m_periode_magang')->pluck('periode')->toArray();
+            $insertedCount = 0;
+
+            foreach ($data as $index => $row) {
+                if ($index <= 1) continue; // Lewati header
+
+                $periode = trim($row['B'] ?? '');
+                $keterangan = trim($row['C'] ?? '');
+
+                if (!$periode) continue;
+
+                if (in_array($periode, $existingPeriode) && in_array($keterangan, $existingPeriode)) {
+                    continue;
+                }
+
+                DB::table('m_periode_magang')->insert([
+                    'periode' => $periode,
+                    'keterangan' => $keterangan,
+                ]);
+
+                $insertedCount++;
+            }
+
+            if ($insertedCount > 0) {
+                return response()->json([
+                    'status' => true,
+                    'message' => "$insertedCount periode berhasil diimpor"
+                ]);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Tidak ada data periode baru yang diimpor'
+                ]);
+            }
+
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Terjadi kesalahan saat import data'
+            ]);
+        }
+    }
+
+
 }

@@ -94,6 +94,9 @@ Route::group(['prefix' => 'periode'], function () {
     Route::get('/{periode_id}/show_ajax', [PeriodeController::class, 'show_ajax']);
     Route::get('/{periode_id}/edit_ajax', [PeriodeController::class, 'edit_ajax']);
     Route::put('/{periode_id}/update_ajax', [PeriodeController::class, 'update_ajax']);
+    Route::get('/export_pdf', [PeriodeController::class, 'export_pdf']);
+    Route::get('/export_excel', [PeriodeController::class, 'export_excel']);
+    Route::post('/import_ajax', [PeriodeController::class, 'import_ajax']);
 });
 
 Route::group(['prefix' => 'prodi'], function () {
