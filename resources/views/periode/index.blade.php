@@ -3,15 +3,21 @@
 @section('content')
 <div class="card">
   <div class="card-header">
-    {{-- <div class="d-flex align-items-center">
-      <h4 class="card-title">{{ $page->title }}</h4>
-    </div> --}}
-    <div class="card-tools">
-        <button onclick="modalAction('{{ url('/user/import') }}')" class="btn btn-info">Import user</button>
-        <a href="{{ url('/user/export_excel') }}" class="btn btn-primary"><i class="fa fa-file-excel"></i> Export user</a>
-        <a href="{{ url('/user/export_pdf') }}" class="btn btn-warning"><i class="fa fa-file-pdf"></i> Export user</a>
-        <button onclick="modalAction('{{ url('user/create_ajax') }}')" class="btn btn-success" >Tambah ajax</button>
-    </div>
+    <div class="d-flex gap-2 align-items-center flex-wrap">
+    <button onclick="modalAction('{{ url('/user/import') }}')" class="btn btn-info">
+        Import user
+    </button>
+    <a href="{{ url('/user/export_excel') }}" class="btn btn-primary">
+        <i class="fa fa-file-excel"></i> Export user
+    </a>
+    <a href="{{ url('/user/export_pdf') }}" class="btn btn-warning">
+        <i class="fa fa-file-pdf"></i> Export user
+    </a>
+    <button class="btn btn-primary btn-round ms-auto" onclick="modalAction('{{ url('/periode/create_ajax') }}')">
+        <i class="fa fa-plus"></i> Add Row
+    </button>
+</div>
+
   </div>
   <div class="card-body">
     @if (session('success'))
@@ -27,7 +33,13 @@
       tabindex="-1"
       role="dialog"
       aria-hidden="true"
+      data-backdrop="static"
+      data-keyboard="false"
     >
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content"></div>
+      </div>
+    </div>
       {{-- isi modal --}}
     </div>
     <div class="card-body">
@@ -90,8 +102,8 @@
         });
     });
     function modalAction(url = ''){
-        $('.myModal').load(url,function(){
-            $('.myModal').modal('show');
+        $('#myModal .modal-content').load(url,function(){
+            $('#myModal').modal('show');
         });
     }
 

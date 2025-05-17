@@ -61,5 +61,11 @@ Route::group(['prefix' => 'dosen'], function () {
 Route::group(['prefix' => 'periode'], function () {
     Route::get('/', [PeriodeController::class, 'index']);
     Route::post('/list', [PeriodeController::class, 'list']);
-
+    Route::get('/create_ajax', [PeriodeController::class, 'create_ajax']);
+    Route::post('/ajax', [PeriodeController::class, 'store_ajax']);
+    Route::get('/{periode_id}/delete_ajax', [PeriodeController::class, 'confirm_ajax']); // Tampilkan modal konfirmasi
+    Route::delete('/{periode_id}/delete_ajax', [PeriodeController::class, 'delete_ajax']); // Eksekusi penghapusan
+    Route::get('/{periode_id}/show_ajax', [PeriodeController::class, 'show_ajax']);
+    Route::get('/{periode_id}/edit_ajax', [PeriodeController::class, 'edit_ajax']);
+    Route::put('/{periode_id}/update_ajax', [PeriodeController::class, 'update_ajax']);
 });
