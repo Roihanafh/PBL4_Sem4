@@ -31,7 +31,7 @@
       }
     });
   </script>
-
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <!-- CSS Files -->
   <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
   <link rel="stylesheet" href="assets/css/plugins.min.css" />
@@ -83,6 +83,8 @@
 
 
   <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+  <!-- Plugin Validasi Tambahan -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/additional-methods.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <!-- CDN JS -->
@@ -98,6 +100,7 @@
 
   <!-- ✅ Tambahkan ini agar halaman bisa inject script -->
   @stack('js')
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <!-- Modal Global -->
   <div class="modal fade" id="globalModal" tabindex="-1" aria-hidden="true">
