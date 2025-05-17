@@ -92,7 +92,7 @@
                 <div class="collapse" id="forms">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="{{ url('periode') }}">
+                      <a href="forms/forms.html">
                         <span class="sub-item">Data Periode Magang</span>
                       </a>
                     </li>

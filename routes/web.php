@@ -3,7 +3,6 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\DosenController;
-use App\Http\Controllers\PeriodeController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -50,10 +49,3 @@ Route::group(['prefix' => 'dosen'], function () {
     Route::post('/list', [DosenController::class, 'list']);
 
 });
-
-Route::group(['prefix' => 'periode'], function () {
-    Route::get('/', [PeriodeController::class, 'index']);
-    Route::post('/list', [PeriodeController::class, 'list']);
-
-});
-
