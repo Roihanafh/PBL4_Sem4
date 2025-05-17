@@ -4,7 +4,7 @@
 <div class="card">
   <div class="card-header">
     <div class="d-flex gap-2 align-items-center flex-wrap">
-      <button onclick="modalAction('{{ url('/admin/import') }}')" class="btn btn-info">
+      <button onclick="modalAction('{{ url('/admin/import_ajax') }}')" class="btn btn-info">
           Import Admin
       </button>
       <a href="{{ url('/admin/export_excel') }}" class="btn btn-primary">

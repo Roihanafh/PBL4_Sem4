@@ -7,11 +7,11 @@
     <button onclick="modalAction('{{ url('/user/import') }}')" class="btn btn-info">
         Import user
     </button>
-    <a href="{{ url('/user/export_excel') }}" class="btn btn-primary">
-        <i class="fa fa-file-excel"></i> Export user
+    <a href="{{ url('/dosen/export_excel') }}" class="btn btn-primary">
+        <i class="fa fa-file-excel"></i> Export Dosen
     </a>
-    <a href="{{ url('/user/export_pdf') }}" class="btn btn-warning">
-        <i class="fa fa-file-pdf"></i> Export user
+    <a href="{{ url('/dosen/export_pdf') }}" class="btn btn-warning">
+        <i class="fa fa-file-pdf"></i> Export Dosen
     </a>
     <button class="btn btn-primary btn-round ms-auto" onclick="modalAction('{{ url('/dosen/create_ajax') }}')">
         <i class="fa fa-plus"></i> Tambah Data

@@ -12,7 +12,11 @@
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
         "phpoffice/phpspreadsheet": "^4.2",
+<<<<<<< HEAD
         "yajra/laravel-datatables-oracle": "10.11"
+=======
+        "yajra/laravel-datatables-oracle": "^10.11"
+>>>>>>> 8cf65699e825bdcb18396227b6547b50e821c66d
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
