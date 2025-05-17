@@ -241,6 +241,11 @@ class PeriodeController extends Controller
         exit;
     }
 
+    public function import()
+    {
+        return view('periode.import'); // Pastikan view-nya benar
+    }
+
     public function import_ajax(Request $request)
     {
         try {

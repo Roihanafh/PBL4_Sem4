@@ -99,6 +99,7 @@ Route::group(['prefix' => 'periode'], function () {
     Route::put('/{periode_id}/update_ajax', [PeriodeController::class, 'update_ajax']);
     Route::get('/export_pdf', [PeriodeController::class, 'export_pdf']);
     Route::get('/export_excel', [PeriodeController::class, 'export_excel']);
+    Route::get('/import', [PeriodeController::class, 'import']);
     Route::post('/import_ajax', [PeriodeController::class, 'import_ajax']);
 });
 
