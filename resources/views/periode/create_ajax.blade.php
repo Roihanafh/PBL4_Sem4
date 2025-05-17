@@ -29,7 +29,7 @@
 $(document).ready(function() {
     $("#form-tambah").validate({
         rules: {
-            periode: { required: true, maxlength: 20 },
+            periode: { required: true, maxlength: 50 },
             keterangan: { required: true, maxlength: 255 },
         },
         submitHandler: function(form) {

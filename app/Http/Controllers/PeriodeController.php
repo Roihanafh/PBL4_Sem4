@@ -148,7 +148,7 @@ class PeriodeController extends Controller
 
         // Validasi input
         $validator = Validator::make($request->all(), [
-            'periode'  => 'required|max:20',
+            'periode'  => 'required|max:50',
             'keterangan' => 'required|max:255',
         ]);
 

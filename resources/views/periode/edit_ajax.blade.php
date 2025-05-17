@@ -52,7 +52,7 @@ $(document).ready(function () {
         rules: {
             periode: {
                 required: true,
-                maxlength: 20
+                maxlength: 50
             },
             keterangan: {
                 maxlength: 255
