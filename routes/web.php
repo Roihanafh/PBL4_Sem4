@@ -6,6 +6,7 @@ use App\Http\Controllers\DosenController;
 use App\Http\Controllers\PeriodeController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\WelcomeController;
+use App\Http\Controllers\ProdiController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -82,4 +83,21 @@ Route::group(['prefix' => 'periode'], function () {
     Route::get('/{periode_id}/show_ajax', [PeriodeController::class, 'show_ajax']);
     Route::get('/{periode_id}/edit_ajax', [PeriodeController::class, 'edit_ajax']);
     Route::put('/{periode_id}/update_ajax', [PeriodeController::class, 'update_ajax']);
+});
+
+Route::group(['prefix' => 'prodi'], function () {
+    Route::get('/', [ProdiController::class, 'index']);
+    Route::post('/list', [ProdiController::class, 'list']);
+    Route::get('/create_ajax', [ProdiController::class, 'create_ajax']);
+    Route::post('/ajax', [ProdiController::class, 'store_ajax']);
+    Route::get('/{prodi_id}/delete_ajax', [ProdiController::class, 'confirm_ajax']); // Tampilkan modal konfirmasi
+    Route::delete('/{prodi_id}/delete_ajax', [ProdiController::class, 'delete_ajax']); // Eksekusi penghapusan
+    Route::get('/{prodi_id}/show_ajax', [ProdiController::class, 'show_ajax']);
+    Route::get('/{prodi_id}/edit_ajax', [ProdiController::class, 'edit_ajax']);
+    Route::put('/{prodi_id}/update_ajax', [ProdiController::class, 'update_ajax']);
+    Route::get('import', [ProdiController::class, 'import']);
+    Route::post('import_ajax', [ProdiController::class, 'import_ajax']);
+    Route::get('export_excel', [ProdiController::class, 'export_excel']);
+    Route::get('export_pdf', [ProdiController::class, 'export_pdf']);
+    
 });

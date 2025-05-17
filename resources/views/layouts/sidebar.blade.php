@@ -118,13 +118,8 @@
                 <div class="collapse" id="tables">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="tables/tables.html">
+                      <a href="{{ url('prodi') }}">
                         <span class="sub-item">Data Program Studi</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="tables/datatables.html">
-                        <span class="sub-item">Tambah Program Studi</span>
                       </a>
                     </li>
                   </ul>
