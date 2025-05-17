@@ -8,6 +8,11 @@ use App\Models\ProdiModel;
 use App\Models\LevelModel;
 use App\Models\DosenModel;
 use Illuminate\Support\Facades\Validator;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+
 
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -224,6 +229,90 @@ class MahasiswaController extends Controller
                 'error' => $e->getMessage()
             ]);
         }
+    }
+
+   public function export_pdf()
+    {
+        $mahasiswa = DB::table('m_mahasiswa')
+            ->join('m_users', 'm_mahasiswa.user_id', '=', 'm_users.user_id')
+            ->join('r_auth_level', 'm_users.level_id', '=', 'r_auth_level.level_id')
+            ->leftJoin('m_program_studi', 'm_mahasiswa.prodi_id', '=', 'm_program_studi.prodi_id')
+            ->select(
+                'm_users.username',
+                'm_mahasiswa.full_name',
+                'm_mahasiswa.telp',
+                'm_program_studi.nama_prodi as program_studi',
+                'm_mahasiswa.alamat',
+                'm_mahasiswa.status_magang',
+                'r_auth_level.level_name'
+            )
+            ->orderBy('m_mahasiswa.mhs_nim', 'asc')
+            ->get();
+
+        $pdf = Pdf::loadView('mahasiswa.export_pdf', ['mahasiswa' => $mahasiswa]);
+        $pdf->setPaper('a4', 'portrait');
+        $pdf->setOption("isRemoteEnabled", true);
+        $pdf->render();
+
+        return $pdf->stream('Data Mahasiswa ' . date('Y-m-d H:i:s') . '.pdf');
+    }
+
+    public function export_excel()
+    {
+        $mahasiswa = MahasiswaModel::with(['user', 'user.level', 'prodi'])
+            ->orderBy('mhs_nim')
+            ->get();
+
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Header kolom
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Username');
+        $sheet->setCellValue('C1', 'Nama');
+        $sheet->setCellValue('D1', 'No. Telepon');
+        $sheet->setCellValue('E1', 'Program Studi');
+        $sheet->setCellValue('F1', 'Alamat');
+        $sheet->setCellValue('G1', 'Status Magang');
+        $sheet->setCellValue('H1', 'Level');
+
+        $sheet->getStyle('A1:H1')->getFont()->setBold(true);
+
+        $no = 1;
+        $baris = 2;
+
+        foreach ($mahasiswa as $data) {
+            $sheet->setCellValue('A' . $baris, $no);
+            $sheet->setCellValue('B' . $baris, $data->user->username ?? '-');
+            $sheet->setCellValue('C' . $baris, $data->full_name);
+            $sheet->setCellValue('D' . $baris, $data->telp ?? '-');
+            $sheet->setCellValue('E' . $baris, $data->prodi->nama_prodi ?? '-');
+            $sheet->setCellValue('F' . $baris, $data->alamat ?? '-');
+            $sheet->setCellValue('G' . $baris, $data->status_magang ?? '-');
+            $sheet->setCellValue('H' . $baris, $data->user->level->level_name ?? '-');
+            $no++;
+            $baris++;
+        }
+
+        foreach (range('A', 'I') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+        $sheet->setTitle('Data Mahasiswa');
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $filename = 'Data_Mahasiswa_' . date('Y-m-d_H-i-s') . '.xlsx';
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+        header('Cache-Control: max-age=1');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+        header('Cache-Control: cache, must-revalidate');
+        header('Pragma: public');
+
+        $writer->save('php://output');
+        exit;
     }
 
 }

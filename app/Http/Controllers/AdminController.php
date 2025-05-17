@@ -7,6 +7,10 @@ use App\Models\AdminModel;
 use App\Models\UserModel;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 
 class AdminController extends Controller
@@ -161,7 +165,7 @@ class AdminController extends Controller
             'admin' => $admin
         ]);
     }
-    
+
     public function edit_ajax($admin_id)
     {
         // Ambil data admin beserta user-nya
@@ -226,4 +230,74 @@ class AdminController extends Controller
         }
     }
 
+    public function export_pdf()
+    {
+        $admin = DB::table('m_admin')
+            ->join('m_users', 'm_admin.user_id', '=', 'm_users.user_id')
+            ->join('r_auth_level', 'm_users.level_id', '=', 'r_auth_level.level_id')
+            ->select('m_users.username', 'm_admin.nama', 'r_auth_level.level_name')
+            ->orderBy('m_admin.admin_id', 'asc')
+            ->get();
+
+        $pdf = Pdf::loadView('admin.export_pdf', ['admin' => $admin]);
+        $pdf->setPaper('a4', 'portrait');
+        $pdf->setOption("isRemoteEnabled", true);
+        $pdf->render();
+
+        return $pdf->stream('Data Admin ' . date('Y-m-d H:i:s') . '.pdf');
+    }
+
+    public function export_excel()
+    {
+        // Ambil data admin dengan relasi user dan level
+        $admin = AdminModel::select('nama', 'user_id')
+            ->with(['user' => function ($query) {
+                $query->select('user_id', 'username', 'level_id');
+            }, 'user.level']) // Pastikan relasi user() dan level() ada di modelnya
+            ->orderBy('admin_id')
+            ->get();
+
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Header kolom
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Username');
+        $sheet->setCellValue('C1', 'Nama');
+        $sheet->setCellValue('D1', 'Level');
+
+        $sheet->getStyle('A1:D1')->getFont()->setBold(true);
+
+        $no = 1;
+        $baris = 2;
+
+        foreach ($admin as $data) {
+            $sheet->setCellValue('A' . $baris, $no);
+            $sheet->setCellValue('B' . $baris, $data->user->username ?? '-');
+            $sheet->setCellValue('C' . $baris, $data->nama);
+            $sheet->setCellValue('D' . $baris, $data->user->level->level_name ?? '-');
+            $no++;
+            $baris++;
+        }
+
+        foreach (range('A', 'D') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+        $sheet->setTitle('Data Admin');
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $filename = 'Data_Admin_' . date('Y-m-d_H-i-s') . '.xlsx';
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+        header('Cache-Control: max-age=1');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+        header('Cache-Control: cache, must-revalidate');
+        header('Pragma: public');
+
+        $writer->save('php://output');
+        exit;
+    }
 }
