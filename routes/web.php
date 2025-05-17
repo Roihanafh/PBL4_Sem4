@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\DosenController;
 use App\Http\Controllers\PeriodeController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -55,6 +56,19 @@ Route::group(['prefix' => 'dosen'], function () {
     Route::get('/{dosen_id}/show_ajax', [DosenController::class, 'show_ajax']);
     Route::get('/{dosen_id}/edit_ajax', [DosenController::class, 'edit_ajax']);
     Route::put('/{dosen_id}/update_ajax', [DosenController::class, 'update_ajax']);
+
+});
+
+Route::group(['prefix' => 'admin'], function () {
+    Route::get('/', [AdminController::class, 'index']);
+    Route::post('/list', [AdminController::class, 'list']);
+    Route::get('/create_ajax', [AdminController::class, 'create_ajax']);
+    Route::post('/ajax', [AdminController::class, 'store_ajax']);
+    Route::get('/{admin_id}/delete_ajax', [AdminController::class, 'confirm_ajax']); // Tampilkan modal konfirmasi
+    Route::delete('/{admin_id}/delete_ajax', [AdminController::class, 'delete_ajax']);
+    Route::get('/{admin_id}/show_ajax', [AdminController::class, 'show_ajax']);
+    Route::get('/{admin_id}/edit_ajax', [AdminController::class, 'edit_ajax']);
+    Route::put('/{admin_id}/update_ajax', [AdminController::class, 'update_ajax']);
 
 });
 

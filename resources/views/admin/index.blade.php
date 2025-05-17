@@ -4,19 +4,20 @@
 <div class="card">
   <div class="card-header">
     <div class="d-flex gap-2 align-items-center flex-wrap">
-    <button onclick="modalAction('{{ url('/user/import') }}')" class="btn btn-info">
-        Import user
-    </button>
-    <a href="{{ url('/user/export_excel') }}" class="btn btn-primary">
-        <i class="fa fa-file-excel"></i> Export user
-    </a>
-    <a href="{{ url('/user/export_pdf') }}" class="btn btn-warning">
-        <i class="fa fa-file-pdf"></i> Export user
-    </a>
-    <button class="btn btn-primary btn-round ms-auto" onclick="modalAction('{{ url('/mahasiswa/create_ajax') }}')">
-        <i class="fa fa-plus"></i> Tambah Data
-    </button>
-</div>
+      <button onclick="modalAction('{{ url('/admin/import') }}')" class="btn btn-info">
+          Import Admin
+      </button>
+      <a href="{{ url('/admin/export_excel') }}" class="btn btn-primary">
+          <i class="fa fa-file-excel"></i> Export Admin
+      </a>
+      <a href="{{ url('/admin/export_pdf') }}" class="btn btn-warning">
+          <i class="fa fa-file-pdf"></i> Export Admin
+      </a>
+      <button class="btn btn-primary btn-round ms-auto" onclick="modalAction('{{ url('/admin/create_ajax') }}')">
+          <i class="fa fa-plus"></i> Tambah Data
+      </button>
+    </div>
+  </div>
 
   <div class="card-body">
     @if (session('success'))
@@ -42,24 +43,23 @@
     </div>
 
     <table
-      id="mahasiswa-table"
+      id="admin-table"
       class="display table table-striped table-hover"
       style="width: 100%"
     >
       <thead>
         <tr>
-          <th>No.</th>
-          <th>NIM</th>
+          <th class="text-center" style="width:5%">No.</th>
           <th>Nama</th>
-          <th>Program Studi</th>
-          <th style="width: 10%;">Action</th>
+          <th>Email</th>
+          <th>Telepon</th>
+          <th class="text-center" style="width: 15%">Aksi</th>
         </tr>
       </thead>
     </table>
   </div>
 </div>
 @endsection
-
 
 @push('js')
 <script>
@@ -70,19 +70,19 @@
       }
     });
 
-    $('#mahasiswa-table').DataTable({
+    $('#admin-table').DataTable({
       processing: true,
       serverSide: true,
       ajax: {
-        url: "{{ url('mahasiswa/list') }}",
+        url: "{{ url('/admin/list') }}",
         type: "POST"
       },
       columns: [
         { data: 'DT_RowIndex', className: "text-center", orderable: false, searchable: false, width: "5%" },
-        { data: 'nim' },
         { data: 'nama' },
-        { data: 'prodi' },
-        { data: 'aksi', className: "text-center", orderable: false, searchable: false, width: "10%" }
+        { data: 'email' },
+        { data: 'telp' },
+        { data: 'aksi', className: "text-center", orderable: false, searchable: false, width: "15%" }
       ]
     });
   });

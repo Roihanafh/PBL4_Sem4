@@ -49,6 +49,11 @@
                 <div class="collapse" id="base">
                   <ul class="nav nav-collapse">
                     <li>
+                       <a href="{{ url('admin') }}">
+                        <span class="sub-item">Data Admin</span>
+                      </a>
+                    </li>
+                    <li>
                        <a href="{{ url('dosen') }}">
                         <span class="sub-item">Data Dosen</span>
                       </a>
