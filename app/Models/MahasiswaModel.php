@@ -23,7 +23,6 @@ class MahasiswaModel extends Model
         'telp',
         'prodi_id',
         'status_magang',
-        'dosen_id',
     ];
 
     public function user()

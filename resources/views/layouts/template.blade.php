@@ -77,6 +77,10 @@
   <script src="assets/js/setting-demo.js"></script>
   <script src="assets/js/demo.js"></script>
 
+  
+  <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <!-- CDN JS -->
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 

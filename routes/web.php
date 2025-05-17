@@ -34,7 +34,13 @@ Route::get('/dashboard', [WelcomeController::class, 'index']);
 Route::group(['prefix' => 'mahasiswa'], function () {
     Route::get('/', [MahasiswaController::class, 'index']);
     Route::post('/list', [MahasiswaController::class, 'list']);
-
+    Route::get('/create_ajax', [MahasiswaController::class, 'create_ajax']);
+    Route::post('/ajax', [MahasiswaController::class, 'store_ajax']);
+    Route::get('/{nim}/delete_ajax', [MahasiswaController::class, 'confirm_ajax']); // Tampilkan modal konfirmasi
+    Route::delete('/{nim}/delete_ajax', [MahasiswaController::class, 'delete_ajax']); // Eksekusi penghapusan
+    Route::get('/{nim}/show_ajax', [MahasiswaController::class, 'show_ajax']);
+    Route::get('/{nim}/edit_ajax', [MahasiswaController::class, 'edit_ajax']);
+    Route::put('/{nim}/update_ajax', [MahasiswaController::class, 'update_ajax']);
 });
 
 
