@@ -32,22 +32,28 @@ class MahasiswaController extends Controller
 
         $activeMenu = 'mahasiswa'; // set menu yang sedang aktif
 
+        $prodis = ProdiModel::all(); // ambil data prodi untuk filter
+
         return view('mahasiswa.index', [
             'breadcrumb' => $breadcrumb,
             'page' => $page,
-            'activeMenu' => $activeMenu
+            'activeMenu' => $activeMenu,
+            'prodis' => $prodis, // kirim data prodi ke view
         ]);
-
-        $prodis = ProdiModel::all();
-        return view('mahasiswa.index', compact('prodis'));
     }
+
 
     public function list(Request $request)
     {
         if ($request->ajax()) {
             $mahasiswa = MahasiswaModel::with('prodi')
-            ->select('mhs_nim as nim', 'full_name as nama', 'prodi_id')
-            ->orderBy('user_id', 'asc');
+                ->select('mhs_nim as nim', 'full_name as nama', 'prodi_id', 'user_id')
+                ->orderBy('user_id', 'asc');
+
+            // Filter berdasarkan prodi jika ada input filter
+            if ($request->prodi_id) {
+                $mahasiswa->where('prodi_id', $request->prodi_id);
+            }
 
             return DataTables::of($mahasiswa)
                 ->addIndexColumn()
@@ -70,6 +76,7 @@ class MahasiswaController extends Controller
                 ->make(true);
         }
     }
+
 
    public function create_ajax()
     {
