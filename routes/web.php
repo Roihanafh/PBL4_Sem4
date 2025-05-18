@@ -35,7 +35,8 @@ Route::get('/dashboard', function () {
 
 Route::get('/dashboard', [WelcomeController::class, 'index']);
 
-Route::group(['prefix' => 'mahasiswa'], function () {
+Route::middleware(['auth'])->group(function () {
+    Route::group(['prefix' => 'mahasiswa'], function () {
     Route::get('/', [MahasiswaController::class, 'index']);
     Route::post('/list', [MahasiswaController::class, 'list']);
     Route::get('/create_ajax', [MahasiswaController::class, 'create_ajax']);
@@ -51,7 +52,6 @@ Route::group(['prefix' => 'mahasiswa'], function () {
     Route::post('/import_ajax', [MahasiswaController::class, 'import_ajax']);
 
 });
-
 
 Route::group(['prefix' => 'dosen'], function () {
     Route::get('/', [DosenController::class, 'index']);
@@ -84,11 +84,9 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('/export_excel', [AdminController::class, 'export_excel']);
     Route::get('import', [AdminController::class, 'import']);
     Route::post('/import_ajax', [AdminController::class, 'import_ajax']);
-    
-
 });
-
-Route::group(['prefix' => 'periode'], function () {
+    
+    Route::group(['prefix' => 'periode'], function () {
     Route::get('/', [PeriodeController::class, 'index']);
     Route::post('/list', [PeriodeController::class, 'list']);
     Route::get('/create_ajax', [PeriodeController::class, 'create_ajax']);
@@ -121,7 +119,10 @@ Route::group(['prefix' => 'prodi'], function () {
     
 });
 
-Route::prefix('log-aktivitas')->middleware('auth')->group(function () {
+Route::group(['prefix' => 'log-aktivitas'], function () {
     Route::get('/', [LogAktivitasMhsController::class, 'index']);
     Route::post('/list', [LogAktivitasMhsController::class, 'list']);
+
+});
+
 });
