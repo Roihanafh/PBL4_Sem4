@@ -80,11 +80,6 @@
                         <span class="sub-item">Data Perusahaan</span>
                       </a>
                     </li>
-                    <li>
-                      <a href="components/buttons.html">
-                        <span class="sub-item">Tambah Perusahaan</span>
-                      </a>
-                    </li>
                   </ul>
                 </div>
               </li>
@@ -99,11 +94,6 @@
                     <li>
                       <a href="{{ url('periode') }}">
                         <span class="sub-item">Data Periode Magang</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="forms/forms.html">
-                        <span class="sub-item">Tambah Data Periode Magang</span>
                       </a>
                     </li>
                   </ul>
@@ -136,11 +126,6 @@
                     <li>
                       <a href="maps/googlemaps.html">
                         <span class="sub-item">Data Lowongan Magang</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="maps/jsvectormap.html">
-                        <span class="sub-item">Tambah Data Lowongan</span>
                       </a>
                     </li>
                   </ul>
