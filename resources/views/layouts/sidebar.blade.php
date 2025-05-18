@@ -148,31 +148,31 @@
                 </div>
               </li>
               <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#charts">
+                <a data-bs-toggle="collapse" href="#charts1">
                   <i class="fas fa-laptop-code"></i>
                   <p>Manajemen Akun & Profile</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#charts">
+                <a data-bs-toggle="collapse" href="#charts2">
                   <i class="fas fa-laptop-code"></i>
                   <p>Rekomendasi Magang</p>
                 </a>
               </li>
                <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#charts">
+                <a data-bs-toggle="collapse" href="#charts3">
                   <i class="fas fa-laptop-code"></i>
                   <p>Pengajuan Magang</p>
                 </a>
               </li>
                <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#charts">
+                <a data-bs-toggle="collapse" href="#charts4">
                   <i class="fas fa-laptop-code"></i>
                   <p>Monitoring dan Evaluasi Magang</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#charts">
+                <a data-bs-toggle="collapse" href="#charts5">
                   <i class="fas fa-laptop-code"></i>
                   <p>Mahasiswa Bimbingan</p>
                 </a>
