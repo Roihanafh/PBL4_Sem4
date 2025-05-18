@@ -7,6 +7,7 @@ use App\Http\Controllers\PeriodeController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\ProdiController;
+use App\Http\Controllers\LogAktivitasMhsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -118,4 +119,9 @@ Route::group(['prefix' => 'prodi'], function () {
     Route::get('export_excel', [ProdiController::class, 'export_excel']);
     Route::get('export_pdf', [ProdiController::class, 'export_pdf']);
     
+});
+
+Route::prefix('log-aktivitas')->middleware('auth')->group(function () {
+    Route::get('/', [LogAktivitasMhsController::class, 'index']);
+    Route::post('/list', [LogAktivitasMhsController::class, 'list']);
 });

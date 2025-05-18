@@ -183,6 +183,12 @@
                   <p>Monitoring dan Statistik</p>
                   <span class="badge badge-success"></span>
                 </a>
+               <li class="nav-item">
+                <a href="{{ url('log-aktivitas') }}">
+                  <i class="fas fa-laptop-code"></i>
+                  <p>Log Aktifitas Mahasiswa</p>
+                </a>
+              </li>
             </ul>
           </div>
         </div>
