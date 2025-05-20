@@ -36,7 +36,7 @@
 
     <div class="card-body">
       <table id="admin-table" class="display table table-striped table-hover" style="width: 100%">
-        <thead>
+        <thead class="thead-dark">
           <tr>
             <th>No.</th>
             <th>Nama</th>
