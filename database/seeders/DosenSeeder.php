@@ -13,15 +13,13 @@ class DosenSeeder extends Seeder
      */
     public function run(): void
     {
-        $user = DB::table('m_users')->where('username', 'dosen')->first();
-
-        if ($user) {
-            DB::table('m_dosen')->insert([
-                'user_id' => $user->user_id,
+        $data = [
+                'user_id' => 2,
                 'nama'    => 'Dr. Siti Dosen, M.Kom',
                 'email'   => 'siti.dosen@gmail.com',
                 'telp'    => '081298765432',
-            ]);
+        ];
+        DB::table('m_dosen')->insert($data);
         }
     }
-}
+

@@ -20,6 +20,12 @@ class DosenModel extends Model
         'telp',
     ];
 
+     public function user()
+    {
+        return $this->belongsTo(UserModel::class, 'user_id', 'user_id');
+    }
+
+
     public function komentarLogAktivitas()
     {
         return $this->hasMany(KomenLogAktivitasModel::class, 'pengirim_id', 'dosen_id');

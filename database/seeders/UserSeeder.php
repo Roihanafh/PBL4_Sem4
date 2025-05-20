@@ -14,7 +14,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('m_users')->insert([
+        $data =[
             [
                 'username' => 'admin',
                 'password' => Hash::make('12345'),
@@ -30,6 +30,7 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('mhs'),
                 'level_id' => 3, // Mahasiswa
             ],
-        ]);
+        ];
+            DB::table('m_users')->insert($data);
     }
 }

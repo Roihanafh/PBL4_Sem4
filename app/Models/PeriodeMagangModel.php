@@ -9,7 +9,7 @@ class PeriodeMagangModel extends Model
 {
     use HasFactory;
 
-    protected $table = 'periode_magang';
+    protected $table = 'm_periode_magang';
     protected $primaryKey = 'periode_id';
     public $timestamps = false;
 

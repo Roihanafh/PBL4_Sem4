@@ -49,6 +49,11 @@
                 <div class="collapse" id="base">
                   <ul class="nav nav-collapse">
                     <li>
+                       <a href="{{ url('admin') }}">
+                        <span class="sub-item">Data Admin</span>
+                      </a>
+                    </li>
+                    <li>
                        <a href="{{ url('dosen') }}">
                         <span class="sub-item">Data Dosen</span>
                       </a>
@@ -75,11 +80,6 @@
                         <span class="sub-item">Data Perusahaan</span>
                       </a>
                     </li>
-                    <li>
-                      <a href="components/buttons.html">
-                        <span class="sub-item">Tambah Perusahaan</span>
-                      </a>
-                    </li>
                   </ul>
                 </div>
               </li>
@@ -92,13 +92,8 @@
                 <div class="collapse" id="forms">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="forms/forms.html">
+                      <a href="{{ url('periode') }}">
                         <span class="sub-item">Data Periode Magang</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="forms/forms.html">
-                        <span class="sub-item">Tambah Data Periode Magang</span>
                       </a>
                     </li>
                   </ul>
@@ -113,13 +108,8 @@
                 <div class="collapse" id="tables">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="tables/tables.html">
+                      <a href="{{ url('prodi') }}">
                         <span class="sub-item">Data Program Studi</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="tables/datatables.html">
-                        <span class="sub-item">Tambah Program Studi</span>
                       </a>
                     </li>
                   </ul>
@@ -136,11 +126,6 @@
                     <li>
                       <a href="maps/googlemaps.html">
                         <span class="sub-item">Data Lowongan Magang</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="maps/jsvectormap.html">
-                        <span class="sub-item">Tambah Data Lowongan</span>
                       </a>
                     </li>
                   </ul>
@@ -163,31 +148,31 @@
                 </div>
               </li>
               <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#charts">
+                <a data-bs-toggle="collapse" href="#charts1">
                   <i class="fas fa-laptop-code"></i>
                   <p>Manajemen Akun & Profile</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#charts">
+                <a data-bs-toggle="collapse" href="#charts2">
                   <i class="fas fa-laptop-code"></i>
                   <p>Rekomendasi Magang</p>
                 </a>
               </li>
                <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#charts">
+                <a data-bs-toggle="collapse" href="#charts3">
                   <i class="fas fa-laptop-code"></i>
                   <p>Pengajuan Magang</p>
                 </a>
               </li>
                <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#charts">
+                <a data-bs-toggle="collapse" href="#charts4">
                   <i class="fas fa-laptop-code"></i>
                   <p>Monitoring dan Evaluasi Magang</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#charts">
+                <a data-bs-toggle="collapse" href="#charts5">
                   <i class="fas fa-laptop-code"></i>
                   <p>Mahasiswa Bimbingan</p>
                 </a>
@@ -198,6 +183,12 @@
                   <p>Monitoring dan Statistik</p>
                   <span class="badge badge-success"></span>
                 </a>
+               <li class="nav-item">
+                <a href="{{ url('log-aktivitas') }}">
+                  <i class="fas fa-laptop-code"></i>
+                  <p>Log Aktifitas Mahasiswa</p>
+                </a>
+              </li>
             </ul>
           </div>
         </div>

@@ -4,7 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\DosenModel;
+use App\Models\UserModel;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use Illuminate\Support\Facades\Storage;
+
 
 class DosenController extends Controller
 {
@@ -31,18 +39,349 @@ class DosenController extends Controller
     public function list(Request $request)
     {
         if ($request->ajax()) {
-            $dosen = DosenModel::select('nama', 'email', 'telp');
+           $dosen = DosenModel::select('dosen_id', 'nama', 'email', 'telp');
 
             return DataTables::of($dosen)
                 ->addIndexColumn()
                 ->addColumn('aksi', function ($dsn) {
-                    $btn = '<button onclick="modalAction(\'' . url('/dosen/' . $dsn->dosen_id . '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
-                    $btn .= '<button onclick="modalAction(\'' . url('/dosen/' . $dsn->dosen_id . '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
-                    $btn .= '<button onclick="modalAction(\'' . url('/dosen/' . $dsn->dosen_id. '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button>';
+                    $btn  = '<div class="btn-group" role="group">';
+                    $btn .= '<button onclick="modalAction(\''.url('/dosen/' . $dsn->dosen_id . '/show_ajax').'\')" class="btn btn-primary btn-sm" style="margin-right: 5px;" title="Detail Data">';
+                    $btn .= '<i class="fas fa-info-circle"></i></button>';
+                    $btn .= '<button onclick="modalAction(\''.url('/dosen/' . $dsn->dosen_id . '/edit_ajax').'\')" class="btn btn-warning btn-sm" style="margin-right: 5px;" title="Edit Data">';
+                    $btn .= '<i class="fas fa-edit"></i></button>';
+                    $btn .= '<button onclick="modalAction(\''.url('/dosen/' . $dsn->dosen_id . '/delete_ajax').'\')" class="btn btn-danger btn-sm" title="Hapus Data">';
+                    $btn .= '<i class="fas fa-trash-alt"></i></button>';
+                    $btn .= '</div>';
+
                     return $btn;
                 })
                 ->rawColumns(['aksi'])
                 ->make(true);
         }
     }
+
+    public function create_ajax()
+    {
+        return view('dosen.create_ajax');
+    }
+
+    public function store_ajax(Request $request)
+    {
+        // Validasi data untuk tabel users
+        $validatedUser = $request->validate([
+            'username' => 'required|unique:m_users,username',
+            'password' => 'required',
+        ]);
+
+        // Simpan ke tabel m_users
+        $user = UserModel::create([
+            'username' => $validatedUser['username'],
+            'password' => bcrypt($validatedUser['password']),
+            'level_id' => 2, // misal: level 2 untuk dosen
+        ]);
+
+        // Validasi data untuk tabel m_dosen
+        $validatedDosen = $request->validate([
+            'nama' => 'required',
+            'email' => 'required|email|unique:m_dosen,email',
+            'telp' => 'nullable',
+        ]);
+
+        // Simpan ke tabel m_dosen
+        DosenModel::create([
+            'user_id' => $user->user_id,
+            'nama' => $validatedDosen['nama'],
+            'email' => $validatedDosen['email'],
+            'telp' => $validatedDosen['telp'] ?? null,
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Data dosen berhasil disimpan'
+        ]);
+    }
+
+    public function confirm_ajax($dosen_id)
+    {
+        $dosen = DosenModel::where('dosen_id', $dosen_id)->first();
+
+        return view('dosen.confirm_ajax', compact('dosen'));
+    }
+
+    public function delete_ajax(Request $request, $dosen_id)
+    {
+        $dosen = DosenModel::where('dosen_id', $dosen_id)->first();
+
+        if (!$dosen) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data dosen tidak ditemukan.'
+            ], 404);
+        }
+
+        // Simpan ID user dulu sebelum hapus dosen
+        $userId = $dosen->user_id;
+
+        // Hapus data dosen
+        $dosen->delete();
+
+        // Hapus user yang terkait
+        UserModel::where('user_id', $userId)->delete();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Data dosen berhasil dihapus.'
+        ]);
+    }
+
+    public function show_ajax($dosen_id)
+    {
+        // Ambil data dosen beserta relasi user-nya
+        $dosen = DosenModel::with('user')->where('dosen_id', $dosen_id)->first();
+
+        // Jika data tidak ditemukan
+        if (!$dosen) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data dosen dengan ID ' . $dosen_id . ' tidak ditemukan.'
+            ], 404);
+        }
+
+        // Tampilkan view show_ajax untuk dosen
+        return view('dosen.show_ajax', [
+            'dosen' => $dosen
+        ]);
+    }
+
+    public function edit_ajax($dosen_id)
+    {
+        $dosen = DosenModel::with('user')->find($dosen_id);
+
+        return view('dosen.edit_ajax', compact('dosen'));
+    }
+
+    public function update_ajax(Request $request, $dosen_id)
+    {
+        $dosen = DosenModel::with('user')->find($dosen_id);
+
+        if (!$dosen) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data dosen tidak ditemukan.'
+            ]);
+        }
+
+        // Validasi input
+        $validator = Validator::make($request->all(), [
+            'username'  => 'required|max:20|unique:m_users,username,' . $dosen->user->user_id . ',user_id',
+            'password'  => 'nullable|min:5|max:20',
+            'nama'      => 'required|max:100',
+            'email'     => 'required|email|max:100',
+            'telp'      => 'nullable|max:20',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validasi gagal, periksa input anda.',
+                'msgField' => $validator->errors()
+            ]);
+        }
+
+        try {
+            // Update data dosen
+            $dosen->nama = $request->nama;
+            $dosen->email = $request->email;
+            $dosen->telp = $request->telp;
+            $dosen->save();
+
+            // Update user
+            $user = $dosen->user;
+            $user->username = $request->username;
+            if (!empty($request->password)) {
+                $user->password = bcrypt($request->password);
+            }
+            $user->save();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data dosen berhasil diperbarui.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan data.',
+                'error' => $e->getMessage()
+            ]);
+        }
+
+    }
+
+   public function export_pdf()
+    {
+        $dosen = DB::table('m_dosen')
+            ->join('m_users', 'm_dosen.user_id', '=', 'm_users.user_id')
+            ->join('r_auth_level', 'm_users.level_id', '=', 'r_auth_level.level_id')
+            ->select(
+                'm_users.username', 
+                'm_dosen.nama', 
+                'm_dosen.email',      
+                'm_dosen.telp',   
+                'r_auth_level.level_name'
+            )
+            ->orderBy('m_dosen.dosen_id', 'asc')
+            ->get();
+
+        $pdf = Pdf::loadView('dosen.export_pdf', ['dosen' => $dosen]);
+        $pdf->setPaper('a4', 'portrait');
+        $pdf->setOption("isRemoteEnabled", true);
+        $pdf->render();
+
+        return $pdf->stream('Data Dosen ' . date('Y-m-d H:i:s') . '.pdf');
+    }
+
+    public function export_excel()
+    {
+        // Ambil data dosen dengan relasi user dan level
+        $dosen = DosenModel::select('nama', 'user_id', 'email', 'telp') // misal ada email dan telepon di model dosen
+            ->with(['user' => function ($query) {
+                $query->select('user_id', 'username', 'level_id');
+            }, 'user.level']) // Pastikan relasi user() dan level() ada di model DosenModel
+            ->orderBy('dosen_id')
+            ->get();
+
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Header kolom
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Username');
+        $sheet->setCellValue('C1', 'Nama');
+        $sheet->setCellValue('D1', 'Email');
+        $sheet->setCellValue('E1', 'No. Telepon');
+        $sheet->setCellValue('F1', 'Level');
+
+        $sheet->getStyle('A1:F1')->getFont()->setBold(true);
+
+        $no = 1;
+        $baris = 2;
+
+        foreach ($dosen as $data) {
+            $sheet->setCellValue('A' . $baris, $no);
+            $sheet->setCellValue('B' . $baris, $data->user->username ?? '-');
+            $sheet->setCellValue('C' . $baris, $data->nama);
+            $sheet->setCellValue('D' . $baris, $data->email ?? '-');
+            $sheet->setCellValue('E' . $baris, $data->telp ?? '-');
+            $sheet->setCellValue('F' . $baris, $data->user->level->level_name ?? '-');
+            $no++;
+            $baris++;
+        }
+
+        foreach (range('A', 'F') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+        $sheet->setTitle('Data Dosen');
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $filename = 'Data_Dosen_' . date('Y-m-d_H-i-s') . '.xlsx';
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+        header('Cache-Control: max-age=1');
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+        header('Cache-Control: cache, must-revalidate');
+        header('Pragma: public');
+
+        $writer->save('php://output');
+        exit;
+    }
+
+    public function import()
+    {
+        return view('dosen.import'); // Pastikan view-nya sesuai
+    }
+
+    public function import_ajax(Request $request)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            $rules = [
+                'file_dosen' => ['required', 'mimes:xlsx', 'max:1024']
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validasi Gagal',
+                    'msgField' => $validator->errors()
+                ]);
+            }
+
+            try {
+                $file = $request->file('file_dosen');
+                $reader = IOFactory::createReader('Xlsx');
+                $reader->setReadDataOnly(true);
+                $spreadsheet = $reader->load($file->getRealPath());
+                $sheet = $spreadsheet->getActiveSheet();
+                $data = $sheet->toArray(null, false, true, true);
+
+                $insertedCount = 0;
+                $existingUsernames = UserModel::pluck('username')->toArray();
+                $existingEmails = DosenModel::pluck('email')->toArray();
+
+                if (count($data) > 1) {
+                    foreach ($data as $index => $row) {
+                        if ($index <= 1) continue; // Skip header
+
+                        $username = trim($row['A']);
+                        $password = trim($row['B']);
+                        $nama     = trim($row['C']);
+                        $email    = trim($row['D']);
+                        $telp     = trim($row['E'] ?? '');
+
+                        if (!$username || !$password || !$nama || !$email) continue;
+                        if (in_array($username, $existingUsernames) || in_array($email, $existingEmails)) continue;
+
+                        $user = UserModel::create([
+                            'username' => $username,
+                            'password' => bcrypt($password),
+                            'level_id' => 2, // level 2 = dosen
+                            'created_at' => now()
+                        ]);
+
+                        DosenModel::create([
+                            'user_id' => $user->user_id,
+                            'nama' => $nama,
+                            'email' => $email,
+                            'telp' => $telp ?: null,
+                            'created_at' => now()
+                        ]);
+
+                        $insertedCount++;
+                    }
+
+                    return response()->json([
+                        'status' => true,
+                        'message' => "$insertedCount dosen berhasil diimport"
+                    ]);
+                }
+
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Tidak ada data dosen yang diimport'
+                ]);
+            } catch (\Throwable $e) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Terjadi kesalahan saat import: ' . $e->getMessage()
+                ]);
+            }
+        }
+
+        return redirect('/');
+    }
+
 }

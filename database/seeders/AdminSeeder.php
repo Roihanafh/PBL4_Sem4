@@ -13,15 +13,13 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        $adminUser = DB::table('m_users')->where('username', 'admin')->first();
-
-        if ($adminUser) {
-            DB::table('m_admin')->insert([
-                'user_id' => $adminUser->user_id,
+        $data = [
+                'user_id' => 1,
                 'nama'    => 'Admin Sistem',
                 'email'   => 'admin@gmail.com',
                 'telp'    => '08123456789',
-            ]);
+            ];
+            DB::table('m_admin')->insert($data);
         }
     }
-}
+

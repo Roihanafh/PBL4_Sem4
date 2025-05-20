@@ -13,7 +13,7 @@ class ProgramStudiSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('m_program_studi')->insert([
+        $data = [
             [
                 'nama_prodi' => 'Teknik Informatika',
                 'jurusan'    => 'Teknologi Informasi',
@@ -22,6 +22,7 @@ class ProgramStudiSeeder extends Seeder
                 'nama_prodi' => 'Sistem Informasi Bisnis',
                 'jurusan'    => 'Teknologi Informasi',
             ],
-        ]);
+        ];
+            DB::table('m_program_studi')->insert($data);
     }
 }

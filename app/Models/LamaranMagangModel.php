@@ -17,6 +17,7 @@ class LamaranMagangModel extends Model
         'lowongan_id',
         'tanggal_lamaran',
         'status',
+        'dosen_id'
     ];
 
     protected $casts = [
@@ -45,4 +46,17 @@ class LamaranMagangModel extends Model
     {
         return $this->belongsTo(MahasiswaModel::class, 'mhs_nim', 'mhs_nim');
     }
+
+    public function dosen()
+    {
+        return $this->hasOneThrough(
+            DosenPembimbingModel::class,
+            LowonganModel::class,
+            'lowongan_id', // foreign key di lowongan
+            'dosen_id',    // foreign key di dosen
+            'lowongan_id', // foreign key di lamaran
+            'dosen_id'     // foreign key di lowongan
+        );
+    }
+
 }

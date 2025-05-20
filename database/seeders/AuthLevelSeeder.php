@@ -13,7 +13,7 @@ class AuthLevelSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('r_auth_level')->insert([
+        $data = [
             [
                 'level_id' => 1,
                 'level_name' => 'admin',
@@ -29,6 +29,7 @@ class AuthLevelSeeder extends Seeder
                 'level_name' => 'mahasiswa',
                 'description' => 'Mahasiswa yang mengakses dan mengisi data magang',
             ],
-        ]);
+        ];
+        DB::table('r_auth_level')->insert($data);
     }
 }

@@ -23,16 +23,19 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AuthLevelSeeder::class,
             UserSeeder::class,
-            AdminSeeder::class,
+            ProgramStudiSeeder::class,
             MahasiswaSeeder::class,
             DosenSeeder::class,
-            ProgramStudiSeeder::class,
+            AdminSeeder::class,
+            
             PerusahaanMitraSeeder::class,
             PeriodeMagangSeeder::class,
+
             LowonganMagangSeeder::class,
             LamaranMagangSeeder::class,
-            FeedbackSeeder::class,
+
             LogAktivitasMhsSeeder::class,
+            FeedbackSeeder::class,
         ]);
             
     }

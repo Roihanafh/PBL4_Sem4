@@ -9,7 +9,7 @@ class LowonganModel extends Model
 {
     use HasFactory;
 
-    protected $table = 'lowongan';
+    protected $table = 't_lowongan_magang';
     protected $primaryKey = 'lowongan_id';
     public $timestamps = false;
 

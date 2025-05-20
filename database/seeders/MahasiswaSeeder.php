@@ -13,20 +13,18 @@ class MahasiswaSeeder extends Seeder
      */
     public function run(): void
     {
-        $user = DB::table('m_users')->where('username', 'mahasiswa')->first();
-        // Ambil program studi pertama
-        $prodi = DB::table('m_program_studi')->first();
-
-        if ($user && $prodi) {
-            DB::table('m_mahasiswa')->insert([
+        $data = [
+            [
                 'mhs_nim'        => '2341720226',
-                'user_id'        => $user->user_id,
+                'user_id'        => 3,
                 'full_name'      => 'Ramadhani Bi Hayyin',
                 'alamat'         => 'Jl. Kembang Kertas',
                 'telp'           => '081333537649',
-                'prodi_id'       => $prodi->prodi_id,
+                'prodi_id'       => 1, // disesuaikan dengan migration
                 'status_magang'  => 'Belum Magang',
-            ]);
+            ]
+        ];
+        DB::table('m_mahasiswa')->insert($data);
         }
     }
-}
+

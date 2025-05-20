@@ -13,7 +13,8 @@ class LogAktivitasMhsModel extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'mhs_nim',
+        'aktivitas_id',
+        'lamaran_id',
         'keterangan',
         'waktu',
     ];
@@ -33,8 +34,12 @@ class LogAktivitasMhsModel extends Model
     /**
      * Relasi ke lamaran magang (t_lamaran_magang)
      */
+   
+
     public function lamaran()
     {
-        return $this->belongsTo(LamaranMagangModel::class, 'mhs_nim', 'mhs_nim');
+        return $this->belongsTo(LamaranMagangModel::class, 'lamaran_id', 'lamaran_id');
     }
+
+
 }
