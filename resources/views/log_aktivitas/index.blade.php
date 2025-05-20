@@ -31,7 +31,7 @@
     </div>
 
     <table id="log-table" class="display table table-striped" style="width:100%">
-      <thead>
+      <thead class="thead-dark">
         <tr>
           <th>No</th>
           <th>Nama Mahasiswa</th>
