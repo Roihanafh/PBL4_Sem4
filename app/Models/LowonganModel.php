@@ -21,7 +21,7 @@ class LowonganModel extends Model
         'lokasi',
         'perusahaan_id',
         'periode_id',
-        'sylabus path',
+        'sylabus_path',
     ];
 
     // Relasi ke perusahaan

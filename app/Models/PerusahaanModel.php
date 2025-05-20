@@ -1,4 +1,5 @@
 <?php
+// app/Models/PerusahaanModel.php
 
 namespace App\Models;
 
@@ -9,7 +10,7 @@ class PerusahaanModel extends Model
 {
     use HasFactory;
 
-    protected $table = 'perusahaan';
+    protected $table = 'm_perusahaan_mitra';  
     protected $primaryKey = 'perusahaan_id';
     public $timestamps = false;
 
@@ -17,10 +18,9 @@ class PerusahaanModel extends Model
         'nama',
         'alamat',
         'email',
-        'telp'
+        'telp',
     ];
 
-    // Relasi: satu perusahaan punya banyak lowongan
     public function lowongan()
     {
         return $this->hasMany(LowonganModel::class, 'perusahaan_id');

@@ -15,7 +15,6 @@ class CreateTLamaranMagangTable extends Migration
             $table->timestamp('tanggal_lamaran')->useCurrent();
             $table->enum('status', ['pending','diterima','ditolak'])
                   ->default('pending');
-
             $table->foreign('mhs_nim')
                   ->references('mhs_nim')->on('m_mahasiswa');
             $table->foreign('lowongan_id')
