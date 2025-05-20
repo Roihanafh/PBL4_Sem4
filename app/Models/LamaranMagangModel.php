@@ -34,12 +34,12 @@ class LamaranMagangModel extends Model
 
     public function lowongan()
     {
-        return $this->belongsTo(LowonganModel::class, 'lowongan_id');
+        return $this->belongsTo(LowonganModel::class, 'lowongan_id', 'lowongan_id');
     }
 
     public function notifikasi()
     {
-        return $this->hasMany(NotifikasiModel::class, 'lamaran_id');
+        return $this->hasMany(NotifikasiModel::class, 'lamaran_id', 'lamaran_id');
     }
 
     public function mahasiswa()
@@ -49,13 +49,8 @@ class LamaranMagangModel extends Model
 
     public function dosen()
     {
-        return $this->hasOneThrough(
-            DosenPembimbingModel::class,
-            LowonganModel::class,
-            'lowongan_id', // foreign key di lowongan
-            'dosen_id',    // foreign key di dosen
-            'lowongan_id', // foreign key di lamaran
-            'dosen_id'     // foreign key di lowongan
+        return $this->belongsTo(
+            DosenModel::class, 'dosen_id', 'dosen_id'
         );
     }
 
