@@ -115,16 +115,17 @@
                   </ul>
                 </div>
               </li>
+              <!-- Manajemen Lowongan Magang -->
               <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#maps">
+                <a data-bs-toggle="collapse" href="#lowongan">
                   <i class="fas fa-briefcase"></i>
                   <p>Manajemen Lowongan Magang</p>
                   <span class="caret"></span>
                 </a>
-                <div class="collapse" id="maps">
+                <div class="collapse" id="lowongan">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="maps/googlemaps.html">
+                      <a href="{{ url('lowongan') }}">
                         <span class="sub-item">Data Lowongan Magang</span>
                       </a>
                     </li>

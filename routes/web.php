@@ -8,6 +8,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\ProdiController;
 use App\Http\Controllers\LogAktivitasMhsController;
+use App\Http\Controllers\LowonganController;
 use App\Http\Controllers\PengajuanMagangController;
 use Illuminate\Support\Facades\Route;
 
@@ -119,6 +120,22 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [LogAktivitasMhsController::class, 'index']);
         Route::post('/list', [LogAktivitasMhsController::class, 'list']);
     });
+
+// routes/web.php
+
+Route::middleware(['auth'])->group(function () {
+    Route::group(['prefix' => 'lowongan'], function () {
+        Route::get('/', [LowonganController::class, 'index']);
+        Route::post('/list', [LowonganController::class, 'list']);
+        Route::get('/create_ajax', [LowonganController::class, 'create_ajax']);
+        Route::post('/ajax', [LowonganController::class, 'store_ajax']);
+        Route::get('/{lowongan_id}/delete_ajax', [LowonganController::class, 'confirm_ajax']);
+        Route::delete('/{lowongan_id}/delete_ajax', [LowonganController::class, 'delete_ajax']);
+        Route::get('/{lowongan_id}/show_ajax', [LowonganController::class, 'show_ajax']);
+        Route::get('/{lowongan_id}/edit_ajax', [LowonganController::class, 'edit_ajax']);
+        Route::put('/{lowongan_id}/update_ajax', [LowonganController::class, 'update_ajax']);
+    });
+});
 
     Route::group(['prefix' => 'pengajuan-magang'], function () {
         Route::get('/', [PengajuanMagangController::class, 'index']);
