@@ -161,12 +161,10 @@
                 </a>
               </li>
                <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#charts3">
-                  <a href="{{ url('pengajuan-magang') }}">
-                    <i class="fas fa-laptop-code"></i>
-                    <p>Pengajuan Magang</p>
+                 <a href="{{ url('pengajuan-magang') }}">
+                   <i class="fas fa-laptop-code"></i>
+                   <p>Pengajuan Magang</p>
                   </a>
-                </a>
               </li>
                <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#charts4">
