@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
   <link
       rel="icon"
-      href="img/MagangIn.png"
+      href="img/M_Logo.png"
       type="image/x-icon"
     />
   <!-- ✅ Tambahkan CSRF Token -->
