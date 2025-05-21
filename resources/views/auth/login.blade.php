@@ -31,6 +31,13 @@
       /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
       background: linear-gradient(to right, #6a00f4, #c400cc, #ff4fa2, #ff8a65);
     }
+    .form-outline .form-control:focus ~ .form-label,
+    .form-outline .form-control:not(:placeholder-shown) ~ .form-label {
+      transform: translateY(-1.5rem);
+      font-size: 0.85rem;
+      color: #4f4f4f;
+    }
+
 
     @media (min-width: 768px) {
       .gradient-form {
@@ -61,14 +68,15 @@
                   @csrf
                   <p>Silahkan LogIn terlebih dahulu</p>
                   <div class="form-outline mb-4">
-                      <input type="text" id="username" name="username" class="form-control" placeholder="Username">
-                      <label class="form-label" for="username">Username</label>
+                    <input type="text" id="username" name="username" class="form-control" placeholder=" " />
+                    <label class="form-label" for="username">Username</label>
                   </div>
 
                   <div class="form-outline mb-4">
-                      <input type="password" id="password" name="password" class="form-control" />
-                      <label class="form-label" for="password">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" placeholder=" " />
+                    <label class="form-label" for="password">Password</label>
                   </div>
+
 
                   <div class="text-center pt-1 mb-5 pb-1">
                       <button class="btn btn-primary btn-block gradient-custom-2 mb-3" type="submit">Log in</button>
