@@ -31,9 +31,9 @@ Route::get('login', [AuthController::class,'login'])->name('login');
 Route::post('login', [AuthController::class,'postlogin']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('/dashboard', [WelcomeController::class, 'index']);
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [WelcomeController::class, 'index']);
     Route::group(['prefix' => 'mahasiswa'], function () {
         Route::get('/', [MahasiswaController::class, 'index']);
         Route::post('/list', [MahasiswaController::class, 'list']);
@@ -140,5 +140,7 @@ Route::middleware(['auth'])->group(function () {
     Route::group(['prefix' => 'pengajuan-magang'], function () {
         Route::get('/', [PengajuanMagangController::class, 'index']);
         Route::post('/list', [PengajuanMagangController::class, 'list']);
+        Route::get('/{lamaran_id}/show_ajax', [PengajuanMagangController::class, 'show_ajax']);
+
     });
 });
