@@ -30,7 +30,10 @@ Route::get('/', function () {
 Route::get('login', [AuthController::class,'login'])->name('login');
 Route::post('login', [AuthController::class,'postlogin']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
+Route::get('/register/mahasiswa', [AuthController::class, 'registerMahasiswa'])->name('register.mahasiswa');
+Route::post('/register/mahasiswa', [AuthController::class, 'storeMahasiswa'])->name('register.mahasiswa.store');
+Route::get('/register/dosen', [AuthController::class, 'registerDosen'])->name('register.dosen');
+Route::post('/register/dosen', [AuthController::class, 'storeDosen'])->name('register.dosen.store');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [WelcomeController::class, 'index']);
