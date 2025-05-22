@@ -90,9 +90,19 @@
                 { data: 'DT_RowIndex',  className: "text-center", orderable: false, searchable: false, width: "5%" },
                 { data: 'mahasiswa_nama' },
                 { data: 'mhs_nim' },
-                { data: 'dosen_nama' },
+                {
+                    data: 'dosen_nama',
+                    className: "text-center",
+                    render: function(data, type, row) {
+                        if (data === '-') {
+                            return '<span class="badge badge-warning text-center"><i class="fa fa-clock"></i> Pending</span>';
+                        }
+                        return '<span>' + data + '</span>';
+                    }
+                },
                 { data: 'tanggal_lamaran' },
                 { data: 'status',
+                  className: "text-center",
                   render: function(data, type, row) {
                       if (data === 'diterima') {
                           return '<span class="badge badge-success"><i class="fa fa-check"></i> Diterima</span>';
