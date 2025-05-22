@@ -94,7 +94,15 @@
                 { data: 'tanggal_lamaran' },
                 { data: 'status' },
                 { data: 'aksi', className: "text-center", orderable: false, searchable: false, width: "20%" }
-            ]
+            ],
+            columnDefs: [
+            {
+                targets: [1, 3], // Kolom mahasiswa_nama dan dosen_nama
+                render: function(data, type, row) {
+                    return data.length > 30 ? '<span title="' + data + '">' + data.substring(0, 30) + '...' + '</span>' : data;
+                }
+            }
+        ]
         });
     });
     function modalAction(url = ''){
