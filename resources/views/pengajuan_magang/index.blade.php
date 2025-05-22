@@ -92,7 +92,19 @@
                 { data: 'mhs_nim' },
                 { data: 'dosen_nama' },
                 { data: 'tanggal_lamaran' },
-                { data: 'status' },
+                { data: 'status',
+                  render: function(data, type, row) {
+                      if (data === 'diterima') {
+                          return '<span class="badge badge-success"><i class="fa fa-check"></i> Diterima</span>';
+                      } else if (data === 'ditolak') {
+                          return '<span class="badge badge-danger"><i class="fa fa-times"></i> Ditolak</span>';
+                      } else if (data === 'pending') {
+                          return '<span class="badge badge-warning"><i class="fa fa-clock"></i> pending</span>';
+                      } else {
+                          return '<span class="badge badge-secondary">' + data + '</span>';
+                      }
+                  } 
+                },
                 { data: 'aksi', className: "text-center", orderable: false, searchable: false, width: "20%" }
             ],
             columnDefs: [
