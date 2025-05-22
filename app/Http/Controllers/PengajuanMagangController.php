@@ -103,6 +103,28 @@ class PengajuanMagangController extends Controller
         ]);
     }
 
+    public function update_status(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:diterima,ditolak',
+            'dosen_id' => 'required_if:status,diterima|nullable|exists:m_dosen,dosen_id'
+        ], [
+            'dosen_id.required_if' => 'Dosen pembimbing wajib dipilih jika lamaran diterima.'
+        ]);
+
+        $lamaran = LamaranMagangModel::findOrFail($id);
+        $lamaran->status = $request->status;
+        $lamaran->dosen_id = $request->status === 'diterima' ? $request->dosen_id : null;
+        $lamaran->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Status lamaran berhasil diperbarui.'
+        ]);
+    }
+
+
+
     // public function edit_ajax($mhs_nim)
     // {
     //     $mahasiswa = MahasiswaModel::with(['prodi', 'user'])->find($mhs_nim);

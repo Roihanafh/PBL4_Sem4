@@ -51,7 +51,7 @@
                     <tr>
                         <th class="text-right" style="background-color: #f7f9fc; color: #1a2e4f;">Status Lamaran:</th>
                         <td>
-                            <span class="badge" style="{{ $lamaran->status == 'Diterima' ? 'background-color: #28a745; color: white;' : ($lamaran->status == 'Ditolak' ? 'background-color: #dc3545; color: white;' : 'background-color: #f4b740; color: #1a2e4f;') }}">
+                            <span class="badge" style="{{ $lamaran->status == 'diterima' ? 'background-color: #28a745; color: white;' : ($lamaran->status == 'Ditolak' ? 'background-color: #dc3545; color: white;' : 'background-color: #f4b740; color: #1a2e4f;') }}">
                                 {{ $lamaran->status }}
                             </span>
                         </td>
@@ -86,7 +86,7 @@
         </div>
 
         {{-- Dosen Pembimbing --}}
-        @if ($lamaran->dosen)
+        @if ($lamaran->dosen && $lamaran->status != 'ditolak')
             <h6 style="color: #1a2e4f; font-weight: 600;"><i class="fas fa-chalkboard-teacher me-2"></i>Dosen Pembimbing</h6>
             <div class="card mb-4">
                 <div class="card-body p-0">
@@ -102,6 +102,8 @@
                     </table>
                 </div>
             </div>
+        @elseif ($lamaran->status == 'ditolak')
+            {{-- tidak menampilkan dosen jika status telah ditolak --}}
         @else
             <h6 style="color: #1a2e4f; font-weight: 600;"><i class="fas fa-chalkboard-teacher me-2"></i>Pilih Dosen Pembimbing</h6>
             <div class="card mb-4">
@@ -110,10 +112,10 @@
                         <tr>
                             <th class="text-right col-4" style="background-color: #f7f9fc; color: #1a2e4f;">Nama Dosen:</th>
                             <td>
-                                <select name="dosen_id" class="form-select form-select-sm" required>
+                                <select name="dosen_id" class="form-select form-select-sm">
                                     <option value="">-- Pilih Dosen --</option>
                                     @foreach ($dosens as $dosen)
-                                        <option value="{{ $dosen->id }}" {{ $lamaran->dosen_id == $dosen->id ? 'selected' : '' }}>
+                                        <option value="{{ $dosen->dosen_id }}" {{ $lamaran->dosen_id == $dosen->dosen_id ? 'selected' : '' }}>
                                             {{ $dosen->nama }}
                                         </option>
                                     @endforeach
@@ -125,12 +127,70 @@
             </div>
         @endif
     </div>
-    <div class="modal-footer">
-        <button onclick="modalAction('{{ url('/pengajuan-magang/' . $lamaran->lamaran_id . '/edit_ajax') }}')" class="btn btn-sm" style="background-color: #28a745; border-color: #28a745; color: white;">
-            <i class="fas fa-check me-2"></i>Terima
-        </button>
-        <button onclick="modalAction('{{ url('/pengajuan-magang/' . $lamaran->lamaran_id . '/edit_ajax') }}')" class="btn btn-sm" style="background-color: #dc3545; border-color: #dc3545; color: white;">
-            <i class="fas fa-times me-2"></i>Tolak
-        </button>
-    </div>
+
+    @if ($lamaran->status == 'ditolak' || $lamaran->status == 'diterima')
+        {{-- tidak menampilkan button jika ditolak atau diterima --}}
+    @else
+        <div class="modal-footer">
+            <button onclick="submitLamaran('{{ $lamaran->lamaran_id }}', 'diterima')" class="btn btn-sm" style="background-color: #28a745; border-color: #28a745; color: white;">
+                <i class="fas fa-check me-2"></i>Terima
+            </button>
+            <button onclick="submitLamaran('{{ $lamaran->lamaran_id }}', 'ditolak')" class="btn btn-sm" style="background-color: #dc3545; border-color: #dc3545; color: white;">
+                <i class="fas fa-times me-2"></i>Tolak
+            </button>
+
+        </div>
+    @endif
 @endempty
+
+<script>
+    function submitLamaran(lamaranId, status) {
+        let dosenId = $('select[name="dosen_id"]').val();
+
+        if (status === 'diterima' && (!dosenId || dosenId === '')) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Validasi Gagal',
+                text: 'Pilih dosen pembimbing terlebih dahulu sebelum menerima lamaran.'
+            });
+            return;
+        }
+
+        $.ajax({
+            url: '/PBL4_Sem4/public/pengajuan-magang/' + lamaranId + '/update_status',
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                status: status,
+                dosen_id: status === 'diterima' ? dosenId : null
+            },
+            success: function (response) {
+                if (response.status) {
+                    $('#myModal').modal('hide');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: response.message
+                    });
+                    if ($.fn.DataTable.isDataTable('#pengajuan-magang-table')) {
+                        $('#pengajuan-magang-table').DataTable().ajax.reload(null, false);
+                    }
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: response.message
+                    });
+                }
+            },
+            error: function (xhr) {
+                let msg = xhr.responseJSON?.message || 'Terjadi kesalahan.';
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: msg
+                });
+            }
+        });
+    }
+</script>

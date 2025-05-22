@@ -7,7 +7,11 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge" />
   <title>MagangIn</title>
   <!-- MDB icon -->
-  <link rel="icon" href="img/mdb-favicon.ico" type="image/x-icon" />
+  <link
+      rel="icon"
+      href="img/M_Logo.png"
+      type="image/x-icon"
+    />
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" />
   <!-- Google Fonts Roboto -->

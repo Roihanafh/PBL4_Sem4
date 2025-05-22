@@ -141,6 +141,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [PengajuanMagangController::class, 'index']);
         Route::post('/list', [PengajuanMagangController::class, 'list']);
         Route::get('/{lamaran_id}/show_ajax', [PengajuanMagangController::class, 'show_ajax']);
+        Route::post('/{lamaran_id}/update_status', [PengajuanMagangController::class, 'update_status']);
+
 
     });
 });
