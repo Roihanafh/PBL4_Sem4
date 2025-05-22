@@ -95,7 +95,11 @@
                     className: "text-center",
                     render: function(data, type, row) {
                         if (data === '-') {
-                            return '<span class="badge badge-warning text-center"><i class="fa fa-clock"></i> Pending</span>';
+                            if (row.status === 'pending') {
+                                return '<span class="badge badge-warning text-center"><i class="fa fa-clock"></i> Pending</span>';
+                            }else if(row.status === 'ditolak'){
+                                return '<span class="badge badge-danger"><i class="fa fa-times"></i> Ditolak</span>';   
+                            }
                         }
                         return '<span>' + data + '</span>';
                     }

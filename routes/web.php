@@ -145,7 +145,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/list', [PengajuanMagangController::class, 'list']);
         Route::get('/{lamaran_id}/show_ajax', [PengajuanMagangController::class, 'show_ajax']);
         Route::post('/{lamaran_id}/update_status', [PengajuanMagangController::class, 'update_status']);
-
+        Route::get('/{lamaran_id}/edit_ajax', [PengajuanMagangController::class, 'edit_ajax']);
+        Route::post('/{lamaran_id}/update', [PengajuanMagangController::class, 'update']);
+        Route::get('/{lamaran_id}/delete_ajax', [PengajuanMagangController::class, 'confirm_ajax']);
+        Route::delete('/{lamaran_id}/delete_ajax', [PengajuanMagangController::class, 'delete_ajax']);
 
     });
 });

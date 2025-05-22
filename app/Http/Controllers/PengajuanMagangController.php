@@ -123,8 +123,129 @@ class PengajuanMagangController extends Controller
         ]);
     }
 
+    public function edit_ajax(String $lamaran_id)
+    {
+        $lamaran = LamaranMagangModel::with('lowongan', 'dosen', 'mahasiswa')
+            ->where('lamaran_id', $lamaran_id)
+            ->first();
+        
+        $prodi = ProdiModel::find($lamaran->mahasiswa->prodi_id);
+        $perusahaan = PerusahaanModel::find($lamaran->lowongan->perusahaan_id);
+        $dosens = DosenModel::all();
+        if (!$lamaran) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data lamaran tersebut tidak ditemukan.'
+            ], 404);
+        }
+        if (!$prodi) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data prodi tersebut tidak ditemukan.'
+            ], 404);
+        }  
+        if (!$perusahaan) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data perusahaan tersebut tidak ditemukan.'
+            ], 404);
+        } 
+        return view('pengajuan_magang.edit_ajax', [
+            'lamaran' => $lamaran,
+            'prodi' => $prodi,
+            'perusahaan'=> $perusahaan,
+            'dosens' => $dosens
+            
+        ]);
+    }
 
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:diterima,ditolak,pending',
+            'dosen_id' => 'required_if:status,diterima|nullable|exists:m_dosen,dosen_id'
+        ], [
+            'status.in' => 'Status harus berupa diterima, ditolak, atau pending.',
+            'dosen_id.required_if' => 'Dosen pembimbing wajib dipilih jika lamaran diterima.'
+        ]);
 
+        $lamaran = LamaranMagangModel::findOrFail($id);
+        $lamaran->status = $request->status;
+        $lamaran->dosen_id = $request->status === 'diterima' ? $request->dosen_id : null;
+        $lamaran->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Lamaran berhasil diperbarui.'
+        ]);
+    }
+    public function confirm_ajax(String $lamaran_id)
+    {
+        $lamaran = LamaranMagangModel::with('lowongan', 'dosen', 'mahasiswa')
+            ->where('lamaran_id', $lamaran_id)
+            ->first();
+        
+        $prodi = ProdiModel::find($lamaran->mahasiswa->prodi_id);
+        $perusahaan = PerusahaanModel::find($lamaran->lowongan->perusahaan_id);
+        $dosens = DosenModel::all();
+        if (!$lamaran) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data lamaran tersebut tidak ditemukan.'
+            ], 404);
+        }
+        if (!$prodi) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data prodi tersebut tidak ditemukan.'
+            ], 404);
+        }  
+        if (!$perusahaan) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data perusahaan tersebut tidak ditemukan.'
+            ], 404);
+        } 
+        return view('pengajuan_magang.confirm_ajax', [
+            'lamaran' => $lamaran,
+            'prodi' => $prodi,
+            'perusahaan'=> $perusahaan,
+            'dosens' => $dosens
+            
+        ]);
+    }
+    public function delete_ajax(Request $request, $lamaran_id)
+    {
+        try {
+            $lamaran = LamaranMagangModel::where('lamaran_id', $lamaran_id)->first();
+
+            if (!$lamaran) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Data lamaran tidak ditemukan.'
+                ], 404);
+            }
+
+            // Soft delete lamaran
+            $lamaran->delete();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data lamaran berhasil dihapus.'
+            ]);
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() === '23000') {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Data gagal dihapus karena masih digunakan pada data lain.'
+                ], 422);
+            }
+            return response()->json([
+                'status' => false,
+                'message' => 'Terjadi kesalahan saat menghapus data: ' . $e->getMessage()
+            ], 500);
+        }
+    }
     // public function edit_ajax($mhs_nim)
     // {
     //     $mahasiswa = MahasiswaModel::with(['prodi', 'user'])->find($mhs_nim);

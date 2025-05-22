@@ -1,167 +1,171 @@
-@empty($mahasiswa)
-    <div id="myModal" class="modal-dialog modal-lg" role="document">
+@if (@empty($lamaran) || @empty($prodi) || @empty($perusahaan))
+    <div id="modal-delete" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Kesalahan</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                </button>
+            <div class="modal-header" style="background-color: #1a2e4f; color: white;">
+                <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>Kesalahan</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="alert alert-danger">
-                    <h5><i class="icon fas fa-ban"></i> Kesalahan!!!</h5>
-                    Data yang anda cari tidak ditemukan
+                <div class="alert alert-danger d-flex align-items-center">
+                    <i class="fas fa-ban fa-2x me-3"></i>
+                    <div>
+                        <h5 class="alert-heading">Kesalahan!!!</h5>
+                        <p>Data lamaran, lowongan, atau prodi tidak ditemukan</p>
+                    </div>
                 </div>
-                <a href="{{ url('/mahasiswa') }}" class="btn btn-warning">Kembali</a>
+                <a href="{{ url('/pengajuan-magang') }}" class="btn btn-warning btn-sm" style="background-color: #f4b740; border-color: #f4b740; color: #1a2e4f;"><i class="fas fa-arrow-left me-2"></i>Kembali</a>
             </div>
         </div>
     </div>
 @else
-    <form action="{{ url('/mahasiswa/' . $mahasiswa->mhs_nim . '/update_ajax') }}" method="POST" id="form-edit">
-        @csrf
-        @method('PUT')
-        <div class="modal-header">
-            <h5 class="modal-title">Edit Data Mahasiswa</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            </button>
+    <div class="modal-header" style="background-color: #1a2e4f; color: white;">
+        <h5 class="modal-title"><i class="fas fa-file-alt me-2"></i>Edit Lamaran Mahasiswa</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        {{-- Informasi Mahasiswa --}}
+        <h6 style="color: #1a2e4f; font-weight: 600;"><i class="fas fa-user-graduate me-2"></i>Informasi Mahasiswa</h6>
+        <div class="card mb-4">
+            <div class="card-body p-0">
+                <table class="table table-sm table-bordered mb-0">
+                    <tr>
+                        <th class="text-right col-4" style="background-color: #f7f9fc; color: #1a2e4f;">NIM:</th>
+                        <td class="col-8">{{ $lamaran->mahasiswa->mhs_nim }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right" style="background-color: #f7f9fc; color: #1a2e4f;">Nama Lengkap:</th>
+                        <td>{{ $lamaran->mahasiswa->full_name }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right" style="background-color: #f7f9fc; color: #1a2e4f;">Alamat:</th>
+                        <td>{{ $lamaran->mahasiswa->alamat }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right" style="background-color: #f7f9fc; color: #1a2e4f;">No. Telepon:</th>
+                        <td>{{ $lamaran->mahasiswa->telp }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right" style="background-color: #f7f9fc; color: #1a2e4f;">Program Studi:</th>
+                        <td>{{ $prodi->nama_prodi ?? '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right" style="background-color: #f7f9fc; color: #1a2e4f;">Status Lamaran:</th>
+                        <td>
+                            <select name="status" class="form-select form-select-sm">
+                                <option value="pending" {{ $lamaran->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                                <option value="diterima" {{ $lamaran->status == 'diterima' ? 'selected' : '' }}>Diterima</option>
+                                <option value="ditolak" {{ $lamaran->status == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
-        <div class="modal-body">
 
-            <div class="form-group">
-                <label>NIM</label>
-                <input type="text" name="mhs_nim" id="mhs_nim" class="form-control" 
-                       value="{{ $mahasiswa->mhs_nim }}" readonly>
-                <small class="form-text text-muted">NIM tidak dapat diubah.</small>
+        {{-- Informasi Lowongan --}}
+        <h6 style="color: #1a2e4f; font-weight: 600;"><i class="fas fa-briefcase me-2"></i>Informasi Lowongan</h6>
+        <div class="card mb-4">
+            <div class="card-body p-0">
+                <table class="table table-sm table-bordered mb-0">
+                    <tr>
+                        <th class="text-right col-4" style="background-color: #f7f9fc; color: #1a2e4f;">Judul Lowongan:</th>
+                        <td>{{ $lamaran->lowongan->judul ?? '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right" style="background-color: #f7f9fc; color: #1a2e4f;">Perusahaan:</th>
+                        <td>{{ $perusahaan->nama ?? '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right" style="background-color: #f7f9fc; color: #1a2e4f;">Lokasi:</th>
+                        <td>{{ $perusahaan->alamat ?? '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th class="text-right" style="background-color: #f7f9fc; color: #1a2e4f;">Tanggal Lamaran:</th>
+                        <td>{{ $lamaran->tanggal_lamaran ?? '-' }}</td>
+                    </tr>
+                </table>
             </div>
-
-            <div class="form-group">
-                <label>Nama Lengkap</label>
-                <input type="text" name="full_name" id="full_name" class="form-control" 
-                       value="{{ $mahasiswa->full_name }}" required>
-                <small id="error-full_name" class="error-text form-text text-danger"></small>
-            </div>
-
-            <div class="form-group">
-                <label>Alamat</label>
-                <textarea name="alamat" id="alamat" class="form-control">{{ $mahasiswa->alamat }}</textarea>
-                <small id="error-alamat" class="error-text form-text text-danger"></small>
-            </div>
-
-            <div class="form-group">
-                <label>Telepon</label>
-                <input type="text" name="telp" id="telp" class="form-control" 
-                       value="{{ $mahasiswa->telp }}">
-                <small id="error-telp" class="error-text form-text text-danger"></small>
-            </div>
-
-            <div class="form-group">
-                <label>Status Magang</label>
-                <input type="text" class="form-control" value="{{ ucfirst($mahasiswa->status_magang) }}" readonly>
-            </div>
-
-            <div class="form-group">
-                <label>Prodi</label>
-                <input type="text" class="form-control" 
-                       value="{{ $mahasiswa->prodi->nama_prodi ?? '-' }}" readonly>
-            </div>
-
-            <div class="form-group">
-                <label>Username</label>
-                <input value="{{ $mahasiswa->user->username }}" type="text" name="username" id="username" class="form-control" required>
-                <small id="error-username" class="error-text form-text text-danger"></small>
-            </div>
-
-            <div class="form-group">
-                <label>Password</label>
-                <input value="" type="password" name="password" id="password" class="form-control">
-                <small class="form-text text-muted">Abaikan jika tidak ingin ubah password</small>
-                <small id="error-password" class="error-text form-text text-danger"></small>
-            </div>
-
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-warning" data-bs-dismiss="modal" aria-label="Batal">Batal</button>
-            <button type="submit" class="btn btn-primary">Simpan</button>
+
+        {{-- Dosen Pembimbing --}}
+        <h6 style="color: #1a2e4f; font-weight: 600;"><i class="fas fa-chalkboard-teacher me-2"></i>Pilih Dosen Pembimbing</h6>
+        <div class="card mb-4">
+            <div class="card-body p-0">
+                <table class="table table-sm table-bordered mb-0">
+                    <tr>
+                        <th class="text-right col-4" style="background-color: #f7f9fc; color: #1a2e4f;">Nama Dosen:</th>
+                        <td>
+                            <select name="dosen_id" class="form-select form-select-sm">
+                                <option value="">-- Pilih Dosen --</option>
+                                @foreach ($dosens as $dosen)
+                                    <option value="{{ $dosen->dosen_id }}" {{ $lamaran->dosen_id == $dosen->dosen_id ? 'selected' : '' }}>
+                                        {{ $dosen->nama }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </div>
-    </form>
+    </div>
 
-    <script>
-$(document).ready(function () {
-    $("#form-edit").validate({
-        rules: {
-            username: {required: true, maxlength: 20},
-            password: {
-                minlength: 5,
-                maxlength: 20
-            },
-            full_name: {
-                required: true,
-                maxlength: 100
-            },
-            alamat: {
-                maxlength: 255
-            },
-            telp: {
-                maxlength: 20
-            },
-            prodi_id: {
-                digits: true
-            }
-        },
-        submitHandler: function(form) {
-            $.ajax({
-                url: form.action,
-                type: form.method,
-                data: $(form).serialize(),
-               success: function(response) {
-                    if(response.status) {
-                        $('#myModal').modal('hide'); // Tutup modal
+    <div class="modal-footer">
+        <button onclick="updateLamaran('{{ $lamaran->lamaran_id }}')" class="btn btn-sm" style="background-color: #28a745; border-color: #28a745; color: white;">
+            <i class="fas fa-save me-2"></i>Simpan
+        </button>
+    </div>
+@endempty
 
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil',
-                            text: response.message
-                        });
+<script>
+    function updateLamaran(lamaranId) {
+        let status = $('select[name="status"]').val();
+        let dosenId = $('select[name="dosen_id"]').val();
 
-                        // Reload DataTable
-                        if ($.fn.DataTable.isDataTable('#mahasiswa-table')) {
-                            $('#mahasiswa-table').DataTable().ajax.reload(null, false);
-                        }
-                    } else {
-                        $('.text-danger').text(''); // reset error text
-                        if(response.msgField){
-                            $.each(response.msgField, function(prefix, val) {
-                                $('#error-' + prefix).text(val[0]);
-                            });
-                        }
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Terjadi Kesalahan',
-                            text: response.message || 'Mohon cek kembali inputan anda.'
-                        });
+        if (status === 'diterima' && (!dosenId || dosenId === '')) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Validasi Gagal',
+                text: 'Pilih dosen pembimbing terlebih dahulu sebelum menerima lamaran.'
+            });
+            return;
+        }
+
+        $.ajax({
+            url: '/PBL4_Sem4/public/pengajuan-magang/' + lamaranId + '/update',
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                status: status,
+                dosen_id: dosenId
+            },
+            success: function (response) {
+                if (response.status) {
+                    $('#myModal').modal('hide');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil',
+                        text: 'Lamaran berhasil diperbarui.'
+                    });
+                    if ($.fn.DataTable.isDataTable('#pengajuan-magang-table')) {
+                        $('#pengajuan-magang-table').DataTable().ajax.reload(null, false);
                     }
-                },
-                error: function() {
+                } else {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error',
-                        text: 'Terjadi kesalahan pada server.'
+                        title: 'Gagal',
+                        text: response.message
                     });
                 }
-            });
-            return false; // prevent default submit
-        },
-        errorElement: 'span',
-        errorPlacement: function(error, element) {
-            error.addClass('invalid-feedback');
-            element.closest('.form-group').append(error);
-        },
-        highlight: function(element) {
-            $(element).addClass('is-invalid');
-        },
-        unhighlight: function(element) {
-            $(element).removeClass('is-invalid');
-        }
-    });
-});
+            },
+            error: function (xhr) {
+                let msg = xhr.responseJSON?.message || 'Terjadi kesalahan.';
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: msg
+                });
+            }
+        });
+    }
 </script>
-@endempty
