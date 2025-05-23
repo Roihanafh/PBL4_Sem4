@@ -17,7 +17,7 @@ class AuthorizeUser
     {
         $user = $request->user();
 
-        if (!$user->getRoleName()) {
+        if ($role === $user->getRoleName()) {
             return $next($request);
         }
         abort(403, 'Forbidden. Kamu tidak memiliki izin untuk mengakses halaman ini.');

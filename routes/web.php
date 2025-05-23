@@ -35,8 +35,8 @@ Route::post('/register/mahasiswa', [AuthController::class, 'storeMahasiswa'])->n
 Route::get('/register/dosen', [AuthController::class, 'registerDosen'])->name('register.dosen');
 Route::post('/register/dosen', [AuthController::class, 'storeDosen'])->name('register.dosen.store');
 
-Route::get('/dashboard', [WelcomeController::class, 'index']);
-Route::middleware(['auth, authorize:admin'])->group(function () {
+Route::middleware(['auth','authorize:admin'])->group(function () {
+    Route::get('/admin-dashboard', [WelcomeController::class, 'index']);
     Route::group(['prefix' => 'mahasiswa'], function () {
         Route::get('/', [MahasiswaController::class, 'index']);
         Route::post('/list', [MahasiswaController::class, 'list']);

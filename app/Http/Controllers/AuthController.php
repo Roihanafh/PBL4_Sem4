@@ -24,25 +24,43 @@ class AuthController extends Controller
  
     public function postlogin(Request $request) 
     { 
-        if($request->ajax() || $request->wantsJson()){ 
+        if ($request->ajax() || $request->wantsJson()) { 
             $credentials = $request->only('username', 'password'); 
- 
+
             if (Auth::attempt($credentials)) { 
+                $user = Auth::user();
+
+                // Redirect berdasarkan level
+                switch ($user->level->level_name) {
+                    case 'admin':
+                        $redirectUrl = url('/dashboard/admin');
+                        break;
+                    case 'dosen':
+                        $redirectUrl = url('/dashboard/dosen');
+                        break;
+                    case 'mahasiswa':
+                        $redirectUrl = url('/dashboard/mahasiswa');
+                        break;
+                    default:
+                        $redirectUrl = url('/dashboard');
+                }
+
                 return response()->json([ 
                     'status' => true, 
                     'message' => 'Login Berhasil', 
-                    'redirect' => url('/dashboard') 
+                    'redirect' => $redirectUrl 
                 ]); 
-            } 
-             
+            }
+
             return response()->json([ 
                 'status' => false, 
                 'message' => 'Login Gagal' 
             ]); 
-        } 
- 
+        }
+
         return redirect('login'); 
-    } 
+    }
+ 
  
     public function logout(Request $request) 
     { 
