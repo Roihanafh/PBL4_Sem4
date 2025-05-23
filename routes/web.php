@@ -120,11 +120,6 @@ Route::middleware(['auth','authorize:admin'])->group(function () {
         
     });
 
-    Route::group(['prefix' => 'log-aktivitas'], function () {
-        Route::get('/', [LogAktivitasMhsController::class, 'index']);
-        Route::post('/list', [LogAktivitasMhsController::class, 'list']);
-    });
-
     Route::group(['prefix' => 'lowongan'], function () {
         Route::get('/', [LowonganController::class, 'index']);
         Route::post('/list', [LowonganController::class, 'list']);
@@ -153,6 +148,12 @@ Route::middleware(['auth','authorize:admin'])->group(function () {
 //route dosen beserta auth nya
 Route::middleware(['auth','authorize:dosen'])->group(function () {
     Route::get('/dashboard-dosen', [WelcomeController::class, 'index_dosen']);
+
+    Route::group(['prefix' => 'log-aktivitas'], function () {
+        Route::get('/', [LogAktivitasMhsController::class, 'index']);
+        Route::post('/list', [LogAktivitasMhsController::class, 'list']);
+    });
+
 });  
 
 //route mahasiswa beserta auth nya

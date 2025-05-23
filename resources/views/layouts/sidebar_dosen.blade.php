@@ -51,25 +51,10 @@
                 </div>
               </li>
               <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#charts4">
+                <a href="{{ url('log-aktivitas') }}">
                   <i class="fas fa-laptop-code"></i>
                   <p>Monitoring dan Evaluasi Magang</p>
-                  <span class="caret"></span>
                 </a>
-                <div class="collapse" id="charts4">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a>
-                        <span class="sub-item">Laporan log aktivitas</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a>
-                        <span class="sub-item">Feedback dan saran</span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
               </li>
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#charts1">
