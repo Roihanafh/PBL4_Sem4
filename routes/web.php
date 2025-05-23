@@ -149,6 +149,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/{lamaran_id}/update', [PengajuanMagangController::class, 'update']);
         Route::get('/{lamaran_id}/delete_ajax', [PengajuanMagangController::class, 'confirm_ajax']);
         Route::delete('/{lamaran_id}/delete_ajax', [PengajuanMagangController::class, 'delete_ajax']);
-
+        Route::post('{lamaran_id}/restore', [PengajuanMagangController::class, 'restore'])->name('pengajuan-magang.restore');
     });
 });

@@ -246,6 +246,32 @@ class PengajuanMagangController extends Controller
             ], 500);
         }
     }
+
+    public function restore(Request $request, $lamaran_id)
+    {
+        try {
+            $lamaran = LamaranMagangModel::withTrashed()->where('lamaran_id', $lamaran_id)->first();
+
+            if (!$lamaran) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Data lamaran tidak ditemukan.'
+                ], 404);
+            }
+
+            $lamaran->restore();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data lamaran berhasil dipulihkan.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Terjadi kesalahan saat memulihkan data: ' . $e->getMessage()
+            ], 500);
+        }
+    }
     // public function edit_ajax($mhs_nim)
     // {
     //     $mahasiswa = MahasiswaModel::with(['prodi', 'user'])->find($mhs_nim);

@@ -4,10 +4,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>MagangIn - JTI Polinema</title>
     <link
-      rel="icon"
-      href="img/MagangIn.png"
-      type="image/x-icon"
-    />
+        rel="icon"
+        href="img/M_Logo.png"
+        type="image/x-icon"
+      />
     <meta
       content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
       name="viewport"
