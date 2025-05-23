@@ -35,8 +35,9 @@ Route::post('/register/mahasiswa', [AuthController::class, 'storeMahasiswa'])->n
 Route::get('/register/dosen', [AuthController::class, 'registerDosen'])->name('register.dosen');
 Route::post('/register/dosen', [AuthController::class, 'storeDosen'])->name('register.dosen.store');
 
+//route admin beserta auth nya
+Route::get('/dashboard-admin', [WelcomeController::class, 'index_admin']);
 Route::middleware(['auth','authorize:admin'])->group(function () {
-    Route::get('/admin-dashboard', [WelcomeController::class, 'index']);
     Route::group(['prefix' => 'mahasiswa'], function () {
         Route::get('/', [MahasiswaController::class, 'index']);
         Route::post('/list', [MahasiswaController::class, 'list']);
@@ -147,4 +148,14 @@ Route::middleware(['auth','authorize:admin'])->group(function () {
         Route::delete('/{lamaran_id}/delete_ajax', [PengajuanMagangController::class, 'delete_ajax']);
         Route::post('{lamaran_id}/restore', [PengajuanMagangController::class, 'restore'])->name('pengajuan-magang.restore');
     });
+});
+
+//route dosen beserta auth nya
+Route::middleware(['auth','authorize:dosen'])->group(function () {
+    Route::get('/dashboard-dosen', [WelcomeController::class, 'index_dosen']);
+});  
+
+//route mahasiswa beserta auth nya
+Route::middleware(['auth','authorize:mahasiswa'])->group(function () {
+    Route::get('/dashboard-mahasiswa', [WelcomeController::class, 'index_mahasiswa']);
 });

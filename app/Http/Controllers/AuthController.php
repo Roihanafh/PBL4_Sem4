@@ -33,13 +33,13 @@ class AuthController extends Controller
                 // Redirect berdasarkan level
                 switch ($user->level->level_name) {
                     case 'admin':
-                        $redirectUrl = url('/dashboard/admin');
+                        $redirectUrl = url('/dashboard-admin');
                         break;
                     case 'dosen':
-                        $redirectUrl = url('/dashboard/dosen');
+                        $redirectUrl = url('/dashboard-dosen');
                         break;
                     case 'mahasiswa':
-                        $redirectUrl = url('/dashboard/mahasiswa');
+                        $redirectUrl = url('/dashboard-mahasiswa');
                         break;
                     default:
                         $redirectUrl = url('/dashboard');
