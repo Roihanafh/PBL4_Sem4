@@ -35,8 +35,8 @@ Route::post('/register/mahasiswa', [AuthController::class, 'storeMahasiswa'])->n
 Route::get('/register/dosen', [AuthController::class, 'registerDosen'])->name('register.dosen');
 Route::post('/register/dosen', [AuthController::class, 'storeDosen'])->name('register.dosen.store');
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [WelcomeController::class, 'index']);
+Route::get('/dashboard', [WelcomeController::class, 'index']);
+Route::middleware(['auth, authorize:admin'])->group(function () {
     Route::group(['prefix' => 'mahasiswa'], function () {
         Route::get('/', [MahasiswaController::class, 'index']);
         Route::post('/list', [MahasiswaController::class, 'list']);
@@ -124,9 +124,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/list', [LogAktivitasMhsController::class, 'list']);
     });
 
-// routes/web.php
-
-Route::middleware(['auth'])->group(function () {
     Route::group(['prefix' => 'lowongan'], function () {
         Route::get('/', [LowonganController::class, 'index']);
         Route::post('/list', [LowonganController::class, 'list']);
@@ -138,7 +135,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{lowongan_id}/edit_ajax', [LowonganController::class, 'edit_ajax']);
         Route::put('/{lowongan_id}/update_ajax', [LowonganController::class, 'update_ajax']);
     });
-});
 
     Route::group(['prefix' => 'pengajuan-magang'], function () {
         Route::get('/', [PengajuanMagangController::class, 'index']);
