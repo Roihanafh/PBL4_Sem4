@@ -152,6 +152,9 @@ Route::middleware(['auth','authorize:dosen'])->group(function () {
     Route::group(['prefix' => 'log-aktivitas'], function () {
         Route::get('/', [LogAktivitasMhsController::class, 'index']);
         Route::post('/list', [LogAktivitasMhsController::class, 'list']);
+        Route::get('/{id}/show_ajax', [LogAktivitasMhsController::class, 'showAjax']);
+        Route::post('/{id}/komentar', [LogAktivitasMhsController::class, 'storeKomentar']);
+
     });
 
 });  

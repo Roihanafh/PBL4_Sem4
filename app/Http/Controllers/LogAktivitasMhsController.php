@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\LogAktivitasMhsModel;
+use App\Models\KomenLogAktivitasModel;
 use App\Models\MahasiswaModel;
 use App\Models\LamaranMagangModel;
 use App\Models\DosenModel;
@@ -11,6 +12,7 @@ use App\Models\LowonganModel;
 use App\Models\ProdiModel;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class LogAktivitasMhsController extends Controller
 {
@@ -81,5 +83,41 @@ class LogAktivitasMhsController extends Controller
 
         return abort(404);
     }
+
+    public function showAjax($id)
+    {
+        $aktivitas = LogAktivitasMhsModel::with(['lamaran.mahasiswa.prodi'])->findOrFail($id);
+        $komentar = KomenLogAktivitasModel::where('aktivitas_id', $id)
+            ->with('dosen')
+            ->latest('created_at')
+            ->get();
+
+        return view('log_aktivitas.show_ajax', compact('aktivitas', 'komentar'));
+    }
+
+    public function storeKomentar(Request $request, $id)
+    {
+        $request->validate([
+            'komentar' => 'required|string|max:1000',
+        ]);
+
+        try {
+            $user = Auth::user();
+            $dosen = DosenModel::where('user_id', $user->user_id)->firstOrFail();
+
+            KomenLogAktivitasModel::create([
+                'aktivitas_id' => $id,
+                'dosen_id'     => $dosen->dosen_id,
+                'komentar'     => $request->komentar,
+                'created_at'   => Carbon::now(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
+        }
+
+        return response()->json(['success' => true, 'message' => 'Komentar berhasil ditambahkan.']);
+    }
+
+
 }
 
