@@ -138,5 +138,22 @@
         fillColor: "rgba(255, 165, 52, .14)",
       });
     </script>
+
+    <!-- Modal untuk menampilkan profile -->
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" id="modalContent">
+      <!-- konten ajax akan masuk di sini -->
+    </div>
+  </div>
+</div>
+<script>
+  function modalAction(url) {
+    $('#modalContent').load(url, function() {
+      $('#modal').modal('show');
+    });
+  }
+</script>
+
   </body>
 </html>
