@@ -365,11 +365,26 @@
                           </div>
                           <div class="u-text">
                            <p class="text-sm text-muted">{{ Auth::user()->getRoleName()}}</p>
-                            <a
-                              href="profile.html"
-                              class="btn btn-xs btn-secondary btn-sm"
-                              >View Profile</a
-                            >
+                           @php
+    $user = Auth::user();
+    $url = '#'; // default
+
+    if ($user->hasRole('admin')) {
+        $url = url('/admin/' . $user->admin->admin_id . '/show_ajax');
+    } elseif ($user->hasRole('dosen')) {
+        $url = url('/dosen/' . $user->dosen->dosen_id . '/show_ajax');
+    } elseif ($user->hasRole('mahasiswa')) {
+        $url = url('/mahasiswa/' . $user->mahasiswa->nim . '/show_ajax');
+    }
+@endphp
+
+<button onclick="modalAction('{{ $url }}')" class="btn btn-xs btn-secondary btn-sm">
+  View Profile
+</button>
+
+
+
+
                           </div>
                         </div>
                       </li>
@@ -392,3 +407,12 @@
           </nav>
           <!-- End Navbar -->
         </div>
+
+        @push('js')
+<script>
+  function modalAction(url = '') {
+    $('#myModal .modal-content').load(url, function () {
+      $('#myModal').modal('show');
+    });
+  }
+</script>

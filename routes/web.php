@@ -157,9 +157,22 @@ Route::middleware(['auth','authorize:dosen'])->group(function () {
 
     });
 
+    Route::group(['prefix' => 'dosen'], function () {
+        Route::get('/{dosen_id}/show_ajax', [DosenController::class, 'show_ajax']);
+        Route::get('/{dosen_id}/edit_ajax', [DosenController::class, 'edit_ajax']);
+        Route::put('/{dosen_id}/update_ajax', [DosenController::class, 'update_ajax']);
+    });
+
 });  
 
 //route mahasiswa beserta auth nya
 Route::middleware(['auth','authorize:mahasiswa'])->group(function () {
     Route::get('/dashboard-mahasiswa', [WelcomeController::class, 'index_mahasiswa']);
+    
+    Route::group(['prefix' => 'mahasiswa'], function () {
+        Route::get('/{nim}/show_ajax', [MahasiswaController::class, 'show_ajax']);
+        Route::get('/{nim}/edit_ajax', [MahasiswaController::class, 'edit_ajax']);
+        Route::put('/{nim}/update_ajax', [MahasiswaController::class, 'update_ajax']);
+
+    });
 });
