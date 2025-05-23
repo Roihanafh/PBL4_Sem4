@@ -335,9 +335,22 @@
                       />
                     </div>
                     <span class="profile-username">
-                      <span class="op-7">Hi,</span>
-                      <span class="fw-bold">Hizrian</span>
-                    </span>
+                    @php
+                    $user = Auth::user();
+                    if ($user->level && $user->level->level_name === 'mahasiswa' && $user->mahasiswa) {
+                        $displayName = $user->mahasiswa->full_name;
+                    } elseif ($user->level && $user->level->level_name === 'dosen' && $user->dosen) {
+                        $displayName = $user->dosen->nama;
+                    } elseif ($user->level && $user->level->level_name === 'admin' && $user->admin) {
+                        $displayName = $user->admin->nama;
+                    } else {
+                        $displayName = $user->username;
+                    }
+                  @endphp
+
+                  <span class="profile-username">
+                    <span class="op-7">Hi,</span> {{ $displayName }}
+                  </span>
                   </a>
                   <ul class="dropdown-menu dropdown-user animated fadeIn">
                     <div class="dropdown-user-scroll scrollbar-outer">
@@ -351,7 +364,7 @@
                             />
                           </div>
                           <div class="u-text">
-                            <h4>Hizrian</h4>
+                           <p class="text-sm text-muted">{{ Auth::user()->getRoleName()}}</p>
                             <p class="text-muted">hello@example.com</p>
                             <a
                               href="profile.html"
