@@ -36,7 +36,7 @@
                   class="collapsed"
                   aria-expanded="false"
                 >
-                  <a href="{{ url('dashboard') }}">
+                   <a href="{{ url('/dashboard-admin') }}">
                   <i class="fas fa-home"></i>
                   <p>Dashboard</p>
                 </a>

@@ -419,28 +419,29 @@
         </div>
 
         @push('js')
-<script>
-  function modalAction(url = '') {
-    $('#myModal .modal-content').load(url, function () {
-      $('#myModal').modal('show');
-    });
-  }
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+          function modalAction(url = '') {
+            $('#myModal .modal-content').load(url, function () {
+              $('#myModal').modal('show');
+            });
+          }
 
-   function showLogoutConfirmation(event) {
-    event.preventDefault();
-    Swal.fire({
-      title: 'Yakin ingin logout?',
-      text: "Anda akan keluar dari sesi ini.",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Ya, logout',
-      cancelButtonText: 'Batal'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        document.getElementById('logout-form').submit();
-      }
-    });
-  }
-</script>
+          function showLogoutConfirmation(event) {
+            event.preventDefault();
+            Swal.fire({
+              title: 'Yakin ingin logout?',
+              text: "Anda akan keluar dari sesi ini.",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Ya, logout',
+              cancelButtonText: 'Batal'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                document.getElementById('logout-form').submit();
+              }
+            });
+          }
+        </script>

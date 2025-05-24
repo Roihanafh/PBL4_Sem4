@@ -7,15 +7,10 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::table('m_dosen', function (Blueprint $table) {
-            $table->renameColumn('bidang_penelitian', 'id_minat');
-        });
+       
     }
 
     public function down(): void
     {
-        Schema::table('m_dosen', function (Blueprint $table) {
-            $table->renameColumn('id_minat', 'bidang_penelitian');
-        });
     }
 };
