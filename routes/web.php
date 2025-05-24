@@ -85,6 +85,9 @@ Route::middleware(['auth','authorize:admin'])->group(function () {
         Route::get('/export_excel', [AdminController::class, 'export_excel']);
         Route::get('import', [AdminController::class, 'import']);
         Route::post('/import_ajax', [AdminController::class, 'import_ajax']);
+        Route::get('/{admin_id}/show_admin', [AdminController::class, 'show_admin']);
+        Route::get('/{admin_id}/edit_admin', [AdminController::class, 'edit_admin']);
+        Route::put('/{admin_id}/update_admin', [AdminController::class, 'update_admin']);
     });
         
     Route::group(['prefix' => 'periode'], function () {

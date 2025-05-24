@@ -370,7 +370,7 @@
                               $url = '#'; // default
 
                               if ($user->hasRole('admin')) {
-                                  $url = url('/admin/' . $user->admin->admin_id . '/show_ajax');
+                                  $url = url('/admin/' . $user->admin->admin_id . '/show_admin');
                               } elseif ($user->hasRole('dosen')) {
                                   $url = url('/dosen/' . $user->dosen->dosen_id . '/show_dosen');
                               } elseif ($user->hasRole('mahasiswa')) {

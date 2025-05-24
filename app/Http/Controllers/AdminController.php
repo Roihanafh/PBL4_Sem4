@@ -387,4 +387,88 @@ class AdminController extends Controller
 
         return redirect('/');
     }
+
+    public function show_admin($admin_id)
+    {
+        // Ambil data admin beserta relasi user-nya
+        $admin = AdminModel::with('user')->where('admin_id', $admin_id)->first();
+
+        // Jika data tidak ditemukan
+        if (!$admin) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data admin dengan ID ' . $admin_id . ' tidak ditemukan.'
+            ], 404);
+        }
+
+        // Tampilkan view show_ajax untuk admin
+        return view('admin.show_admin', [
+            'admin' => $admin
+        ]);
+    }
+
+    public function edit_admin($admin_id)
+    {
+        // Ambil data admin beserta user-nya
+        $admin = AdminModel::with('user')->find($admin_id);
+
+        return view('admin.edit_admin', compact('admin'));
+    }
+
+    public function update_admin(Request $request, $admin_id)
+    {
+        $admin = AdminModel::with('user')->find($admin_id);
+
+        if (!$admin) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data admin tidak ditemukan.'
+            ]);
+        }
+
+        // Validasi input
+        $validator = Validator::make($request->all(), [
+            'username'  => 'required|max:20|unique:m_users,username,' . $admin->user->user_id . ',user_id',
+            'password'  => 'nullable|min:5|max:20',
+            'nama'      => 'required|max:100',
+            'email'     => 'required|email|max:100',
+            'telp'      => 'nullable|max:20',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validasi gagal, periksa input anda.',
+                'msgField' => $validator->errors()
+            ]);
+        }
+
+        try {
+            // Update data admin
+            $admin->nama = $request->nama;
+            $admin->email = $request->email;
+            $admin->telp = $request->telp;
+            $admin->save();
+
+            // Update user
+            $user = $admin->user;
+            $user->username = $request->username;
+            if (!empty($request->password)) {
+                $user->password = bcrypt($request->password);
+            }
+            $user->save();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data admin berhasil diperbarui.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan data.',
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
 }

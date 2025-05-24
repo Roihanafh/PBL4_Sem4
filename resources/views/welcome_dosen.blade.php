@@ -19,11 +19,11 @@
     });
   });
 
-  function modalAction(url = '') {
-    $('#myModal .modal-content').html('<div class="text-center p-3">Memuat...</div>');
-    $('#myModal .modal-content').load(url, function () {
-      $('#myModal').modal('show');
-    });
-  }
+ function modalAction(url = ''){
+        $('#myModal .modal-content').load(url,function(){
+            $('#myModal').modal('show');
+        });
+    }
+
 </script>
 @endpush
