@@ -329,7 +329,7 @@
                   >
                     <div class="avatar-sm">
                       <img
-                        src="assets/img/profile.jpg"
+                        src="img/user.png"
                         alt="..."
                         class="avatar-img rounded-circle"
                       />
@@ -358,13 +358,13 @@
                         <div class="user-box">
                           <div class="avatar-lg">
                             <img
-                              src="assets/img/profile.jpg"
+                              src="img/user.png"
                               alt="image profile"
                               class="avatar-img rounded"
                             />
                           </div>
                           <div class="u-text">
-                           <p class="text-sm text-muted">{{ Auth::user()->getRoleName()}}</p>
+                          <p class="text-sm text-muted">{{ $displayName }}</p>
                            @php
                               $user = Auth::user();
                               $url = '#'; // default
