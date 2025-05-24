@@ -70,50 +70,21 @@
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#perusahaan">
                   <i class="fas fa-building"></i>
-                  <p>Manajemen Perusahaan Magang</p>
+                  <p>Manajemen Perusahaan Mitra</p>
                   <span class="caret"></span>
                 </a>
-                <div class="collapse" id="perusahaan">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a href="components/avatars.html">
-                        <span class="sub-item">Data Perusahaan</span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
               </li>
               <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#forms">
+                <a href="{{ url('periode') }}">
                   <i class="fas fa-hourglass-half"></i>
                   <p>Manajemen Periode Magang</p>
-                  <span class="caret"></span>
                 </a>
-                <div class="collapse" id="forms">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a href="{{ url('periode') }}">
-                        <span class="sub-item">Data Periode Magang</span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
               </li>
               <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#tables">
+                <a href="{{ url('prodi') }}">
                   <i class="fas fa-book"></i>
                   <p>Manajemen Program Studi</p>
-                  <span class="caret"></span>
                 </a>
-                <div class="collapse" id="tables">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a href="{{ url('prodi') }}">
-                        <span class="sub-item">Data Program Studi</span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
               </li>
               <!-- Manajemen Lowongan Magang -->
               <li class="nav-item">
@@ -141,43 +112,17 @@
                 <div class="collapse" id="charts">
                   <ul class="nav nav-collapse">
                     <li>
+                       <a href="{{ url('pengajuan-magang') }}">
+                        <span class="sub-item">Pengajuan Magang</span>
+                      </a>
+                    </li>
+                    <li>
                       <a href="charts/charts.html">
                         <span class="sub-item">Data Kegiatan Magang</span>
                       </a>
                     </li>
                   </ul>
                 </div>
-              </li>
-              <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#charts1">
-                  <i class="fas fa-laptop-code"></i>
-                  <p>Manajemen Akun & Profile</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#charts2">
-                  <i class="fas fa-laptop-code"></i>
-                  <p>Rekomendasi Magang</p>
-                </a>
-              </li>
-               <li class="nav-item">
-                 <a href="{{ url('pengajuan-magang') }}">
-                   <i class="fas fa-laptop-code"></i>
-                   <p>Pengajuan Magang</p>
-                  </a>
-              </li>
-               <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#charts4">
-                  <i class="fas fa-laptop-code"></i>
-                  <p>Monitoring dan Evaluasi Magang</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#charts5">
-                  <i class="fas fa-laptop-code"></i>
-                  <p>Mahasiswa Bimbingan</p>
-                </a>
-              </li>
               <li class="nav-item">
                 <a href="widgets.html">
                   <i class="fas fa-chart-bar"></i>
