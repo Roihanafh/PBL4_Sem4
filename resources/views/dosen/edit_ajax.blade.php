@@ -18,7 +18,7 @@
     <form action="{{ url('/dosen/' . $dosen->dosen_id . '/update_ajax') }}" method="POST" id="form-edit">
         @csrf
         @method('PUT')
-        <div class="modal-header">
+        <div class="modal-header" style="background-color: #1a2e4f; color: white;">
             <h5 class="modal-title">Edit Data Dosen</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
         </div>

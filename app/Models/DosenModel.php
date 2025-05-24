@@ -19,7 +19,9 @@ class DosenModel extends Model
         'email',
         'telp',
         'id_minat',
-        'profile_picture'
+        'profile_picture',
+        'cv',          
+        'sertifikat'   
     ];
 
      public function user()

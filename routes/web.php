@@ -164,6 +164,8 @@ Route::middleware(['auth','authorize:dosen'])->group(function () {
         Route::get('/{dosen_id}/show_dosen', [DosenController::class, 'show_dosen']);
         Route::get('/{dosen_id}/edit_dosen', [DosenController::class, 'edit_dosen']);
         Route::put('/{dosen_id}/update_dosen', [DosenController::class, 'update_dosen']);
+        Route::delete('/{dosen_id}/hapus-foto', [DosenController::class, 'hapus_foto_profile'])->name('dosen.hapus_foto');
+
     });
 
 });  

@@ -16,7 +16,7 @@
         </div>
     </div>
 @else
-    <div class="modal-header">
+    <div class="modal-header" style="background-color: #1a2e4f; color: white;">
         <h5 class="modal-title">Detail Dosen</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         </button>

@@ -16,7 +16,7 @@
     </div>
 </div>
 @else
-<div class="modal-header">
+<div class="modal-header" style="background-color: #1a2e4f; color: white;">
     <h5 class="modal-title">Detail Log Aktivitas</h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
     </button>
@@ -66,7 +66,7 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Kembali</button>
-            <button type="submit" class="btn btn-primary">Kirim Komentar</button>
+            <button type="submit" class="btn btn-primary">Kirim</button>
         </div>
     </form>
 </div>
@@ -114,7 +114,7 @@ $(document).ready(function () {
             Swal.fire({
                 icon: 'error',
                 title: 'Gagal!',
-                text: 'Komentar gagal ditambahkan.',
+                text: 'Feedback/Saran gagal ditambahkan.',
                 confirmButtonText: 'OK'
             });
         });

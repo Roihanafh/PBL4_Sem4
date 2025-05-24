@@ -328,26 +328,36 @@
                     aria-expanded="false"
                   >
                     <div class="avatar-sm">
+                      @php
+                    $user = Auth::user();
+
+                    if ($user->level && $user->level->level_name === 'mahasiswa' && $user->mahasiswa) {
+                        $displayName = $user->mahasiswa->full_name;
+                        $profilePicture = $user->mahasiswa->profile_picture
+                            ? Storage::url($user->mahasiswa->profile_picture)
+                            : asset('img/user.png');
+                    } elseif ($user->level && $user->level->level_name === 'dosen' && $user->dosen) {
+                        $displayName = $user->dosen->nama;
+                        $profilePicture = $user->dosen->profile_picture
+                            ? Storage::url($user->dosen->profile_picture)
+                            : asset('img/user.png');
+                    } elseif ($user->level && $user->level->level_name === 'admin' && $user->admin) {
+                        $displayName = $user->admin->nama;
+                        $profilePicture = $user->admin->profile_picture
+                            ? Storage::url($user->admin->profile_picture)
+                            : asset('img/user.png');
+                    } else {
+                        $displayName = $user->username;
+                        $profilePicture = asset('img/user.png');
+                    }
+                    @endphp
                       <img
-                        src="img/user.png"
+                        src="{{ asset($profilePicture) }}"
                         alt="..."
                         class="avatar-img rounded-circle"
                       />
                     </div>
                     <span class="profile-username">
-                    @php
-                    $user = Auth::user();
-                    if ($user->level && $user->level->level_name === 'mahasiswa' && $user->mahasiswa) {
-                        $displayName = $user->mahasiswa->full_name;
-                    } elseif ($user->level && $user->level->level_name === 'dosen' && $user->dosen) {
-                        $displayName = $user->dosen->nama;
-                    } elseif ($user->level && $user->level->level_name === 'admin' && $user->admin) {
-                        $displayName = $user->admin->nama;
-                    } else {
-                        $displayName = $user->username;
-                    }
-                  @endphp
-
                   <span class="profile-username">
                     <span class="op-7">Hi,</span> {{ $displayName }}
                   </span>
@@ -358,7 +368,7 @@
                         <div class="user-box">
                           <div class="avatar-lg">
                             <img
-                              src="img/user.png"
+                              src="{{ asset($profilePicture) }}"
                               alt="image profile"
                               class="avatar-img rounded"
                             />

@@ -115,7 +115,7 @@ class LogAktivitasMhsController extends Controller
             return response()->json(['success' => false, 'message' => 'Error: ' . $e->getMessage()], 500);
         }
 
-        return response()->json(['success' => true, 'message' => 'Komentar berhasil ditambahkan.']);
+        return response()->json(['success' => true, 'message' => 'Feedback/Saran berhasil ditambahkan.']);
     }
 
 
