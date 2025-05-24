@@ -15,9 +15,19 @@
         </div>
     </div>
 @else
-    <div class="modal-header">
+    <div class="modal-header" style="background-color: #1a2e4f; color: white;">
         <h5 class="modal-title">Detail Admin</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-profile text-center">
+        {{-- Gambar Profil --}}
+        @if ($admin->profile_picture)
+            <img src="{{ asset('storage/' . $admin->profile_picture) }}" alt="Foto Profil"  class="img-thumbnail rounded-circle" style="max-width: 150px;">
+        @else
+            <img src="{{ asset('img/user.png') }}" alt="Foto Default"  class="img-thumbnail rounded-circle" style="max-width: 150px;">
+        @endif
     </div>
     <div class="modal-body">
         <table class="table table-sm table-bordered table-striped">

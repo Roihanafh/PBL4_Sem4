@@ -409,8 +409,11 @@ class AdminController extends Controller
 
     public function edit_admin($admin_id)
     {
-        // Ambil data admin beserta user-nya
         $admin = AdminModel::with('user')->find($admin_id);
+
+        if (!$admin) {
+            abort(404, 'Data admin tidak ditemukan.');
+        }
 
         return view('admin.edit_admin', compact('admin'));
     }
@@ -426,13 +429,13 @@ class AdminController extends Controller
             ]);
         }
 
-        // Validasi input
         $validator = Validator::make($request->all(), [
-            'username'  => 'required|max:20|unique:m_users,username,' . $admin->user->user_id . ',user_id',
-            'password'  => 'nullable|min:5|max:20',
-            'nama'      => 'required|max:100',
-            'email'     => 'required|email|max:100',
-            'telp'      => 'nullable|max:20',
+            'username' => 'required|max:20|unique:m_users,username,' . $admin->user->user_id . ',user_id',
+            'password' => 'nullable|min:5|max:20',
+            'nama'     => 'required|max:100',
+            'email'    => 'required|email|max:100',
+            'telp'     => 'nullable|max:20',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -444,10 +447,20 @@ class AdminController extends Controller
         }
 
         try {
-            // Update data admin
+            // Simpan data admin
             $admin->nama = $request->nama;
             $admin->email = $request->email;
             $admin->telp = $request->telp;
+
+            if ($request->hasFile('profile_picture')) {
+                if ($admin->profile_picture && Storage::disk('public')->exists($admin->profile_picture)) {
+                    Storage::disk('public')->delete($admin->profile_picture);
+                }
+
+                $path = $request->file('profile_picture')->store('profile_admin', 'public');
+                $admin->profile_picture = $path;
+            }
+
             $admin->save();
 
             // Update user
@@ -466,6 +479,38 @@ class AdminController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Terjadi kesalahan saat menyimpan data.',
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function hapus_foto_profile($admin_id)
+    {
+        $admin = AdminModel::find($admin_id);
+
+        if (!$admin) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data admin tidak ditemukan.'
+            ]);
+        }
+
+        try {
+            if ($admin->profile_picture && Storage::disk('public')->exists($admin->profile_picture)) {
+                Storage::disk('public')->delete($admin->profile_picture);
+            }
+
+            $admin->profile_picture = null;
+            $admin->save();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Foto profil admin berhasil dihapus.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Terjadi kesalahan saat menghapus foto profil.',
                 'error' => $e->getMessage()
             ]);
         }

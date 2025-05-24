@@ -18,6 +18,7 @@ class AdminModel extends Model
         'nama',
         'email',
         'telp',
+        'profile_picture'
     ];
     
     public function user()

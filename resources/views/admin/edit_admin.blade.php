@@ -23,6 +23,32 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
+            <div class="mb-2  text-center">
+                @if ($admin->profile_picture)
+                    <img id="preview-img" src="{{ asset('storage/' . $admin->profile_picture) }}" 
+                         alt="Foto Profil" 
+                         class="img-thumbnail rounded-circle" 
+                         style="width: 150px; height: 150px; object-fit: cover;">
+                @else
+                    <img id="preview-img" src="{{ asset('img/user.png') }}" 
+                         alt="Foto Profil Default" 
+                         class="img-thumbnail rounded-circle" 
+                         style="width: 150px; height: 150px; object-fit: cover;">
+                @endif
+            </div>
+
+            {{-- Input file tersembunyi --}}
+            <input type="file" name="profile_picture" id="profile_picture" class="d-none" accept="image/*">
+
+            {{-- Tombol Edit dan Hapus --}}
+            <div class="mb-4 text-center">
+                <button type="button" id="btn-edit-profile" class="btn btn-sm btn-primary mr-2">
+                    <i class="fas fa-edit"></i> Edit Profile
+                </button>
+                <button type="button" id="btn-delete-profile" class="btn btn-sm btn-danger">
+                    <i class="fas fa-trash-alt"></i> Hapus Profile
+                </button>
+            </div>
 
             <div class="form-group">
                 <label>Nama Lengkap</label>
@@ -67,21 +93,94 @@
 
     <script>
     $(document).ready(function () {
+
+        // Tombol trigger untuk input file
+        $('#btn-edit-profile').click(function () {
+            $('#profile_picture').click();
+        });
+
+        // Preview gambar saat memilih file
+        $('#profile_picture').change(function () {
+            const input = this;
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#preview-img').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        });
+
+        // Hapus foto profil admin
+        $('#btn-delete-profile').click(function () {
+            Swal.fire({
+                title: 'Yakin ingin menghapus foto profil?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, hapus',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ route('admin.hapus_foto', $admin->admin_id) }}",
+                        type: 'DELETE',
+                        data: {
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function(response) {
+                            if (response.status) {
+                                $('#preview-img').attr('src', "{{ asset('img/user.png') }}");
+                                $('#profile_picture').val('');
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Gagal',
+                                    text: response.message || 'Gagal menghapus foto profil.'
+                                });
+                            }
+                        },
+                        error: function() {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Terjadi kesalahan pada server.'
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
+        // Custom method untuk validasi ukuran file
+        $.validator.addMethod('filesize', function (value, element, param) {
+            return this.optional(element) || (element.files[0].size <= param);
+        }, 'Ukuran file maksimal {0} byte.');
+
+        // Validasi dan submit form edit admin
         $("#form-edit-admin").validate({
             rules: {
                 nama: { required: true, maxlength: 100 },
                 email: { required: true, email: true },
                 telp: { maxlength: 20 },
                 username: { required: true, maxlength: 20 },
-                password: { minlength: 5, maxlength: 20 }
+                password: { minlength: 5, maxlength: 20 },
+                profile_picture: { extension: "jpg|jpeg|png|webp", filesize: 2048000 } // max 2MB
+            },
+            messages: {
+                profile_picture: {
+                    extension: "Format file harus jpg, jpeg, png, atau webp.",
+                    filesize: "Ukuran file maksimal 2 MB."
+                }
             },
             submitHandler: function(form) {
                 $.ajax({
                     url: form.action,
                     type: form.method,
-                    data: $(form).serialize(),
+                    data: new FormData(form),
+                    processData: false,
+                    contentType: false,
                     success: function(response) {
-                        if(response.status) {
+                        if (response.status) {
                             $('#myModal').modal('hide');
                             Swal.fire({
                                 icon: 'success',
@@ -93,8 +192,8 @@
                             }
                         } else {
                             $('.text-danger').text('');
-                            if(response.msgField){
-                                $.each(response.msgField, function(prefix, val) {
+                            if (response.msgField) {
+                                $.each(response.msgField, function (prefix, val) {
                                     $('#error-' + prefix).text(val[0]);
                                 });
                             }
@@ -105,7 +204,7 @@
                             });
                         }
                     },
-                    error: function() {
+                    error: function () {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
@@ -116,17 +215,19 @@
                 return false;
             },
             errorElement: 'span',
-            errorPlacement: function(error, element) {
+            errorPlacement: function (error, element) {
                 error.addClass('invalid-feedback');
                 element.closest('.form-group').append(error);
             },
-            highlight: function(element) {
+            highlight: function (element) {
                 $(element).addClass('is-invalid');
             },
-            unhighlight: function(element) {
+            unhighlight: function (element) {
                 $(element).removeClass('is-invalid');
             }
         });
+
     });
-    </script>
+</script>
+
 @endempty

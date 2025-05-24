@@ -398,10 +398,10 @@
                           </div>
                         </div>
                       </li>
-                      <li>
+                     <li>
                         <div class="dropdown-divider"></div>
-                        
-                        <a href="#" class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+
+                        <a href="#" class="dropdown-item" onclick="showLogoutConfirmation(event)">
                           Logout
                         </a>
 
@@ -423,6 +423,24 @@
   function modalAction(url = '') {
     $('#myModal .modal-content').load(url, function () {
       $('#myModal').modal('show');
+    });
+  }
+
+   function showLogoutConfirmation(event) {
+    event.preventDefault();
+    Swal.fire({
+      title: 'Yakin ingin logout?',
+      text: "Anda akan keluar dari sesi ini.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Ya, logout',
+      cancelButtonText: 'Batal'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        document.getElementById('logout-form').submit();
+      }
     });
   }
 </script>

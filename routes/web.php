@@ -88,6 +88,7 @@ Route::middleware(['auth','authorize:admin'])->group(function () {
         Route::get('/{admin_id}/show_admin', [AdminController::class, 'show_admin']);
         Route::get('/{admin_id}/edit_admin', [AdminController::class, 'edit_admin']);
         Route::put('/{admin_id}/update_admin', [AdminController::class, 'update_admin']);
+        Route::delete('/{admin_id}/hapus-foto', [AdminController::class, 'hapus_foto_profile'])->name('admin.hapus_foto');
     });
         
     Route::group(['prefix' => 'periode'], function () {
