@@ -384,4 +384,88 @@ class DosenController extends Controller
         return redirect('/');
     }
 
+    public function show_dosen($dosen_id)
+    {
+        // Ambil data dosen beserta relasi user-nya
+        $dosen = DosenModel::with('user')->where('dosen_id', $dosen_id)->first();
+
+        // Jika data tidak ditemukan
+        if (!$dosen) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data dosen dengan ID ' . $dosen_id . ' tidak ditemukan.'
+            ], 404);
+        }
+
+        // Tampilkan view show_ajax untuk dosen
+        return view('dosen.show_dosen', [
+            'dosen' => $dosen
+        ]);
+    }
+
+    public function edit_dosen($dosen_id)
+    {
+        $dosen = DosenModel::with('user')->find($dosen_id);
+
+        return view('dosen.edit_dosen', compact('dosen'));
+    }
+
+    public function update_dosen(Request $request, $dosen_id)
+    {
+        $dosen = DosenModel::with('user')->find($dosen_id);
+
+        if (!$dosen) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data dosen tidak ditemukan.'
+            ]);
+        }
+
+        // Validasi input
+        $validator = Validator::make($request->all(), [
+            'username'  => 'required|max:20|unique:m_users,username,' . $dosen->user->user_id . ',user_id',
+            'password'  => 'nullable|min:5|max:20',
+            'nama'      => 'required|max:100',
+            'email'     => 'required|email|max:100',
+            'telp'      => 'nullable|max:20',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validasi gagal, periksa input anda.',
+                'msgField' => $validator->errors()
+            ]);
+        }
+
+        try {
+            // Update data dosen
+            $dosen->nama = $request->nama;
+            $dosen->email = $request->email;
+            $dosen->telp = $request->telp;
+            $dosen->save();
+
+            // Update user
+            $user = $dosen->user;
+            $user->username = $request->username;
+            if (!empty($request->password)) {
+                $user->password = bcrypt($request->password);
+            }
+            $user->save();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data dosen berhasil diperbarui.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan data.',
+                'error' => $e->getMessage()
+            ]);
+        }
+
+    }
+
+
 }

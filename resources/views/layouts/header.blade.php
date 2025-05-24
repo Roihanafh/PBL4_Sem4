@@ -372,7 +372,7 @@
                               if ($user->hasRole('admin')) {
                                   $url = url('/admin/' . $user->admin->admin_id . '/show_ajax');
                               } elseif ($user->hasRole('dosen')) {
-                                  $url = url('/dosen/' . $user->dosen->dosen_id . '/show_ajax');
+                                  $url = url('/dosen/' . $user->dosen->dosen_id . '/show_dosen');
                               } elseif ($user->hasRole('mahasiswa')) {
                                   $url = url('/mahasiswa/' . $user->mahasiswa->mhs_nim . '/show_ajax');
                               }

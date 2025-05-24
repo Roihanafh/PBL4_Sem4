@@ -158,9 +158,9 @@ Route::middleware(['auth','authorize:dosen'])->group(function () {
     });
 
     Route::group(['prefix' => 'dosen'], function () {
-        Route::get('/{dosen_id}/show_ajax', [DosenController::class, 'show_ajax']);
-        Route::get('/{dosen_id}/edit_ajax', [DosenController::class, 'edit_ajax']);
-        Route::put('/{dosen_id}/update_ajax', [DosenController::class, 'update_ajax']);
+        Route::get('/{dosen_id}/show_dosen', [DosenController::class, 'show_dosen']);
+        Route::get('/{dosen_id}/edit_dosen', [DosenController::class, 'edit_dosen']);
+        Route::put('/{dosen_id}/update_dosen', [DosenController::class, 'update_dosen']);
     });
 
 });  

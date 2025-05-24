@@ -29,7 +29,7 @@
           <div class="sidebar-content">
             <ul class="nav nav-secondary">
               <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#dashboard">
+                <a href="{{ url('/dashboard-dosen') }}">
                   <i class="fas fa-home"></i>
                   <p>Dashboard</p>
                 </a>
