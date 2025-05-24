@@ -44,7 +44,18 @@
                        value="{{ $dosen->telp }}">
                 <small id="error-telp" class="error-text form-text text-danger"></small>
             </div>
-
+            <div class="form-group">
+                <label for="id_minat">Bidang Penelitian</label>
+                <select name="id_minat" class="form-control">
+                    <option value="">-- Pilih Bidang Penelitian --</option>
+                    @foreach($bidang_penelitian as $bidang)
+                        <option value="{{ $bidang->id_minat }}"
+                            {{ (old('id_minat', $dosen->id_minat) == $bidang->id_minat) ? 'selected' : '' }}>
+                            {{ $bidang->bidang }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
             <div class="form-group">
                 <label>Username</label>
                 <input value="{{ $dosen->user->username ?? '' }}" type="text" name="username" id="username" class="form-control" required>

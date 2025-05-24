@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\DosenModel;
+use App\Models\BidangPenelitianModel;
 use App\Models\UserModel;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
@@ -386,8 +387,8 @@ class DosenController extends Controller
 
     public function show_dosen($dosen_id)
     {
-        // Ambil data dosen beserta relasi user-nya
-        $dosen = DosenModel::with('user')->where('dosen_id', $dosen_id)->first();
+        // Ambil data dosen beserta relasi user dan bidangPenelitian-nya
+        $dosen = DosenModel::with(['user', 'bidangPenelitian'])->where('dosen_id', $dosen_id)->first();
 
         // Jika data tidak ditemukan
         if (!$dosen) {
@@ -403,11 +404,13 @@ class DosenController extends Controller
         ]);
     }
 
+
     public function edit_dosen($dosen_id)
     {
         $dosen = DosenModel::with('user')->find($dosen_id);
+        $bidang_penelitian = BidangPenelitianModel::all();
 
-        return view('dosen.edit_dosen', compact('dosen'));
+        return view('dosen.edit_dosen', compact('dosen', 'bidang_penelitian'));
     }
 
     public function update_dosen(Request $request, $dosen_id)
@@ -421,13 +424,13 @@ class DosenController extends Controller
             ]);
         }
 
-        // Validasi input
         $validator = Validator::make($request->all(), [
             'username'  => 'required|max:20|unique:m_users,username,' . $dosen->user->user_id . ',user_id',
             'password'  => 'nullable|min:5|max:20',
             'nama'      => 'required|max:100',
             'email'     => 'required|email|max:100',
             'telp'      => 'nullable|max:20',
+            'id_minat'  => 'nullable|exists:d_bidang_penelitian,id_minat',
         ]);
 
         if ($validator->fails()) {
@@ -439,13 +442,12 @@ class DosenController extends Controller
         }
 
         try {
-            // Update data dosen
             $dosen->nama = $request->nama;
             $dosen->email = $request->email;
             $dosen->telp = $request->telp;
+            $dosen->id_minat = $request->id_minat;
             $dosen->save();
 
-            // Update user
             $user = $dosen->user;
             $user->username = $request->username;
             if (!empty($request->password)) {
@@ -464,8 +466,6 @@ class DosenController extends Controller
                 'error' => $e->getMessage()
             ]);
         }
-
     }
-
 
 }

@@ -22,29 +22,33 @@
         </button>
     </div>
     <div class="modal-body">
-        <table class="table table-sm table-bordered table-striped">
-            <tr>
-                <th class="text-right col-4">Nama:</th>
-                <td class="col-8">{{ $dosen->nama }}</td>
-            </tr>
-            <tr>
-                <th class="text-right">Email:</th>
-                <td>{{ $dosen->email }}</td>
-            </tr>
-            <tr>
-                <th class="text-right">No. Telepon:</th>
-                <td>{{ $dosen->telp ?? '-' }}</td>
-            </tr>
-            <tr>
-                <th class="text-right">Username:</th>
-                <td>{{ $dosen->user->username ?? '-' }}</td>
-            </tr>
-            <tr>
-                <th class="text-right">Password:</th>
-                <td>********</td>
-            </tr>
-        </table>
-    </div>
+    <table class="table table-sm table-bordered table-striped">
+        <tr>
+            <th class="text-right col-4">Nama:</th>
+            <td class="col-8">{{ $dosen->nama }}</td>
+        </tr>
+        <tr>
+            <th class="text-right">Email:</th>
+            <td>{{ $dosen->email }}</td>
+        </tr>
+        <tr>
+            <th class="text-right">No. Telepon:</th>
+            <td>{{ $dosen->telp ?? '-' }}</td>
+        </tr>
+        <tr>
+            <th class="text-right">Username:</th>
+            <td>{{ $dosen->user->username ?? '-' }}</td>
+        </tr>
+        <tr>
+            <th class="text-right">Bidang Penelitian:</th>
+            <td>{{ $dosen->bidangPenelitian->bidang ?? '-' }}</td>
+        </tr>
+        <tr>
+            <th class="text-right">Password:</th>
+            <td>********</td>
+        </tr>
+    </table>
+</div>
     <div class="modal-footer">
         <button onclick="modalAction('{{ url('/dosen/' . $dosen->dosen_id . '/edit_dosen') }}')" class="btn btn-success btn-sm">
             Edit

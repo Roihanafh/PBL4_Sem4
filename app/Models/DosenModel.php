@@ -18,6 +18,7 @@ class DosenModel extends Model
         'nama',
         'email',
         'telp',
+        'id_minat',
     ];
 
      public function user()
@@ -40,4 +41,10 @@ class DosenModel extends Model
     {
         return $this->hasMany(MahasiswaModel::class, 'dosen_id', 'dosen_id');
     }
+
+    public function bidangPenelitian()
+    {
+        return $this->belongsTo(BidangPenelitianModel::class, 'id_minat', 'id_minat');
+    }
+
 }
