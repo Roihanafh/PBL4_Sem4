@@ -40,7 +40,7 @@
   <link rel="stylesheet" href="assets/css/demo.css" />
 </head>
 <body>
-  <div class="wrapper">
+  <div class="wrapper sidebar_minimize">
     @include('layouts.sidebar_mhs')
 
     <div class="main-panel">
