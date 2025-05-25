@@ -73,18 +73,6 @@
                   <p>Manajemen Perusahaan Mitra</p>
                   <span class="caret"></span>
                 </a>
-<<<<<<< HEAD
-                <div class="collapse" id="perusahaan">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a href="{{ url('perusahaan-mitra') }}">
-                        <span class="sub-item">Data Perusahaan</span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-=======
->>>>>>> f178e73a2ae5c05aeb1748cd752562585a970533
               </li>
               <li class="nav-item">
                 <a href="{{ url('periode') }}">
