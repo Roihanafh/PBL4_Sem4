@@ -22,6 +22,16 @@ class LowonganModel extends Model
         'perusahaan_id',
         'periode_id',
         'sylabus_path',
+        'status', 
+    ];
+
+    /**
+     * Cast tanggal fields to Carbon instances
+     */
+    protected $casts = [
+        'tanggal_mulai_magang' => 'date',
+        'deadline_lowongan'    => 'date',
+        'status'               => 'string',
     ];
 
     // Relasi ke perusahaan

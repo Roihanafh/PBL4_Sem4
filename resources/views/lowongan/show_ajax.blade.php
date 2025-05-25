@@ -24,11 +24,11 @@
             </tr>
             <tr>
                 <th>Tanggal Mulai</th>
-                <td>{{ $lowongan->tanggal_mulai_magang->format('d/m/Y') }}</td>
+                <td>{{ $lowongan->tanggal_mulai_magang}}</td>
             </tr>
             <tr>
                 <th>Deadline</th>
-                <td>{{ $lowongan->deadline_lowongan->format('d/m/Y') }}</td>
+                <td>{{ $lowongan->deadline_lowongan}}</td>
             </tr>
             <tr>
                 <th>Lokasi</th>

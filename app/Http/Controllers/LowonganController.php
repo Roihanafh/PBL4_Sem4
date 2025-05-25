@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\LowonganModel;
 use App\Models\PerusahaanModel;
 use App\Models\PeriodeMagangModel;
+use Carbon\Carbon;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 
@@ -29,7 +30,8 @@ class LowonganController extends Controller
     {
         if($request->ajax()) {
             $q = LowonganModel::with(['perusahaan','periode'])
-                ->select('lowongan_id','judul','lokasi','tanggal_mulai_magang','deadline_lowongan','perusahaan_id','periode_id');
+                ->where('status','aktif')       // ⬅ hanya ambil yang aktif
+                ->select(/* ... */);
 
             return DataTables::of($q)
                 ->addIndexColumn()
@@ -94,9 +96,17 @@ class LowonganController extends Controller
     public function delete_ajax(Request $request, $lowongan_id)
     {
         $l = LowonganModel::find($lowongan_id);
-        if(!$l) return response()->json(['status'=>false,'message'=>'Data tidak ditemukan'],404);
-        $l->delete();
-        return response()->json(['status'=>true,'message'=>'Lowongan dihapus']);
+        if (!$l) {
+        return response()->json(['status'=>false,'message'=>'Data tidak ditemukan'],404);
+        }
+
+        // bukan delete(), tapi update status
+        $l->update(['status' => 'nonaktif']);
+
+        return response()->json([
+        'status'  => true,
+        'message' => 'Lowongan berhasil dinonaktifkan'
+        ]);
     }
 
     public function show_ajax($lowongan_id)
@@ -104,6 +114,10 @@ class LowonganController extends Controller
         $lowongan = LowonganModel::with(['perusahaan','periode'])
                       ->find($lowongan_id);
         if(!$lowongan) abort(404,'Not Found');
+
+        // convert string ke Carbon
+        $lowongan->tanggal_mulai_magang = Carbon::parse($lowongan->tanggal_mulai_magang);
+        $lowongan->deadline_lowongan    = Carbon::parse($lowongan->deadline_lowongan);
         return view('lowongan.show_ajax', compact('lowongan'));
     }
 

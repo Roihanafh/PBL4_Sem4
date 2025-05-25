@@ -61,5 +61,29 @@ function modalAction(url = '') {
     $('#myModal').modal('show');
   });
 }
+
+// base URL Lowongan
+const lowonganBase = "{{ url('lowongan') }}";
+
+function deleteLowongan(id) {
+  if (!id) return;
+
+  $.ajax({
+    url: `${lowonganBase}/${id}/delete_ajax`,  // => correct full path
+    type: 'DELETE',
+    success(res) {
+      if (res.status) {
+        $('#myModal').modal('hide');
+        $('#lowongan-table').DataTable().ajax.reload();
+      } else {
+        alert(res.message || 'Gagal menghapus data.');
+      }
+    },
+    error(xhr) {
+      console.error('DELETE error:', xhr);
+      alert('Terjadi kesalahan pada server.');
+    }
+  });
+}
 </script>
 @endpush
