@@ -1,9 +1,7 @@
-<form action="{{ url('/dosen/ajax') }}" method="POST" id="form-tambah" autocomplete="off">
+<form action="{{ route('register.dosen') }}" method="POST" id="form-tambah" autocomplete="off">
     @csrf
-    <div class="modal-header" style="background-color: #1a2e4f; color: white;">
-        <h5 class="modal-title">Tambah Data Dosen</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        </button>
+    <div class="modal-header">
+        <h5 class="modal-title">Register Dosen</h5>
     </div>
         <div class="modal-body">
             <div class="form-group">

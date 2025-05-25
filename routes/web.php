@@ -31,10 +31,14 @@ Route::get('/', function () {
 Route::get('login', [AuthController::class,'login'])->name('login');
 Route::post('login', [AuthController::class,'postlogin']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/register/mahasiswa', [AuthController::class, 'registerMahasiswa'])->name('register.mahasiswa');
+Route::post('/register/mahasiswa', [AuthController::class, 'storeMahasiswa'])->name('register.mahasiswa.store');
+Route::get('/register/dosen', [AuthController::class, 'registerDosen'])->name('register.dosen');
+Route::post('/register/dosen', [AuthController::class, 'storeDosen'])->name('register.dosen.store');
 
-Route::get('/dashboard', [WelcomeController::class, 'index']);
-
-Route::middleware(['auth'])->group(function () {
+//route admin beserta auth nya
+Route::get('/dashboard-admin', [WelcomeController::class, 'index_admin']);
+Route::middleware(['auth','authorize:admin'])->group(function () {
     Route::group(['prefix' => 'mahasiswa'], function () {
         Route::get('/', [MahasiswaController::class, 'index']);
         Route::post('/list', [MahasiswaController::class, 'list']);
@@ -82,6 +86,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/export_excel', [AdminController::class, 'export_excel']);
         Route::get('import', [AdminController::class, 'import']);
         Route::post('/import_ajax', [AdminController::class, 'import_ajax']);
+        Route::get('/{admin_id}/show_admin', [AdminController::class, 'show_admin']);
+        Route::get('/{admin_id}/edit_admin', [AdminController::class, 'edit_admin']);
+        Route::put('/{admin_id}/update_admin', [AdminController::class, 'update_admin']);
+        Route::delete('/{admin_id}/hapus-foto', [AdminController::class, 'hapus_foto_profile'])->name('admin.hapus_foto');
     });
         
     Route::group(['prefix' => 'periode'], function () {
@@ -117,14 +125,6 @@ Route::middleware(['auth'])->group(function () {
         
     });
 
-    Route::group(['prefix' => 'log-aktivitas'], function () {
-        Route::get('/', [LogAktivitasMhsController::class, 'index']);
-        Route::post('/list', [LogAktivitasMhsController::class, 'list']);
-    });
-
-// routes/web.php
-
-Route::middleware(['auth'])->group(function () {
     Route::group(['prefix' => 'lowongan'], function () {
         Route::get('/', [LowonganController::class, 'index']);
         Route::post('/list', [LowonganController::class, 'list']);
@@ -136,11 +136,17 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{lowongan_id}/edit_ajax', [LowonganController::class, 'edit_ajax']);
         Route::put('/{lowongan_id}/update_ajax', [LowonganController::class, 'update_ajax']);
     });
-});
 
     Route::group(['prefix' => 'pengajuan-magang'], function () {
         Route::get('/', [PengajuanMagangController::class, 'index']);
         Route::post('/list', [PengajuanMagangController::class, 'list']);
+        Route::get('/{lamaran_id}/show_ajax', [PengajuanMagangController::class, 'show_ajax']);
+        Route::post('/{lamaran_id}/update_status', [PengajuanMagangController::class, 'update_status']);
+        Route::get('/{lamaran_id}/edit_ajax', [PengajuanMagangController::class, 'edit_ajax']);
+        Route::post('/{lamaran_id}/update', [PengajuanMagangController::class, 'update']);
+        Route::get('/{lamaran_id}/delete_ajax', [PengajuanMagangController::class, 'confirm_ajax']);
+        Route::delete('/{lamaran_id}/delete_ajax', [PengajuanMagangController::class, 'delete_ajax']);
+        Route::post('{lamaran_id}/restore', [PengajuanMagangController::class, 'restore'])->name('pengajuan-magang.restore');
     });
 
     Route::group(['prefix' => 'perusahaan-mitra'], function () {
@@ -157,5 +163,39 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/export_excel', [PerusahaanController::class, 'export_excel']);
         Route::get('import', [PerusahaanController::class, 'import']);
         Route::post('/import_ajax', [PerusahaanController::class, 'import_ajax']);
+    });
+});
+
+//route dosen beserta auth nya
+Route::middleware(['auth','authorize:dosen'])->group(function () {
+    Route::get('/dashboard-dosen', [WelcomeController::class, 'index_dosen']);
+
+    Route::group(['prefix' => 'log-aktivitas'], function () {
+        Route::get('/', [LogAktivitasMhsController::class, 'index']);
+        Route::post('/list', [LogAktivitasMhsController::class, 'list']);
+        Route::get('/{id}/show_ajax', [LogAktivitasMhsController::class, 'showAjax']);
+        Route::post('/{id}/komentar', [LogAktivitasMhsController::class, 'storeKomentar']);
+
+    });
+
+    Route::group(['prefix' => 'dosen'], function () {
+        Route::get('/{dosen_id}/show_dosen', [DosenController::class, 'show_dosen']);
+        Route::get('/{dosen_id}/edit_dosen', [DosenController::class, 'edit_dosen']);
+        Route::put('/{dosen_id}/update_dosen', [DosenController::class, 'update_dosen']);
+        Route::delete('/{dosen_id}/hapus-foto', [DosenController::class, 'hapus_foto_profile'])->name('dosen.hapus_foto');
+
+    });
+
+});  
+
+//route mahasiswa beserta auth nya
+Route::middleware(['auth','authorize:mahasiswa'])->group(function () {
+    Route::get('/dashboard-mahasiswa', [WelcomeController::class, 'index_mahasiswa']);
+    
+    Route::group(['prefix' => 'mahasiswa'], function () {
+        Route::get('/{nim}/show_ajax', [MahasiswaController::class, 'show_ajax']);
+        Route::get('/{nim}/edit_ajax', [MahasiswaController::class, 'edit_ajax']);
+        Route::put('/{nim}/update_ajax', [MahasiswaController::class, 'update_ajax']);
+
     });
 });

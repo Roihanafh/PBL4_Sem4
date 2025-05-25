@@ -4,10 +4,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>MagangIn - JTI Polinema</title>
     <link
-      rel="icon"
-      href="img/MagangIn.png"
-      type="image/x-icon"
-    />
+        rel="icon"
+        href="img/M_Logo.png"
+        type="image/x-icon"
+      />
     <meta
       content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
       name="viewport"
@@ -46,7 +46,7 @@
   <body>
     <div class="wrapper">
       <!-- Sidebar -->
-      @include('layouts.sidebar')
+      @include('layouts.sidebar_mahasiswa')
       <!-- End Sidebar -->
 
       <div class="main-panel">
@@ -138,5 +138,22 @@
         fillColor: "rgba(255, 165, 52, .14)",
       });
     </script>
+
+    <!-- Modal untuk menampilkan profile -->
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" id="modalContent">
+      <!-- konten ajax akan masuk di sini -->
+    </div>
+  </div>
+</div>
+<script>
+  function modalAction(url) {
+    $('#modalContent').load(url, function() {
+      $('#modal').modal('show');
+    });
+  }
+</script>
+
   </body>
 </html>

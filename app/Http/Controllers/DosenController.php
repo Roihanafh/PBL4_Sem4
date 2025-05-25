@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\DosenModel;
+use App\Models\BidangPenelitianModel;
 use App\Models\UserModel;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
@@ -383,5 +384,141 @@ class DosenController extends Controller
 
         return redirect('/');
     }
+
+    public function show_dosen($dosen_id)
+    {
+        // Ambil data dosen beserta relasi user dan bidangPenelitian-nya
+        $dosen = DosenModel::with(['user', 'bidangPenelitian'])->where('dosen_id', $dosen_id)->first();
+
+        // Jika data tidak ditemukan
+        if (!$dosen) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data dosen dengan ID ' . $dosen_id . ' tidak ditemukan.'
+            ], 404);
+        }
+
+        // Tampilkan view show_ajax untuk dosen
+        return view('dosen.show_dosen', [
+            'dosen' => $dosen
+        ]);
+    }
+
+
+    public function edit_dosen($dosen_id)
+    {
+        $dosen = DosenModel::with('user')->find($dosen_id);
+        $bidang_penelitian = BidangPenelitianModel::all();
+
+        return view('dosen.edit_dosen', compact('dosen', 'bidang_penelitian'));
+    }
+
+    public function update_dosen(Request $request, $dosen_id)
+{
+    $dosen = DosenModel::with('user')->find($dosen_id);
+
+    if (!$dosen) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Data dosen tidak ditemukan.'
+        ]);
+    }
+
+    $validator = Validator::make($request->all(), [
+        'username'  => 'required|max:20|unique:m_users,username,' . $dosen->user->user_id . ',user_id',
+        'password'  => 'nullable|min:5|max:20',
+        'nama'      => 'required|max:100',
+        'email'     => 'required|email|max:100',
+        'telp'      => 'nullable|max:20',
+        'id_minat'  => 'nullable|exists:d_bidang_penelitian,id_minat',
+        'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validasi file
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Validasi gagal, periksa input anda.',
+            'msgField' => $validator->errors()
+        ]);
+    }
+
+    try {
+        // Simpan data dosen
+        $dosen->nama = $request->nama;
+        $dosen->email = $request->email;
+        $dosen->telp = $request->telp;
+        $dosen->id_minat = $request->id_minat;
+
+        // Upload file jika ada
+        if ($request->hasFile('profile_picture')) {
+            // Hapus file lama jika ada
+            if ($dosen->profile_picture && Storage::exists($dosen->profile_picture)) {
+                Storage::delete($dosen->profile_picture);
+            }
+
+            // Simpan file baru
+            $path = $request->file('profile_picture')->store('profile_dosen', 'public');
+            $dosen->profile_picture = $path;
+
+        }
+
+        $dosen->save();
+
+        // Update user
+        $user = $dosen->user;
+        $user->username = $request->username;
+        if (!empty($request->password)) {
+            $user->password = bcrypt($request->password);
+        }
+        $user->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Data dosen berhasil diperbarui.'
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Terjadi kesalahan saat menyimpan data.',
+            'error' => $e->getMessage()
+        ]);
+    }
+}
+
+    public function hapus_foto_profile($dosen_id)
+    {
+        $dosen = DosenModel::find($dosen_id);
+
+        if (!$dosen) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data dosen tidak ditemukan.'
+            ]);
+        } 
+
+        try {
+            // Cek apakah dosen memiliki foto profil
+            if ($dosen->profile_picture && Storage::disk('public')->exists($dosen->profile_picture)) {
+                // Hapus file dari storage
+                Storage::disk('public')->delete($dosen->profile_picture);
+            }
+
+            // Kosongkan kolom profile_picture di database
+            $dosen->profile_picture = null;
+            $dosen->save();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Foto profil dosen berhasil dihapus.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Terjadi kesalahan saat menghapus foto profil.',
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
 
 }

@@ -90,11 +90,45 @@
                 { data: 'DT_RowIndex',  className: "text-center", orderable: false, searchable: false, width: "5%" },
                 { data: 'mahasiswa_nama' },
                 { data: 'mhs_nim' },
-                { data: 'dosen_nama' },
+                {
+                    data: 'dosen_nama',
+                    className: "text-center",
+                    render: function(data, type, row) {
+                        if (data === '-') {
+                            if (row.status === 'pending') {
+                                return '<span class="badge badge-warning text-center"><i class="fa fa-clock"></i> Pending</span>';
+                            }else if(row.status === 'ditolak'){
+                                return '<span class="badge badge-danger"><i class="fa fa-times"></i> Ditolak</span>';   
+                            }
+                        }
+                        return '<span>' + data + '</span>';
+                    }
+                },
                 { data: 'tanggal_lamaran' },
-                { data: 'status' },
+                { data: 'status',
+                  className: "text-center",
+                  render: function(data, type, row) {
+                      if (data === 'diterima') {
+                          return '<span class="badge badge-success"><i class="fa fa-check"></i> Diterima</span>';
+                      } else if (data === 'ditolak') {
+                          return '<span class="badge badge-danger"><i class="fa fa-times"></i> Ditolak</span>';
+                      } else if (data === 'pending') {
+                          return '<span class="badge badge-warning"><i class="fa fa-clock"></i> pending</span>';
+                      } else {
+                          return '<span class="badge badge-secondary">' + data + '</span>';
+                      }
+                  } 
+                },
                 { data: 'aksi', className: "text-center", orderable: false, searchable: false, width: "20%" }
-            ]
+            ],
+            columnDefs: [
+            {
+                targets: [1, 3], // Kolom mahasiswa_nama dan dosen_nama
+                render: function(data, type, row) {
+                    return data.length > 30 ? '<span title="' + data + '">' + data.substring(0, 30) + '...' + '</span>' : data;
+                }
+            }
+        ]
         });
     });
     function modalAction(url = ''){

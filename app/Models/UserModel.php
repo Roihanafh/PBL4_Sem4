@@ -28,4 +28,30 @@ class UserModel extends Authenticatable
     {
         return $this->belongsTo(LevelModel::class, 'level_id', 'level_id');
     }
+
+    public function getRoleName():string
+    {
+        return $this->level->level_name;
+    }
+
+    public function hasRole($role): bool
+    {
+        return $this->level->level_name == $role;
+    }
+
+    public function mahasiswa()
+    {
+        return $this->hasOne(MahasiswaModel::class, 'user_id');
+    }
+
+    public function dosen()
+    {
+        return $this->hasOne(DosenModel::class, 'user_id');
+    }
+
+    public function admin()
+    {
+        return $this->hasOne(AdminModel::class, 'user_id');
+    }
+
 }

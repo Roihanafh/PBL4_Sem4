@@ -41,7 +41,7 @@
 </head>
 <body>
   <div class="wrapper">
-    @include('layouts.sidebar')
+    @include('layouts.sidebar_dosen')
 
     <div class="main-panel">
       @include('layouts.header')

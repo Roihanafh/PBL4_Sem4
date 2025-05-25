@@ -1,36 +1,40 @@
-<form action="{{ url('/dosen/ajax') }}" method="POST" id="form-tambah" autocomplete="off">
+<form action="{{ route('register.mahasiswa') }}" method="POST" id="form-tambah" autocomplete="off">
     @csrf
-    <div class="modal-header" style="background-color: #1a2e4f; color: white;">
-        <h5 class="modal-title">Tambah Data Dosen</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        </button>
+    <div class="modal-header">
+        <h5 class="modal-title">Register Mahasiswa</h5>
     </div>
-        <div class="modal-body">
-            <div class="form-group">
+    <div class="modal-body">
+        <div class="form-group">
             <label for="username" class="form-label">Username</label>
             <input type="text" class="form-control" id="username" name="username" required autocomplete="off">
             <div class="text-danger" id="error-username"></div>
         </div>
 
-    <div class="form-group">
+        <div class="form-group">
             <label for="password" class="form-label">Password</label>
             <input type="password" class="form-control" id="password" name="password" required autocomplete="new-password">
             <div class="text-danger" id="error-password"></div>
         </div>
 
-        <input type="hidden" name="level_id" value="2"> {{-- level_id untuk dosen --}}
+        <input type="hidden" name="level_id" value="3">
 
-        {{-- DATA DOSEN --}}
+        {{-- DATA MAHASISWA --}}
         <div class="form-group">
-            <label for="nama" class="form-label">Nama Lengkap</label>
-            <input type="text" class="form-control" id="nama" name="nama" required>
-            <div class="text-danger" id="error-nama"></div>
+            <label for="mhs_nim" class="form-label">NIM</label>
+            <input type="text" class="form-control" id="mhs_nim" name="mhs_nim" required>
+            <div class="text-danger" id="error-mhs_nim"></div>
         </div>
 
         <div class="form-group">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" name="email">
-            <div class="text-danger" id="error-email"></div>
+            <label for="full_name" class="form-label">Nama Lengkap</label>
+            <input type="text" class="form-control" id="full_name" name="full_name" required>
+            <div class="text-danger" id="error-full_name"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="alamat" class="form-label">Alamat</label>
+            <textarea class="form-control" id="alamat" name="alamat"></textarea>
+            <div class="text-danger" id="error-alamat"></div>
         </div>
 
         <div class="form-group">
@@ -38,22 +42,36 @@
             <input type="text" class="form-control" id="telp" name="telp">
             <div class="text-danger" id="error-telp"></div>
         </div>
-    </div>
 
+        <div class="form-group">
+            <label for="prodi_id" class="form-label">Program Studi</label>
+            <select name="prodi_id" id="prodi_id" class="form-select" required>
+                <option value="">-- Pilih Program Studi --</option>
+                @foreach($prodis as $prodi)
+                    <option value="{{ $prodi->prodi_id }}">{{ $prodi->nama_prodi }}</option>
+                @endforeach
+            </select>
+            <div class="text-danger" id="error-prodi_id"></div>
+        </div>
+
+        <input type="hidden" name="status_magang" value="belum magang">
+    </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Batal</button>
         <button type="submit" class="btn btn-primary">Simpan</button>
     </div>
 </form>
+
 <script>
 $(document).ready(function() {
     $("#form-tambah").validate({
         rules: {
+            level_id: { required: true, number: true },
             username: { required: true, minlength: 3, maxlength: 20 },
             password: { required: true, minlength: 5, maxlength: 20 },
-            nama: { required: true, minlength: 3, maxlength: 100 },
-            email: { email: true },
-            telp: { maxlength: 20 }
+            mhs_nim: { required: true, minlength: 3, maxlength: 20 },
+            full_name: { required: true, minlength: 3, maxlength: 100 },
+            prodi_id: { required: true }
         },
         submitHandler: function(form) {
             $.ajax({
@@ -61,29 +79,27 @@ $(document).ready(function() {
                 type: form.method,
                 data: $(form).serialize(),
                 success: function(response) {
-                    if (response.status) {
+                    if(response.status) {
                         $('#myModal').modal('hide');
-
                         Swal.fire({
                             icon: 'success',
                             title: 'Berhasil',
                             text: response.message
                         });
-
-                        if ($.fn.DataTable.isDataTable('#dosen-table')) {
-                            $('#dosen-table').DataTable().ajax.reload(null, false);
+                        if ($.fn.DataTable.isDataTable('#mahasiswa-table')) {
+                            $('#mahasiswa-table').DataTable().ajax.reload(null, false);
                         }
                     } else {
                         $('.text-danger').text('');
-                        if (response.msgField) {
-                            $.each(response.msgField, function(field, messages) {
-                                $('#error-' + field).text(messages[0]);
+                        if(response.msgField){
+                            $.each(response.msgField, function(prefix, val) {
+                                $('#error-' + prefix).text(val[0]);
                             });
                         }
                         Swal.fire({
                             icon: 'error',
-                            title: 'Gagal',
-                            text: response.message || 'Periksa kembali inputan Anda.'
+                            title: 'Terjadi Kesalahan',
+                            text: response.message || 'Mohon cek kembali inputan anda.'
                         });
                     }
                 },
@@ -109,5 +125,6 @@ $(document).ready(function() {
             $(element).removeClass('is-invalid');
         }
     });
+    
 });
 </script>

@@ -328,16 +328,39 @@
                     aria-expanded="false"
                   >
                     <div class="avatar-sm">
+                      @php
+                    $user = Auth::user();
+
+                    if ($user->level && $user->level->level_name === 'mahasiswa' && $user->mahasiswa) {
+                        $displayName = $user->mahasiswa->full_name;
+                        $profilePicture = $user->mahasiswa->profile_picture
+                            ? Storage::url($user->mahasiswa->profile_picture)
+                            : asset('img/user.png');
+                    } elseif ($user->level && $user->level->level_name === 'dosen' && $user->dosen) {
+                        $displayName = $user->dosen->nama;
+                        $profilePicture = $user->dosen->profile_picture
+                            ? Storage::url($user->dosen->profile_picture)
+                            : asset('img/user.png');
+                    } elseif ($user->level && $user->level->level_name === 'admin' && $user->admin) {
+                        $displayName = $user->admin->nama;
+                        $profilePicture = $user->admin->profile_picture
+                            ? Storage::url($user->admin->profile_picture)
+                            : asset('img/user.png');
+                    } else {
+                        $displayName = $user->username;
+                        $profilePicture = asset('img/user.png');
+                    }
+                    @endphp
                       <img
-                        src="assets/img/profile.jpg"
+                        src="{{ asset($profilePicture) }}"
                         alt="..."
                         class="avatar-img rounded-circle"
                       />
                     </div>
                     <span class="profile-username">
-                      <span class="op-7">Hi,</span>
-                      <span class="fw-bold">Hizrian</span>
-                    </span>
+                  <span class="profile-username">
+                    <span class="op-7">Hi,</span> {{ $displayName }}
+                  </span>
                   </a>
                   <ul class="dropdown-menu dropdown-user animated fadeIn">
                     <div class="dropdown-user-scroll scrollbar-outer">
@@ -345,31 +368,40 @@
                         <div class="user-box">
                           <div class="avatar-lg">
                             <img
-                              src="assets/img/profile.jpg"
+                              src="{{ asset($profilePicture) }}"
                               alt="image profile"
                               class="avatar-img rounded"
                             />
                           </div>
                           <div class="u-text">
-                            <h4>Hizrian</h4>
-                            <p class="text-muted">hello@example.com</p>
-                            <a
-                              href="profile.html"
-                              class="btn btn-xs btn-secondary btn-sm"
-                              >View Profile</a
-                            >
+                          <p class="text-sm text-muted">{{ $displayName }}</p>
+                           @php
+                              $user = Auth::user();
+                              $url = '#'; // default
+
+                              if ($user->hasRole('admin')) {
+                                  $url = url('/admin/' . $user->admin->admin_id . '/show_admin');
+                              } elseif ($user->hasRole('dosen')) {
+                                  $url = url('/dosen/' . $user->dosen->dosen_id . '/show_dosen');
+                              } elseif ($user->hasRole('mahasiswa')) {
+                                  $url = url('/mahasiswa/' . $user->mahasiswa->mhs_nim . '/show_ajax');
+                              }
+                          @endphp
+
+                          <button onclick="modalAction('{{ $url }}')" class="btn btn-xs btn-secondary btn-sm">
+                            View Profile
+                          </button>
+
+
+
+
                           </div>
                         </div>
                       </li>
-                      <li>
+                     <li>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">My Profile</a>
-                        <a class="dropdown-item" href="#">My Balance</a>
-                        <a class="dropdown-item" href="#">Inbox</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Account Setting</a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+
+                        <a href="#" class="dropdown-item" onclick="showLogoutConfirmation(event)">
                           Logout
                         </a>
 
@@ -385,3 +417,31 @@
           </nav>
           <!-- End Navbar -->
         </div>
+
+        @push('js')
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+          function modalAction(url = '') {
+            $('#myModal .modal-content').load(url, function () {
+              $('#myModal').modal('show');
+            });
+          }
+
+          function showLogoutConfirmation(event) {
+            event.preventDefault();
+            Swal.fire({
+              title: 'Yakin ingin logout?',
+              text: "Anda akan keluar dari sesi ini.",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Ya, logout',
+              cancelButtonText: 'Batal'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                document.getElementById('logout-form').submit();
+              }
+            });
+          }
+        </script>
