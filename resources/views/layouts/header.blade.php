@@ -329,6 +329,10 @@
                   >
                     <div class="avatar-sm">
                       @php
+                      if (!Auth::check()) {
+                        header("Location: " . route('login'));
+                        exit;
+                    }
                     $user = Auth::user();
 
                     if ($user->level && $user->level->level_name === 'mahasiswa' && $user->mahasiswa) {
