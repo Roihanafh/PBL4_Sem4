@@ -10,6 +10,7 @@ use App\Http\Controllers\ProdiController;
 use App\Http\Controllers\LogAktivitasMhsController;
 use App\Http\Controllers\LowonganController;
 use App\Http\Controllers\PengajuanMagangController;
+use App\Http\Controllers\PerusahaanController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -140,5 +141,21 @@ Route::middleware(['auth'])->group(function () {
     Route::group(['prefix' => 'pengajuan-magang'], function () {
         Route::get('/', [PengajuanMagangController::class, 'index']);
         Route::post('/list', [PengajuanMagangController::class, 'list']);
+    });
+
+    Route::group(['prefix' => 'perusahaan-mitra'], function () {
+        Route::get('/', [PerusahaanController::class, 'index']);
+        Route::post('/list', [PerusahaanController::class, 'list']);
+        Route::get('/create_ajax', [PerusahaanController::class, 'create_ajax']);
+        Route::post('/ajax', [PerusahaanController::class, 'store_ajax']);
+        Route::get('/{perusahaan_id}/confirm_ajax', [PerusahaanController::class, 'confirm_ajax']); // Tampilkan modal konfirmasi
+        Route::delete('/{perusahaan_id}/delete_ajax', [PerusahaanController::class, 'delete_ajax']);
+        Route::get('/{admin_id}/show_ajax', [PerusahaanController::class, 'show_ajax']);
+        Route::get('/{perusahaan_id}/edit_ajax', [PerusahaanController::class, 'edit_ajax']);
+        Route::put('/{perusahaan_id}/update_ajax', [PerusahaanController::class, 'update_ajax']);
+        Route::get('/export_pdf', [PerusahaanController::class, 'export_pdf']);
+        Route::get('/export_excel', [PerusahaanController::class, 'export_excel']);
+        Route::get('import', [PerusahaanController::class, 'import']);
+        Route::post('/import_ajax', [PerusahaanController::class, 'import_ajax']);
     });
 });

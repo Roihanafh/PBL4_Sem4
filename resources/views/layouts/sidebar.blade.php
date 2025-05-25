@@ -76,7 +76,7 @@
                 <div class="collapse" id="perusahaan">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a href="components/avatars.html">
+                      <a href="{{ url('perusahaan-mitra') }}">
                         <span class="sub-item">Data Perusahaan</span>
                       </a>
                     </li>
