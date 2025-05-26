@@ -193,9 +193,11 @@ Route::middleware(['auth','authorize:mahasiswa'])->group(function () {
     Route::get('/dashboard-mahasiswa', [WelcomeController::class, 'index_mahasiswa']);
     
     Route::group(['prefix' => 'mahasiswa'], function () {
-        Route::get('/{nim}/show_ajax', [MahasiswaController::class, 'show_ajax']);
-        Route::get('/{nim}/edit_ajax', [MahasiswaController::class, 'edit_ajax']);
-        Route::put('/{nim}/update_ajax', [MahasiswaController::class, 'update_ajax']);
+        Route::get('/{nim}/show_mhs', [MahasiswaController::class, 'show_mhs']);
+        Route::get('/{nim}/edit_mhs', [MahasiswaController::class, 'edit_mhs']);
+        Route::put('/{nim}/update_mhs', [MahasiswaController::class, 'update_mhs']);
+        Route::delete('/{nim}/hapus-foto', [MahasiswaController::class, 'hapus_foto_profile'])->name('mhs.hapus_foto');
+
 
     });
 });

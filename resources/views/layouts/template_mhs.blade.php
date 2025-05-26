@@ -41,7 +41,7 @@
 </head>
 <body>
   <div class="wrapper sidebar_minimize">
-    @include('layouts.sidebar_mhs')
+    @include('layouts.sidebar_mahasiswa')
 
     <div class="main-panel">
       @include('layouts.header')

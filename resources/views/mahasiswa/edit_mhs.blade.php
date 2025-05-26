@@ -1,4 +1,4 @@
-@empty($dosen)
+@empty($mahasiswa)
     <div id="myModal" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -10,24 +10,24 @@
                     <h5><i class="icon fas fa-ban"></i> Kesalahan!!!</h5>
                     Data yang anda cari tidak ditemukan
                 </div>
-                <a href="{{ url('/dosen') }}" class="btn btn-warning">Kembali</a>
+                <a href="{{ url('/mahasiswa') }}" class="btn btn-warning">Kembali</a>
             </div>
         </div>
     </div>
 @else
-    <form action="{{ url('/dosen/' . $dosen->dosen_id . '/update_dosen') }}" method="POST" id="form-edit" enctype="multipart/form-data">
+    <form action="{{ url('/mahasiswa/' . $mahasiswa->mhs_nim . '/update_mhs') }}" method="POST" id="form-edit" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div class="modal-header" style="background-color: #1a2e4f; color: white;">
-            <h5 class="modal-title">Edit Data Dosen</h5>
+            <h5 class="modal-title">Edit Data mahasiswa</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
 
             {{-- Foto Profil Bulat --}}
             <div class="mb-2  text-center">
-                @if ($dosen->profile_picture)
-                    <img id="preview-img" src="{{ asset('storage/' . $dosen->profile_picture) }}" 
+                @if ($mahasiswa->profile_picture)
+                    <img id="preview-img" src="{{ asset('storage/' . $mahasiswa->profile_picture) }}" 
                          alt="Foto Profil" 
                          class="img-thumbnail rounded-circle" 
                          style="width: 150px; height: 150px; object-fit: cover;">
@@ -54,52 +54,57 @@
 
 
             {{-- Form input lain --}}
-            <div class="form-group text-left">
-                <label>Nama Lengkap</label>
-                <input type="text" name="nama" id="nama" class="form-control" 
-                       value="{{ $dosen->nama }}" required>
-                <small id="error-nama" class="error-text form-text text-danger"></small>
-            </div>
-
-            <div class="form-group text-left">
-                <label>Email</label>
-                <input type="email" name="email" id="email" class="form-control" 
-                       value="{{ $dosen->email }}" required>
-                <small id="error-email" class="error-text form-text text-danger"></small>
+             <div class="form-group">
+                <label>NIM</label>
+                <input type="text" name="mhs_nim" id="mhs_nim" class="form-control" 
+                       value="{{ $mahasiswa->mhs_nim }}" readonly>
+                <small class="form-text text-muted">NIM tidak dapat diubah.</small>
             </div>
 
             <div class="form-group">
-                <label>No. Telepon</label>
+                <label>Nama Lengkap</label>
+                <input type="text" name="full_name" id="full_name" class="form-control" 
+                       value="{{ $mahasiswa->full_name }}" required>
+                <small id="error-full_name" class="error-text form-text text-danger"></small>
+            </div>
+
+            <div class="form-group">
+                <label>Alamat</label>
+                <textarea name="alamat" id="alamat" class="form-control">{{ $mahasiswa->alamat }}</textarea>
+                <small id="error-alamat" class="error-text form-text text-danger"></small>
+            </div>
+
+            <div class="form-group">
+                <label>Telepon</label>
                 <input type="text" name="telp" id="telp" class="form-control" 
-                       value="{{ $dosen->telp }}">
+                       value="{{ $mahasiswa->telp }}">
                 <small id="error-telp" class="error-text form-text text-danger"></small>
             </div>
 
-            <div class="form-group text-left">
-                <label for="id_minat">Bidang Penelitian</label>
-                <select name="id_minat" class="form-control">
-                    <option value="">-- Pilih Bidang Penelitian --</option>
-                    @foreach($bidang_penelitian as $bidang)
-                        <option value="{{ $bidang->id_minat }}"
-                            {{ (old('id_minat', $dosen->id_minat) == $bidang->id_minat) ? 'selected' : '' }}>
-                            {{ $bidang->bidang }}
-                        </option>
-                    @endforeach
-                </select>
+            <div class="form-group">
+                <label>Status Magang</label>
+                <input type="text" class="form-control" value="{{ ucfirst($mahasiswa->status_magang) }}" readonly>
             </div>
 
-            <div class="form-group text-left">
+            <div class="form-group">
+                <label>Prodi</label>
+                <input type="text" class="form-control" 
+                       value="{{ $mahasiswa->prodi->nama_prodi ?? '-' }}" readonly>
+            </div>
+
+            <div class="form-group">
                 <label>Username</label>
-                <input value="{{ $dosen->user->username ?? '' }}" type="text" name="username" id="username" class="form-control" required>
+                <input value="{{ $mahasiswa->user->username }}" type="text" name="username" id="username" class="form-control" required>
                 <small id="error-username" class="error-text form-text text-danger"></small>
             </div>
 
-            <div class="form-group text-left">
+            <div class="form-group">
                 <label>Password</label>
                 <input value="" type="password" name="password" id="password" class="form-control">
-                <small class="form-text text-muted">Abaikan jika tidak ingin mengubah password</small>
+                <small class="form-text text-muted">Abaikan jika tidak ingin ubah password</small>
                 <small id="error-password" class="error-text form-text text-danger"></small>
             </div>
+
 
         </div>
         <div class="modal-footer">
@@ -107,6 +112,7 @@
             <button type="submit" class="btn btn-primary">Simpan</button>
         </div>
     </form>
+    
 
 <script>
 $(document).ready(function () {
@@ -139,7 +145,7 @@ $(document).ready(function () {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "{{ route('dosen.hapus_foto', $dosen->dosen_id) }}",
+                    url: "{{ route('mhs.hapus_foto', $mahasiswa->mhs_nim) }}",
                     type: 'DELETE',
                     data: {
                         _token: "{{ csrf_token() }}"
@@ -177,9 +183,10 @@ $(document).ready(function () {
 
     $("#form-edit").validate({
         rules: {
-            nama: { required: true, maxlength: 100 },
-            email: { required: true, email: true },
+            full_name: { required: true, maxlength: 100 },
+            alamat: { maxlength: 255 },
             telp: { maxlength: 20 },
+            prodi_id: { digits: true },
             username: { required: true, maxlength: 20 },
             password: { minlength: 5, maxlength: 20 },
             profile_picture: { extension: "jpg|jpeg|png|webp", filesize: 2048000 } // max 2 MB
@@ -205,8 +212,8 @@ $(document).ready(function () {
                             title: 'Berhasil',
                             text: response.message
                         });
-                        if ($.fn.DataTable.isDataTable('#dosen-table')) {
-                            $('#dosen-table').DataTable().ajax.reload(null, false);
+                        if ($.fn.DataTable.isDataTable('#mahasiswa-table')) {
+                            $('#mahasiswa-table').DataTable().ajax.reload(null, false);
                         }
                     } else {
                         $('.text-danger').text('');

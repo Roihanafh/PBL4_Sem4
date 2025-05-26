@@ -405,5 +405,124 @@ class MahasiswaController extends Controller
 
         return redirect('/');
     }
+
+    public function show_mhs($mhs_nim)
+    {
+        $mahasiswa = MahasiswaModel::with(['user', 'prodi'])->where('mhs_nim', $mhs_nim)->first();
+
+        if (!$mahasiswa) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data mahasiswa dengan NIM ' . $mhs_nim . ' tidak ditemukan.'
+            ], 404);
+        }
+
+        return view('mahasiswa.show_mhs', [
+            'mahasiswa' => $mahasiswa
+        ]);
+    }
+
+    public function edit_mhs($mhs_nim)
+    {
+        $mahasiswa = MahasiswaModel::with(['prodi', 'user'])->find($mhs_nim);
+
+        return view('mahasiswa.edit_mhs', compact('mahasiswa'));
+    }
+
+    public function update_mhs(Request $request, $mhs_nim)
+    {
+        $mahasiswa = MahasiswaModel::with('user')->find($mhs_nim);
+
+        if (!$mahasiswa) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data mahasiswa tidak ditemukan.'
+            ]);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'username'  => 'required|max:20|unique:m_users,username,' . $mahasiswa->user->user_id . ',user_id',
+            'password'  => 'nullable|min:5|max:20',
+            'full_name' => 'required|max:100',
+            'alamat'    => 'nullable|max:255',
+            'telp'      => 'nullable|max:20',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validasi gagal, periksa input anda.',
+                'msgField' => $validator->errors()
+            ]);
+        }
+
+        try {
+            $mahasiswa->full_name = $request->full_name;
+            $mahasiswa->alamat = $request->alamat;
+            $mahasiswa->telp = $request->telp;
+
+            if ($request->hasFile('profile_picture')) {
+                if ($mahasiswa->profile_picture && Storage::disk('public')->exists($mahasiswa->profile_picture)) {
+                    Storage::disk('public')->delete($mahasiswa->profile_picture);
+                }
+
+                $path = $request->file('profile_picture')->store('profile_mahasiswa', 'public');
+                $mahasiswa->profile_picture = $path;
+            }
+
+            $mahasiswa->save();
+
+            $user = $mahasiswa->user;
+            $user->username = $request->username;
+            if (!empty($request->password)) {
+                $user->password = bcrypt($request->password);
+            }
+            $user->save();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data mahasiswa berhasil diperbarui.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan data.',
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function hapus_foto_profile($mhs_nim)
+    {
+        $mahasiswa = MahasiswaModel::find($mhs_nim);
+
+        if (!$mahasiswa) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data mahasiswa tidak ditemukan.'
+            ]);
+        }
+
+        try {
+            if ($mahasiswa->profile_picture && Storage::disk('public')->exists($mahasiswa->profile_picture)) {
+                Storage::disk('public')->delete($mahasiswa->profile_picture);
+            }
+
+            $mahasiswa->profile_picture = null;
+            $mahasiswa->save();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Foto profil mahasiswa berhasil dihapus.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Terjadi kesalahan saat menghapus foto profil.',
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
 }
 
