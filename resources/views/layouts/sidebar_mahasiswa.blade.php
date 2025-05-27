@@ -5,7 +5,7 @@
           <div class="logo-header" data-background-color="dark">
             <a href="index.html" class="logo">
               <img
-                src="img/MagangIn.png"
+                src="{{ asset('img/MagangIn.png') }}"
                 alt="navbar brand"
                 class="navbar-brand"
                 height="100"
@@ -69,7 +69,7 @@
                 <div class="collapse" id="charts2">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a>
+                      <a href="{{ route('lowongan.rekomendasi') }}">
                         <span class="sub-item">Rekomendasi berdasarkan profil</span>
                       </a>
                     </li>

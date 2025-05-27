@@ -149,4 +149,55 @@ class LowonganController extends Controller
         $l->update($request->all());
         return response()->json(['status'=>true,'message'=>'Lowongan diperbarui']);
     }
+
+public function rekomendasi(Request $request)
+{
+        // Mulai query pada semua lowongan aktif
+        $q = LowonganModel::with(['perusahaan', 'periode'])
+             ->where('status', 'aktif');
+
+        // Filter posisi / jabatan (judul)
+        if ($request->filled('posisi')) {
+            $q->where('judul', 'like', '%'.$request->posisi.'%');
+        }
+
+        // Filter skill (deskripsi)
+        if ($request->filled('skill')) {
+            $q->where('deskripsi', 'like', '%'.$request->skill.'%');
+        }
+
+        // Filter lokasi
+        if ($request->filled('lokasi')) {
+            $q->where('lokasi', 'like', '%'.$request->lokasi.'%');
+        }
+
+        // Filter gaji minimum
+        if ($request->filled('gaji')) {
+            $q->where('gaji', '>=', $request->gaji);
+        }
+
+        // Filter durasi via relasi periode
+        if ($request->filled('durasi')) {
+            $q->whereHas('periode', function($sub) use ($request) {
+                $sub->where('durasi', $request->durasi);
+            });
+        }
+
+    $lowongan = $q->orderBy('lowongan_id','desc')->get();
+
+    $breadcrumb = (object)[
+        'title'=>'Rekomendasi Magang',
+        'list'=>['Dashboard Mahasiswa','Rekomendasi Magang']
+    ];
+    $page       = (object)['title'=>'Rekomendasi Magang'];
+    $activeMenu = 'rekomendasi';
+
+    return view('rekomendasi.index', compact(
+        'breadcrumb','page','activeMenu','lowongan'
+    ));
+}
+
+    
+
+
 }
