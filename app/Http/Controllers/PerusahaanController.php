@@ -99,31 +99,31 @@ class PerusahaanController extends Controller
     }
 
     public function update_ajax(Request $request, $id)
-{
-    $perusahaan = PerusahaanModel::find($id);
-
-    if (!$perusahaan) {
-        return response()->json(['status' => false, 'message' => 'Data tidak ditemukan']);
+    {
+        $perusahaan = PerusahaanModel::find($id);
+    
+        if (!$perusahaan) {
+            return response()->json(['status' => false, 'message' => 'Data tidak ditemukan']);
+        }
+    
+        $validator = Validator::make($request->all(), [
+            'nama'    => 'required|max:100',
+            'email'   => 'required|email|unique:m_perusahaan_mitra,email,' . $id . ',perusahaan_id',
+            'telepon' => 'nullable|max:20',
+        ]);
+    
+        if ($validator->fails()) {
+            return response()->json(['status' => false, 'msgField' => $validator->errors(), 'message' => 'Validasi gagal']);
+        }
+    
+        try {
+            $perusahaan->update($request->only('nama', 'email', 'telepon', 'alamat'));
+    
+            return response()->json(['status' => true, 'message' => 'Data perusahaan diperbarui']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => false, 'message' => 'Kesalahan: ' . $e->getMessage()]);
+        }
     }
-
-    $validator = Validator::make($request->all(), [
-        'nama'    => 'required|max:100',
-        'email'   => 'required|email|unique:m_perusahaan_mitra,email,' . $id . ',perusahaan_id',
-        'telepon' => 'nullable|max:20',
-    ]);
-
-    if ($validator->fails()) {
-        return response()->json(['status' => false, 'msgField' => $validator->errors(), 'message' => 'Validasi gagal']);
-    }
-
-    try {
-        $perusahaan->update($request->only('nama', 'email', 'telepon'));
-
-        return response()->json(['status' => true, 'message' => 'Data perusahaan diperbarui']);
-    } catch (\Exception $e) {
-        return response()->json(['status' => false, 'message' => 'Kesalahan: ' . $e->getMessage()]);
-    }
-}
 
     public function confirm_ajax(Request $request, $id)
     {
@@ -145,17 +145,12 @@ class PerusahaanController extends Controller
         return response()->json(['status' => true, 'message' => 'Data perusahaan dihapus']);
     }
 
-    public function export_pdf()
-    {
-        
-        $perusahaan = PerusahaanModel::orderBy('perusahaan_id')->get();
-        $pdf = Pdf::loadView('perusahaan_mitra.export_pdf', compact('perusahaan'))
-            ->setPaper('a4', 'portrait')
-            ->setOption("isRemoteEnabled", true)
-            ->render();
-
-        return $pdf->stream('Data_Perusahaan_' . date('Y-m-d_H-i-s') . '.pdf');
-    }
+    public function exportPdf()
+{
+    $perusahaan = PerusahaanModel::all();
+    $pdf = Pdf::loadView('perusahaan_mitra.export_pdf', compact('perusahaan'));
+    return $pdf->download('laporan_perusahaan.pdf');
+}
 
     public function export_excel()
     {

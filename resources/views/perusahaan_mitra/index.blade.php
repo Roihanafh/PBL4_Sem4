@@ -7,10 +7,10 @@
       <button onclick="modalAction('{{ url('/perusahaan/import') }}')" class="btn btn-info">
         Import Perusahaan
       </button>
-      <a href="{{ url('/perusahaan/export_excel') }}" class="btn btn-primary">
+      <a href="{{ url('/perusahaan-mitra/export_excel') }}" class="btn btn-primary">
         <i class="fa fa-file-excel"></i> Export Perusahaan
       </a>
-      <a href="{{ url('/perusahaan/export_pdf') }}" class="btn btn-warning">
+      <a href="{{ url('/perusahaan-mitra/export_pdf') }}" class="btn btn-warning">
         <i class="fa fa-file-pdf"></i> Export Perusahaan
       </a>
       <button class="btn btn-primary btn-round ms-auto" onclick="modalAction('{{ url('/perusahaan-mitra/create_ajax') }}')">
