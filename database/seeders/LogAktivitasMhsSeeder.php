@@ -12,14 +12,59 @@ class LogAktivitasMhsSeeder extends Seeder
      * Run the database seeds.
      */
     public function run(): void
-    {
-        $data = [
-             [
-                'lamaran_id' => 1,
-                'keterangan' => 'Mahasiswa mengirim lamaran magang.',
-                'waktu' => now()->subDays(5),
-            ],
-        ];
-        DB::table('t_log_aktivitas_mhs')->insert($data);
-    }
+{
+    $data = [
+        // [
+        //     'lamaran_id' => 2,
+        //     'keterangan' => 'Mahasiswa mengirim lamaran magang',
+        //     'waktu' => now()->subDays(13)->setTime(11, 41, 49), // 2025-05-11 11:41:49 WIB
+        // ],
+        [
+            'lamaran_id' => 2,
+            'keterangan' => 'Mahasiswa diterima untuk magang di perusahaan',
+            'waktu' => now()->subDays(9)->setTime(9, 0, 0), // 2025-05-15 09:00:00 WIB
+        ],
+        [
+            'lamaran_id' => 2,
+            'keterangan' => 'Hari pertama magang: Orientasi tim IT',
+            'waktu' => now()->subDays(4)->setTime(8, 30, 0), // 2025-05-20 08:30:00 WIB
+        ],
+        [
+            'lamaran_id' => 2,
+            'keterangan' => 'Membantu setup database untuk proyek internal',
+            'waktu' => now()->subDays(3)->setTime(10, 15, 0), // 2025-05-21 10:15:00 WIB
+        ],
+        [
+            'lamaran_id' => 2,
+            'keterangan' => 'Mengikuti pelatihan penggunaan API perusahaan',
+            'waktu' => now()->subDays(2)->setTime(13, 0, 0), // 2025-05-22 13:00:00 WIB
+        ],
+        [
+            'lamaran_id' => 2,
+            'keterangan' => 'Membantu debugging kode aplikasi web',
+            'waktu' => now()->subDay()->setTime(14, 20, 0), // 2025-05-23 14:20:00 WIB
+        ],
+        [
+            'lamaran_id' => 2,
+            'keterangan' => 'Membuat laporan harian perkembangan proyek',
+            'waktu' => now()->setTime(11, 0, 0), // 2025-05-24 11:00:00 WIB
+        ],
+        [
+            'lamaran_id' => 2,
+            'keterangan' => 'Mengikuti meeting dengan tim developer',
+            'waktu' => now()->addDay()->setTime(9, 30, 0), // 2025-05-25 09:30:00 WIB
+        ],
+        [
+            'lamaran_id' => 2,
+            'keterangan' => 'Menguji fitur baru pada aplikasi mobile',
+            'waktu' => now()->addDays(2)->setTime(15, 10, 0), // 2025-05-26 15:10:00 WIB
+        ],
+        [
+            'lamaran_id' => 2,
+            'keterangan' => 'Membantu update dokumentasi teknis sistem',
+            'waktu' => now()->addDays(3)->setTime(12, 45, 0), // 2025-05-27 12:45:00 WIB
+        ],
+    ];
+    DB::table('t_log_aktivitas_mhs')->insert($data);
+}
 }

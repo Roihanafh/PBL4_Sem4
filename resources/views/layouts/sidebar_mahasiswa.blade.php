@@ -116,7 +116,7 @@
                 <div class="collapse" id="charts4">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a>
+                      <a href="{{ url('log-aktivitas-mhs') }}">
                         <span class="sub-item">Isi log harian</span>
                       </a>
                     </li>

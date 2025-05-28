@@ -201,4 +201,12 @@ Route::middleware(['auth','authorize:mahasiswa'])->group(function () {
 
 
     });
+
+    Route::group(['prefix' => 'log-aktivitas-mhs'], function () {
+        Route::get('/', [LogAktivitasMhsController::class, 'index_mhs']);
+        Route::post('/list', [LogAktivitasMhsController::class, 'list_pov_mhs']);
+        Route::get('/{id}/show_ajax', [LogAktivitasMhsController::class, 'showAjaxMhs']);
+        Route::get('/{id}/create', [LogAktivitasMhsController::class, 'create_ajax']);
+        Route::post('/ajax', [LogAktivitasMhsController::class, 'store_ajax']);
+    });
 });

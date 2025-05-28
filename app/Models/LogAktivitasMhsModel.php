@@ -20,7 +20,7 @@ class LogAktivitasMhsModel extends Model
     ];
 
     protected $casts = [
-        'waktu' => 'datetime',
+        'waktu' => 'date',
     ];
 
     /**
