@@ -99,31 +99,31 @@ class PerusahaanController extends Controller
     }
 
     public function update_ajax(Request $request, $id)
-    {
-        $perusahaan = PerusahaanModel::find($id);
+{
+    $perusahaan = PerusahaanModel::find($id);
 
-        if (!$perusahaan) {
-            return response()->json(['status' => false, 'message' => 'Data tidak ditemukan']);
-        }
-
-        $validator = Validator::make($request->all(), [
-            'nama'    => 'required|max:100',
-            'email'   => 'required|email|unique:m_perusahaan_mitra,email,' . $id . ',perusahaan_id',
-            'telepon' => 'nullable|max:20',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['status' => false, 'msgField' => $validator->errors(), 'message' => 'Validasi gagal']);
-        }
-
-        try {
-            $perusahaan->update($request->only('nama', 'email', 'telepon'));
-
-            return response()->json(['status' => true, 'message' => 'Data perusahaan diperbarui']);
-        } catch (\Exception $e) {
-            return response()->json(['status' => false, 'message' => 'Kesalahan: ' . $e->getMessage()]);
-        }
+    if (!$perusahaan) {
+        return response()->json(['status' => false, 'message' => 'Data tidak ditemukan']);
     }
+
+    $validator = Validator::make($request->all(), [
+        'nama'    => 'required|max:100',
+        'email'   => 'required|email|unique:m_perusahaan_mitra,email,' . $id . ',perusahaan_id',
+        'telepon' => 'nullable|max:20',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(['status' => false, 'msgField' => $validator->errors(), 'message' => 'Validasi gagal']);
+    }
+
+    try {
+        $perusahaan->update($request->only('nama', 'email', 'telepon'));
+
+        return response()->json(['status' => true, 'message' => 'Data perusahaan diperbarui']);
+    } catch (\Exception $e) {
+        return response()->json(['status' => false, 'message' => 'Kesalahan: ' . $e->getMessage()]);
+    }
+}
 
     public function confirm_ajax(Request $request, $id)
     {
@@ -147,6 +147,7 @@ class PerusahaanController extends Controller
 
     public function export_pdf()
     {
+        
         $perusahaan = PerusahaanModel::orderBy('perusahaan_id')->get();
         $pdf = Pdf::loadView('perusahaan_mitra.export_pdf', compact('perusahaan'))
             ->setPaper('a4', 'portrait')

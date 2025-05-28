@@ -59,7 +59,7 @@
     </form>
 
     <script>
-    $(document).ready(function () {
+   $(document).ready(function () {
     $("#form-edit-perusahaan").validate({
         rules: {
             nama: { required: true, maxlength: 100 },

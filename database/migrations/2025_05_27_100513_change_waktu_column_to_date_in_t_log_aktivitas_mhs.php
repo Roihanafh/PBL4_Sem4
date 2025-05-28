@@ -11,16 +11,14 @@ class ChangeWaktuColumnToDateInTLogAktivitasMhs extends Migration
     {
         // Ubah data waktu menjadi hanya tanggal
         DB::statement('UPDATE t_log_aktivitas_mhs SET waktu = DATE(waktu)');
-        Schema::table('t_log_aktivitas_mhs', function (Blueprint $table) {
-            $table->date('waktu')->change();
-        });
+       
     }
 
     public function down()
     {
         Schema::table('t_log_aktivitas_mhs', function (Blueprint $table) {
             // Kembalikan ke timestamp jika migrasi dibatalkan
-            $table->timestamp('waktu')->useCurrent()->change();
+            
         });
     }
 }
