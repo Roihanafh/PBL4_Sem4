@@ -18,17 +18,18 @@
       </div>
     </div>
 
-    <div class="row mb-3">
-      <div class="col-md-3">
-        <label for="prodi_id" class="form-label">Filter Prodi:</label>
-        <select id="prodi_id" name="prodi_id" class="form-control">
-          <option value="">- Semua Prodi -</option>
-          @foreach($prodis as $prodi)
-            <option value="{{ $prodi->prodi_id }}">{{ $prodi->nama_prodi }}</option>
-          @endforeach
-        </select>
-      </div>
-    </div>
+  <div class="col-md-4">
+    <label for="mhs_nim" class="form-label">Nama Mahasiswa</label>
+    <select name="mhs_nim" id="mhs_nim" class="form-control">
+      <option value="">-- Semua Mahasiswa --</option>
+      @foreach($mahasiswas as $mhs)
+        <option value="{{ $mhs->mhs_nim }}">{{ $mhs->full_name }}</option>
+      @endforeach
+    </select>
+  </div>
+</div>
+
+
 
     <table id="log-table" class="display table table-striped" style="width:100%">
       <thead class="thead-dark">
@@ -63,8 +64,9 @@
       ajax: {
         url: "{{ url('/log-aktivitas/list') }}", // Pastikan route ini menerima POST
         type: "POST", // WAJIB POST, karena route-nya hanya mendukung POST
-        data: function (d) {
-          d.prodi_id = $('#prodi_id').val(); // Filter berdasarkan prodi_id
+        data: function(d) {
+            d.prodi_id = $('#prodi_id').val(); // jika kamu sudah punya ini
+            d.mhs_nim = $('#mhs_nim').val();
         }
       },
       columns: [
@@ -80,6 +82,9 @@
     // Reload table saat filter prodi berubah
     $('#prodi_id').on('change', function () {
       table.ajax.reload();
+    });
+    $('#mhs_nim').change(function () {
+    $('#log-table').DataTable().ajax.reload();
     });
   });
 

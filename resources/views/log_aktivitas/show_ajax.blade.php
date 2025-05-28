@@ -37,7 +37,7 @@
         </tr>
         <tr>
             <th class="text-right">Waktu:</th>
-            <td>{{ $aktivitas->waktu->format('d-m-Y H:i') }}</td>
+            <td>{{ $aktivitas->waktu->format('d-m-Y') }}</td>
         </tr>
     </table>
 
