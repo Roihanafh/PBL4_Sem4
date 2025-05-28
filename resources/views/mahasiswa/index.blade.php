@@ -1,4 +1,4 @@
-@extends('layouts.template_mhs')
+@extends('layouts.template')
 
 @section('content')
 <div class="card">
