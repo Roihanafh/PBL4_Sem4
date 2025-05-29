@@ -14,24 +14,28 @@ class LogAktivitasMhsSeeder extends Seeder
     public function run(): void
 {
     $data = [
-        // [
-        //     'lamaran_id' => 2,
-        //     'keterangan' => 'Mahasiswa mengirim lamaran magang',
-        //     'waktu' => now()->subDays(13)->setTime(11, 41, 49), // 2025-05-11 11:41:49 WIB
-        // ],
         [
             'lamaran_id' => 1,
+<<<<<<< HEAD
+=======
+            'keterangan' => 'Mahasiswa mengirim lamaran magang',
+            'waktu' => now()->subDays(13)
+        ],
+        [
+            'lamaran_id' => 1,
+>>>>>>> 16ca67020666036955a19242956f36aac289a16a
             'keterangan' => 'Mahasiswa diterima untuk magang di perusahaan',
-            'waktu' => now()->subDays(9)->setTime(9, 0, 0), // 2025-05-15 09:00:00 WIB
+            'waktu' => now()->subDays(9)
         ],
         [
             'lamaran_id' => 1,
             'keterangan' => 'Hari pertama magang: Orientasi tim IT',
-            'waktu' => now()->subDays(4)->setTime(8, 30, 0), // 2025-05-20 08:30:00 WIB
+            'waktu' => now()->subDays(4)
         ],
         [
             'lamaran_id' => 1,
             'keterangan' => 'Membantu setup database untuk proyek internal',
+<<<<<<< HEAD
             'waktu' => now()->subDays(3)->setTime(10, 15, 0), // 2025-05-21 10:15:00 WIB
      ],
         [
@@ -59,10 +63,39 @@ class LogAktivitasMhsSeeder extends Seeder
             'keterangan' => 'Menguji fitur baru pada aplikasi mobile',
             'waktu' => now()->addDays(2)->setTime(15, 10, 0), // 2025-05-26 15:10:00 WIB
        ],
+=======
+            'waktu' => now()->subDays(3)
+        ],
+        [
+            'lamaran_id' => 1,
+            'keterangan' => 'Mengikuti pelatihan penggunaan API perusahaan',
+            'waktu' => now()->subDays(2)
+        ],
+        [
+            'lamaran_id' => 1,
+            'keterangan' => 'Membantu debugging kode aplikasi web',
+            'waktu' => now()->subDay()
+        ],
+        [
+            'lamaran_id' => 1,
+            'keterangan' => 'Membuat laporan harian perkembangan proyek',
+            'waktu' => now()
+        ],
+        [
+            'lamaran_id' => 1,
+            'keterangan' => 'Mengikuti meeting dengan tim developer',
+            'waktu' => now()->addDay()
+        ],
+        [
+            'lamaran_id' => 1,
+            'keterangan' => 'Menguji fitur baru pada aplikasi mobile',
+            'waktu' => now()->addDays(2)
+        ],
+>>>>>>> 16ca67020666036955a19242956f36aac289a16a
         [
             'lamaran_id' => 1,
             'keterangan' => 'Membantu update dokumentasi teknis sistem',
-            'waktu' => now()->addDays(3)->setTime(12, 45, 0), // 2025-05-27 12:45:00 WIB
+            'waktu' => now()->addDays(3)
         ],
     ];
     DB::table('t_log_aktivitas_mhs')->insert($data);

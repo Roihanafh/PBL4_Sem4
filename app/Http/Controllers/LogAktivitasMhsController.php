@@ -30,8 +30,8 @@ class LogAktivitasMhsController extends Controller
         $activeMenu = 'log_aktivitas';
 
         $prodis = ProdiModel::all();
-
-        return view('log_aktivitas.index', compact('breadcrumb', 'page', 'activeMenu', 'prodis'));
+        $mahasiswas = MahasiswaModel::select('full_name', 'mhs_nim')->orderBy('full_name')->get();
+        return view('log_aktivitas.index', compact('breadcrumb', 'page', 'activeMenu', 'prodis', 'mahasiswas'));
     }
 
     public function list(Request $request)
@@ -66,6 +66,12 @@ class LogAktivitasMhsController extends Controller
                 });
             }
 
+            if ($request->filled('mhs_nim')) {
+                $aktivitas->whereHas('lamaran', function ($query) use ($request) {
+                    $query->where('mhs_nim', $request->mhs_nim);
+                });
+            }
+
             $aktivitas = $aktivitas->orderByDesc('waktu');
 
             return DataTables::of($aktivitas)
@@ -76,10 +82,21 @@ class LogAktivitasMhsController extends Controller
             ->addColumn('waktu', fn($item) => $item->waktu->format('d-m-Y H:i'))
             ->addColumn('aksi', function ($item) {
                 return '<button onclick="modalAction(\'' . url('/log-aktivitas/' . $item->aktivitas_id . '/show_ajax') . '\')" class="btn btn-info btn-sm"><i class="fa fa-eye"></i></button>';
-        })
-        ->rawColumns(['aksi'])
-        ->make(true);
-
+            })
+            ->filter(function ($query) use ($request) {
+                if ($request->has('search') && $request->search['value'] != '') {
+                    $search = $request->search['value'];
+                    $query->where(function($q) use ($search) {
+                        $q->whereHas('lamaran.mahasiswa', function($mahasiswaQuery) use ($search) {
+                            $mahasiswaQuery->where('full_name', 'like', "%{$search}%");
+                        })->orWhereHas('lamaran.mahasiswa.prodi', function($prodiQuery) use ($search) {
+                            $prodiQuery->where('nama_prodi', 'like', "%{$search}%");
+                        })->orWhere('keterangan', 'like', "%{$search}%");
+                    });
+                }
+            })
+            ->rawColumns(['aksi'])
+            ->make(true);
 
         return abort(404);
     }
