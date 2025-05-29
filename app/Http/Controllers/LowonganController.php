@@ -22,32 +22,32 @@ class LowonganController extends Controller
     {
         $breadcrumb = (object)[
             'title' => 'Lowongan Magang',
-            'list'  => ['Home','Lowongan']
+            'list'  => ['Home', 'Lowongan']
         ];
         $page = (object)['title' => 'Manajemen Lowongan Magang'];
         $activeMenu = 'lowongan';
 
-        return view('lowongan.index', compact('breadcrumb','page','activeMenu'));
+        return view('lowongan.index', compact('breadcrumb', 'page', 'activeMenu'));
     }
 
     public function list(Request $request)
     {
-        if($request->ajax()) {
-            $q = LowonganModel::with(['perusahaan','periode'])
-                ->where('status','aktif')       // ⬅ hanya ambil yang aktif
+        if ($request->ajax()) {
+            $q = LowonganModel::with(['perusahaan', 'periode'])
+                ->where('status', 'aktif')       // ⬅ hanya ambil yang aktif
                 ->select(/* ... */);
 
             return DataTables::of($q)
                 ->addIndexColumn()
-                ->addColumn('perusahaan', fn($row)=> $row->perusahaan->nama ?? '-')
-                ->addColumn('periode', fn($row)=> $row->periode->nama_periode ?? '-')
-                ->addColumn('aksi', function($row){
+                ->addColumn('perusahaan', fn($row) => $row->perusahaan->nama ?? '-')
+                ->addColumn('periode', fn($row) => $row->periode->nama_periode ?? '-')
+                ->addColumn('aksi', function ($row) {
                     $url = url("/lowongan/{$row->lowongan_id}");
                     return "
                        <div class='btn-group'>
-                         <button onclick=\"modalAction('".url('/lowongan/'.$row->lowongan_id.'/show_ajax')."')\" class='btn btn-info btn-sm'><i class='fas fa-info-circle'></i></button>
-                         <button onclick=\"modalAction('".url('/lowongan/'.$row->lowongan_id.'/edit_ajax')."')\" class='btn btn-warning btn-sm'><i class='fas fa-edit'></i></button>
-                         <button onclick=\"modalAction('".url('/lowongan/'.$row->lowongan_id.'/delete_ajax')."')\" class='btn btn-danger btn-sm'><i class='fas fa-trash'></i></button>
+                         <button onclick=\"modalAction('" . url('/lowongan/' . $row->lowongan_id . '/show_ajax') . "')\" class='btn btn-info btn-sm'><i class='fas fa-info-circle'></i></button>
+                         <button onclick=\"modalAction('" . url('/lowongan/' . $row->lowongan_id . '/edit_ajax') . "')\" class='btn btn-warning btn-sm'><i class='fas fa-edit'></i></button>
+                         <button onclick=\"modalAction('" . url('/lowongan/' . $row->lowongan_id . '/delete_ajax') . "')\" class='btn btn-danger btn-sm'><i class='fas fa-trash'></i></button>
                        </div>";
                 })
                 ->rawColumns(['aksi'])
@@ -59,7 +59,7 @@ class LowonganController extends Controller
     {
         $perusahaan = PerusahaanModel::all();
         $periode    = PeriodeMagangModel::all();
-        return view('lowongan.create_ajax', compact('perusahaan','periode'));
+        return view('lowongan.create_ajax', compact('perusahaan', 'periode'));
     }
 
     public function store_ajax(Request $request)
@@ -75,19 +75,19 @@ class LowonganController extends Controller
             'sylabus_path'         => 'nullable|url',
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             return response()->json([
-                'status'=>false,
-                'msgField'=>$validator->errors(),
-                'message'=>'Validasi gagal'
+                'status' => false,
+                'msgField' => $validator->errors(),
+                'message' => 'Validasi gagal'
             ]);
         }
 
         LowonganModel::create($request->all());
 
         return response()->json([
-            'status'=>true,
-            'message'=>'Lowongan berhasil ditambahkan'
+            'status' => true,
+            'message' => 'Lowongan berhasil ditambahkan'
         ]);
     }
 
@@ -101,23 +101,23 @@ class LowonganController extends Controller
     {
         $l = LowonganModel::find($lowongan_id);
         if (!$l) {
-        return response()->json(['status'=>false,'message'=>'Data tidak ditemukan'],404);
+            return response()->json(['status' => false, 'message' => 'Data tidak ditemukan'], 404);
         }
 
         // bukan delete(), tapi update status
         $l->update(['status' => 'nonaktif']);
 
         return response()->json([
-        'status'  => true,
-        'message' => 'Lowongan berhasil dinonaktifkan'
+            'status'  => true,
+            'message' => 'Lowongan berhasil dinonaktifkan'
         ]);
     }
 
     public function show_ajax($lowongan_id)
     {
-        $lowongan = LowonganModel::with(['perusahaan','periode'])
-                      ->find($lowongan_id);
-        if(!$lowongan) abort(404,'Not Found');
+        $lowongan = LowonganModel::with(['perusahaan', 'periode'])
+            ->find($lowongan_id);
+        if (!$lowongan) abort(404, 'Not Found');
 
         // convert string ke Carbon
         $lowongan->tanggal_mulai_magang = Carbon::parse($lowongan->tanggal_mulai_magang);
@@ -130,28 +130,28 @@ class LowonganController extends Controller
         $lowongan = LowonganModel::find($lowongan_id);
         $perusahaan = PerusahaanModel::all();
         $periode    = PeriodeMagangModel::all();
-        return view('lowongan.edit_ajax', compact('lowongan','perusahaan','periode'));
+        return view('lowongan.edit_ajax', compact('lowongan', 'perusahaan', 'periode'));
     }
 
     public function update_ajax(Request $request, $lowongan_id)
     {
         $l = LowonganModel::find($lowongan_id);
-        if(!$l) return response()->json(['status'=>false,'message'=>'Data tidak ditemukan']);
+        if (!$l) return response()->json(['status' => false, 'message' => 'Data tidak ditemukan']);
 
         $validator = Validator::make($request->all(), [
             // sama seperti store_ajax
         ]);
 
-        if($validator->fails()){
+        if ($validator->fails()) {
             return response()->json([
-                'status'=>false,
-                'msgField'=>$validator->errors(),
-                'message'=>'Validasi gagal'
+                'status' => false,
+                'msgField' => $validator->errors(),
+                'message' => 'Validasi gagal'
             ]);
         }
 
         $l->update($request->all());
-        return response()->json(['status'=>true,'message'=>'Lowongan diperbarui']);
+        return response()->json(['status' => true, 'message' => 'Lowongan diperbarui']);
     }
 
     // public function rekomendasi(Request $request)
@@ -217,19 +217,21 @@ class LowonganController extends Controller
 
         // 3. Terapkan filter jika ada
         if ($request->filled('posisi')) {
-            $q->where('judul', 'like', '%'.$request->posisi.'%');
+            $q->where('judul', 'like', '%' . $request->posisi . '%');
         }
         if ($request->filled('skill')) {
-            $q->where('deskripsi', 'like', '%'.$request->skill.'%');
+            $q->where('deskripsi', 'like', '%' . $request->skill . '%');
         }
         if ($request->filled('lokasi')) {
-            $q->where('lokasi', 'like', '%'.$request->lokasi.'%');
+            $q->where('lokasi', 'like', '%' . $request->lokasi . '%');
         }
         if ($request->filled('gaji')) {
             $q->where('gaji', '>=', $request->gaji);
         }
         if ($request->filled('durasi')) {
-            $q->whereHas('periode', fn($sub) =>
+            $q->whereHas(
+                'periode',
+                fn($sub) =>
                 $sub->where('durasi', $request->durasi)
             );
         }
@@ -238,15 +240,19 @@ class LowonganController extends Controller
         $lowongan = $q->get();
 
         // 5. Peta ke array five-criteria untuk SMART
-        $raw = $lowongan->map(function($l) use (
-            $mhs, $prefKeywords, $skillKeywords, $totalPref, $totalSkill
+        $raw = $lowongan->map(function ($l) use (
+            $mhs,
+            $prefKeywords,
+            $skillKeywords,
+            $totalPref,
+            $totalSkill
         ) {
             // Hitung jumlah keyword pref yang muncul di judul atau deskripsi
             $prefMatches = 0;
             foreach ($prefKeywords as $kw) {
                 if ($kw !== '' && (
                     stripos($l->judul, $kw) !== false
-                 || stripos($l->deskripsi, $kw) !== false
+                    || stripos($l->deskripsi, $kw) !== false
                 )) {
                     $prefMatches++;
                 }
@@ -276,10 +282,11 @@ class LowonganController extends Controller
 
         // 7. Gabungkan skor kembali ke model LowonganModel
         $ranked = collect($ranking)
-            ->map(fn($r) =>
+            ->map(
+                fn($r) =>
                 $lowongan
-                  ->firstWhere('lowongan_id', $r['id'])
-                  ->setAttribute('smart_score', $r['score'])
+                    ->firstWhere('lowongan_id', $r['id'])
+                    ->setAttribute('smart_score', $r['score'])
             );
 
         // 8. Siapkan data view
@@ -298,37 +305,39 @@ class LowonganController extends Controller
             'lowongan'   => $ranked,
         ]);
     }
-    
-public function show($lowongan_id)
-{
-    // Ambil data lowongan, statistik, dst.
-    $lowongan      = LowonganModel::with(['perusahaan','periode','lamaran'])
-                           ->findOrFail($lowongan_id);
-    $totalJobs     = LowonganModel::where('status','aktif')->count();
-    $totalCompanies= LowonganModel::where('status','aktif')
-                           ->distinct('perusahaan_id')->count('perusahaan_id');
-    $totalPositions= LowonganModel::where('status','aktif')->sum('kuota');
 
-    // Tambahkan breadcrumb + page + activeMenu
-    $breadcrumb = (object)[
-      'title' => 'Detail Lowongan',
-      'list'  => ['Dashboard Mahasiswa', 'Rekomendasi Magang', 'Detail']
-    ];
-    $page = (object)[ 'title' => 'Detail Lowongan' ];
-    $activeMenu = 'rekomendasi';
+    public function show($lowongan_id)
+    {
+        // Ambil data lowongan, statistik, dst.
+        $lowongan = LowonganModel::with(['perusahaan', 'periode', 'lamaran'])
+            ->findOrFail($lowongan_id);
+        $totalJobs = LowonganModel::where('status', 'aktif')->count();
+        $totalCompanies = LowonganModel::where('status', 'aktif')
+            ->distinct('perusahaan_id')->count('perusahaan_id');
+        $totalPositions = LowonganModel::where('status', 'aktif')->sum('kuota');
 
-    // Kirim semua variabel ke view
-    return view('rekomendasi.show', compact(
-      'lowongan',
-      'totalJobs',
-      'totalCompanies',
-      'totalPositions',
-      'breadcrumb',
-      'page',
-      'activeMenu'
-    ));
-}
+        $lowonganList = LowonganModel::with(['perusahaan', 'periode', 'lamaran'])
+            ->orderBy('deadline_lowongan', 'asc')
+            ->get();
 
+        // Tambahkan breadcrumb + page + activeMenu
+        $breadcrumb = (object)[
+            'title' => 'Detail Lowongan',
+            'list'  => ['Dashboard Mahasiswa', 'Rekomendasi Magang', 'Detail']
+        ];
+        $page = (object)['title' => 'Detail Lowongan'];
+        $activeMenu = 'rekomendasi';
 
-
+        // Kirim semua variabel ke view
+        return view('rekomendasi.show', [
+            'lowongan'=> $lowongan,
+            'totalJobs' => $totalJobs,
+            'totalCompanies' => $totalCompanies,
+            'totalPositions' => $totalPositions,
+            'breadcrumb' => $breadcrumb,
+            'page' => $page,
+            'activeMenu' => $activeMenu,
+            'lowonganList' => $lowonganList
+        ]);
+    }
 }
