@@ -109,7 +109,8 @@ class PerusahaanController extends Controller
         $validator = Validator::make($request->all(), [
             'nama'    => 'required|max:100',
             'email'   => 'required|email|unique:m_perusahaan_mitra,email,' . $id . ',perusahaan_id',
-            'telepon' => 'nullable|max:20',
+            'telp' => 'nullable|max:20',
+            'alamat'  => 'required|max:255',
         ]);
     
         if ($validator->fails()) {
@@ -117,7 +118,7 @@ class PerusahaanController extends Controller
         }
     
         try {
-            $perusahaan->update($request->only('nama', 'email', 'telepon', 'alamat'));
+            $perusahaan->update($request->only('nama', 'email', 'telp', 'alamat'));
     
             return response()->json(['status' => true, 'message' => 'Data perusahaan diperbarui']);
         } catch (\Exception $e) {
