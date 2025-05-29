@@ -2,8 +2,6 @@
 
 @section('content')
 <div class="container mt-4">
-  {{-- Judul halaman --}}
-  <h1 class="mb-4">Rekomendasi Magang</h1>
 
   {{-- Filter form --}}
   <form method="GET" action="{{ url()->current() }}" class="card mb-4 p-3 bg-dark text-white">

@@ -8,9 +8,13 @@ use Illuminate\Http\Request;
 use App\Models\LowonganModel;
 use App\Models\PerusahaanModel;
 use App\Models\PeriodeMagangModel;
+use Illuminate\Support\Facades\Auth;
+use App\Models\MahasiswaModel;
 use Carbon\Carbon;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use App\Services\SmartRecommendationService;
+
 
 class LowonganController extends Controller
 {
@@ -150,53 +154,150 @@ class LowonganController extends Controller
         return response()->json(['status'=>true,'message'=>'Lowongan diperbarui']);
     }
 
-public function rekomendasi(Request $request)
-{
-        // Mulai query pada semua lowongan aktif
-        $q = LowonganModel::with(['perusahaan', 'periode'])
-             ->where('status', 'aktif');
+    // public function rekomendasi(Request $request)
+    // {
+    //         // Mulai query pada semua lowongan aktif
+    //         $q = LowonganModel::with(['perusahaan', 'periode'])
+    //             ->where('status', 'aktif');
 
-        // Filter posisi / jabatan (judul)
+    //         // Filter posisi / jabatan (judul)
+    //         if ($request->filled('posisi')) {
+    //             $q->where('judul', 'like', '%'.$request->posisi.'%');
+    //         }
+
+    //         // Filter skill (deskripsi)
+    //         if ($request->filled('skill')) {
+    //             $q->where('deskripsi', 'like', '%'.$request->skill.'%');
+    //         }
+
+    //         // Filter lokasi
+    //         if ($request->filled('lokasi')) {
+    //             $q->where('lokasi', 'like', '%'.$request->lokasi.'%');
+    //         }
+
+    //         // Filter gaji minimum
+    //         if ($request->filled('gaji')) {
+    //             $q->where('gaji', '>=', $request->gaji);
+    //         }
+
+    //         // Filter durasi via relasi periode
+    //         if ($request->filled('durasi')) {
+    //             $q->whereHas('periode', function($sub) use ($request) {
+    //                 $sub->where('durasi', $request->durasi);
+    //             });
+    //         }
+
+    //     $lowongan = $q->orderBy('lowongan_id','desc')->get();
+
+    //     $breadcrumb = (object)[
+    //         'title'=>'Rekomendasi Magang',
+    //         'list'=>['Dashboard Mahasiswa','Rekomendasi Magang']
+    //     ];
+    //     $page       = (object)['title'=>'Rekomendasi Magang'];
+    //     $activeMenu = 'rekomendasi';
+
+    //     return view('rekomendasi.index', compact(
+    //         'breadcrumb','page','activeMenu','lowongan'
+    //     ));
+    // }
+
+    public function rekomendasi(Request $request, SmartRecommendationService $smart)
+    {
+        // 1. Ambil data preferensi mahasiswa yang sedang login
+        //    Asumsikan kolom 'pref' & 'skill' di database menyimpan comma-separated keywords
+        $mhs = MahasiswaModel::where('user_id', Auth::id())->firstOrFail();
+        $prefKeywords  = array_filter(array_map('trim', explode(',', $mhs->pref)));
+        $skillKeywords = array_filter(array_map('trim', explode(',', $mhs->skill)));
+        $totalPref     = count($prefKeywords) ?: 1;
+        $totalSkill    = count($skillKeywords) ?: 1;
+
+        // 2. Bangun query lowongan aktif
+        $q = LowonganModel::with(['perusahaan', 'periode'])
+            ->where('status', 'aktif');
+
+        // 3. Terapkan filter jika ada
         if ($request->filled('posisi')) {
             $q->where('judul', 'like', '%'.$request->posisi.'%');
         }
-
-        // Filter skill (deskripsi)
         if ($request->filled('skill')) {
             $q->where('deskripsi', 'like', '%'.$request->skill.'%');
         }
-
-        // Filter lokasi
         if ($request->filled('lokasi')) {
             $q->where('lokasi', 'like', '%'.$request->lokasi.'%');
         }
-
-        // Filter gaji minimum
         if ($request->filled('gaji')) {
             $q->where('gaji', '>=', $request->gaji);
         }
-
-        // Filter durasi via relasi periode
         if ($request->filled('durasi')) {
-            $q->whereHas('periode', function($sub) use ($request) {
-                $sub->where('durasi', $request->durasi);
-            });
+            $q->whereHas('periode', fn($sub) =>
+                $sub->where('durasi', $request->durasi)
+            );
         }
 
-    $lowongan = $q->orderBy('lowongan_id','desc')->get();
+        // 4. Eksekusi query
+        $lowongan = $q->get();
 
-    $breadcrumb = (object)[
-        'title'=>'Rekomendasi Magang',
-        'list'=>['Dashboard Mahasiswa','Rekomendasi Magang']
-    ];
-    $page       = (object)['title'=>'Rekomendasi Magang'];
-    $activeMenu = 'rekomendasi';
+        // 5. Peta ke array five-criteria untuk SMART
+        $raw = $lowongan->map(function($l) use (
+            $mhs, $prefKeywords, $skillKeywords, $totalPref, $totalSkill
+        ) {
+            // Hitung jumlah keyword pref yang muncul di judul atau deskripsi
+            $prefMatches = 0;
+            foreach ($prefKeywords as $kw) {
+                if ($kw !== '' && (
+                    stripos($l->judul, $kw) !== false
+                 || stripos($l->deskripsi, $kw) !== false
+                )) {
+                    $prefMatches++;
+                }
+            }
+            // Hitung jumlah keyword skill yang muncul di deskripsi
+            $skillMatches = 0;
+            foreach ($skillKeywords as $kw) {
+                if ($kw !== '' && stripos($l->deskripsi, $kw) !== false) {
+                    $skillMatches++;
+                }
+            }
 
-    return view('rekomendasi.index', compact(
-        'breadcrumb','page','activeMenu','lowongan'
-    ));
-}
+            return [
+                'id'     => $l->lowongan_id,
+                // Proporsi match (0–1)
+                'pref'   => $prefMatches  / $totalPref,
+                'skill'  => $skillMatches / $totalSkill,
+                // Kriteria lain
+                'lokasi' => ($l->lokasi === $mhs->lokasi) ? 1.0 : 0.0,
+                'gaji'   => (float) $l->gaji,
+                'durasi' => (float) $l->periode->durasi,
+            ];
+        })->toArray();
 
+        // 6. Hitung skor SMART
+        $ranking = $smart->rank($raw);
+
+        // 7. Gabungkan skor kembali ke model LowonganModel
+        $ranked = collect($ranking)
+            ->map(fn($r) =>
+                $lowongan
+                  ->firstWhere('lowongan_id', $r['id'])
+                  ->setAttribute('smart_score', $r['score'])
+            );
+
+        // 8. Siapkan data view
+        $breadcrumb = (object)[
+            'title' => 'Rekomendasi Magang',
+            'list'  => ['Dashboard Mahasiswa', 'Rekomendasi Magang'],
+        ];
+        $page       = (object)['title' => 'Rekomendasi Magang'];
+        $activeMenu = 'rekomendasi';
+
+        // 9. Render view
+        return view('rekomendasi.index', [
+            'breadcrumb' => $breadcrumb,
+            'page'       => $page,
+            'activeMenu' => $activeMenu,
+            'lowongan'   => $ranked,
+        ]);
+    }
     
 
 

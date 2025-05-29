@@ -9,11 +9,11 @@ class MahasiswaModel extends Model
 {
     use HasFactory;
 
-    protected $table = 'm_mahasiswa';
+    protected $table      = 'm_mahasiswa';
     protected $primaryKey = 'mhs_nim';
-    public $incrementing = false; // karena primary key bertipe varchar
-    protected $keyType = 'string';
-    public $timestamps = false;
+    public $incrementing  = false;
+    protected $keyType    = 'string';
+    public $timestamps    = false;
 
     protected $fillable = [
         'mhs_nim',
@@ -24,6 +24,24 @@ class MahasiswaModel extends Model
         'prodi_id',
         'status_magang',
         'profile_picture',
+
+        // <<-- tambahkan preferensi di sini
+        'pref',           // preferensi kerja
+        'skill',          // keahlian
+        'lokasi',         // lokasi favorit
+        'gaji_minimum',   // range salary (minimum)
+        'durasi',         // periode magang (bulan)
+    ];
+
+    protected $casts = [
+        'mhs_nim'       => 'string',
+        'user_id'       => 'integer',
+        'pref'          => 'integer',
+        'skill'         => 'integer',
+        'lokasi'        => 'string',
+        'gaji_minimum'  => 'integer',
+        'durasi'        => 'integer',
+        'status_magang' => 'string',
     ];
 
     public function user()

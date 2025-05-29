@@ -23,6 +23,7 @@ class LowonganModel extends Model
         'periode_id',
         'sylabus_path',
         'status', 
+        'gaji',               // ← tambahkan ini
     ];
 
     /**
@@ -31,6 +32,7 @@ class LowonganModel extends Model
     protected $casts = [
         'tanggal_mulai_magang' => 'date',
         'deadline_lowongan'    => 'date',
+        'gaji'                 => 'integer',
         'status'               => 'string',
     ];
 
