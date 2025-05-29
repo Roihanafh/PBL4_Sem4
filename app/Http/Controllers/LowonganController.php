@@ -299,6 +299,36 @@ class LowonganController extends Controller
         ]);
     }
     
+public function show($lowongan_id)
+{
+    // Ambil data lowongan, statistik, dst.
+    $lowongan      = LowonganModel::with(['perusahaan','periode','lamaran'])
+                           ->findOrFail($lowongan_id);
+    $totalJobs     = LowonganModel::where('status','aktif')->count();
+    $totalCompanies= LowonganModel::where('status','aktif')
+                           ->distinct('perusahaan_id')->count('perusahaan_id');
+    $totalPositions= LowonganModel::where('status','aktif')->sum('kuota');
+
+    // Tambahkan breadcrumb + page + activeMenu
+    $breadcrumb = (object)[
+      'title' => 'Detail Lowongan',
+      'list'  => ['Dashboard Mahasiswa', 'Rekomendasi Magang', 'Detail']
+    ];
+    $page = (object)[ 'title' => 'Detail Lowongan' ];
+    $activeMenu = 'rekomendasi';
+
+    // Kirim semua variabel ke view
+    return view('rekomendasi.show', compact(
+      'lowongan',
+      'totalJobs',
+      'totalCompanies',
+      'totalPositions',
+      'breadcrumb',
+      'page',
+      'activeMenu'
+    ));
+}
+
 
 
 }

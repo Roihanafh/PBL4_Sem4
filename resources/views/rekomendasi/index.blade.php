@@ -93,12 +93,10 @@
             <p class="text-danger small mb-2">
               Penutupan: {{ $l->deadline_lowongan->format('d M Y') }}
             </p>
-            <a 
-              href="{{ url('/lowongan/'.$l->lowongan_id.'/show_ajax') }}" 
-              class="btn btn-outline-primary w-100"
-            >
-              Lihat Detail
-            </a>
+          <a href="{{ route('rekomendasi.show', $l->lowongan_id) }}"
+            class="btn btn-outline-primary w-100">
+            Lihat Detail
+          </a>
           </div>
           <div class="card-footer text-muted small">
             Dibuat {{ $l->tanggal_mulai_magang?->diffForHumans() ?? '-' }}

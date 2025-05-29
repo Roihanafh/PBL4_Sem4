@@ -23,7 +23,8 @@ class LowonganModel extends Model
         'periode_id',
         'sylabus_path',
         'status', 
-        'gaji',               // ← tambahkan ini
+        'gaji',        
+        'kuota',  
     ];
 
     /**
@@ -34,6 +35,7 @@ class LowonganModel extends Model
         'deadline_lowongan'    => 'date',
         'gaji'                 => 'integer',
         'status'               => 'string',
+        'kuota'                => 'integer',
     ];
 
     // Relasi ke perusahaan

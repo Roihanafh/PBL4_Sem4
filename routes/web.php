@@ -198,7 +198,9 @@ Route::middleware(['auth','authorize:mahasiswa'])->group(function () {
         Route::put('/{nim}/update_mhs', [MahasiswaController::class, 'update_mhs']);
         Route::delete('/{nim}/hapus-foto', [MahasiswaController::class, 'hapus_foto_profile'])->name('mhs.hapus_foto');
         Route::get('/rekomendasi-magang', [LowonganController::class, 'rekomendasi'])->name('lowongan.rekomendasi');
-
+        Route::get('/rekomendasi/{lowongan_id}', [LowonganController::class, 'show'])
+            ->name('rekomendasi.show');
+        
 
     });
 
