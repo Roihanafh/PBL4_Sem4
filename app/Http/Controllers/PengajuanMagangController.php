@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DosenModel;
 use App\Models\LamaranMagangModel;
+use App\Models\MahasiswaModel;
 use App\Models\PerusahaanModel;
 use App\Models\ProdiModel;
 use Illuminate\Http\Request;
@@ -115,6 +116,9 @@ class PengajuanMagangController extends Controller
         $lamaran = LamaranMagangModel::findOrFail($id);
         $lamaran->status = $request->status;
         $lamaran->dosen_id = $request->status === 'diterima' ? $request->dosen_id : null;
+        if ($request->status === 'diterima') {
+            MahasiswaModel::where('mhs_nim', $lamaran->mhs_nim)->update(['status_magang' => "Sedang Magang"]);
+        }
         $lamaran->save();
 
         return response()->json([
@@ -172,6 +176,11 @@ class PengajuanMagangController extends Controller
         $lamaran = LamaranMagangModel::findOrFail($id);
         $lamaran->status = $request->status;
         $lamaran->dosen_id = $request->status === 'diterima' ? $request->dosen_id : null;
+        if ($request->status === 'diterima') {
+            MahasiswaModel::where('mhs_nim', $lamaran->mhs_nim)->update(['status_magang' => "Sedang Magang"]);
+        }else if($request->status === 'pending' || $request->status === 'ditolak'){
+            MahasiswaModel::where('mhs_nim', $lamaran->mhs_nim)->update(['status_magang' => "Belum Magang"]);
+        }
         $lamaran->save();
 
         return response()->json([
