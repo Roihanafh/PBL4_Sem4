@@ -7,8 +7,8 @@
     </div>
     <div class="modal-body">
         {{-- Hidden fields for lamaran_id and waktu --}}
-        <input type="text" name="lamaran_id" id="lamaran_id" value="{{ $lamaran_id }}">
-        <input type="text" name="waktu" id="waktu">
+        <input type="text" name="lamaran_id" id="lamaran_id" value="{{ $lamaran_id }}" hidden>
+        <input type="text" name="waktu" id="waktu" hidden>
 
         {{-- KETERANGAN --}}
         <div class="form-group">
@@ -51,8 +51,8 @@ $(document).ready(function() {
                         });
 
                         // Reload DataTable
-                        if ($.fn.DataTable.isDataTable('#aktivitas-table')) {
-                            $('#aktivitas-table').DataTable().ajax.reload(null, false);
+                        if ($.fn.DataTable.isDataTable('#log-table')) {
+                            $('#log-table').DataTable().ajax.reload(null, false);
                         }
                     } else {
                         $('.text-danger').text(''); // reset error text

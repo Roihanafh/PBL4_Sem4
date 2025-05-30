@@ -219,10 +219,9 @@ class LogAktivitasMhsController extends Controller
 
     public function store_ajax(Request $request)
     {
-        dd($request->all());
         // Validate the incoming request
         $validatedData = $request->validate([
-            'lamaran_id' => 'required|integer|exists:lamaran,id', // Ensure lamaran_id exists in the 'lamaran' table
+            'lamaran_id' => 'required|integer|exists:t_lamaran_magang,lamaran_id', // Ensure lamaran_id exists in the 'lamaran' table
             'waktu' => 'required|date', // Ensure waktu is a valid date
             'keterangan' => 'required|string|max:255', // Keterangan is required, max 255 characters
         ], [
