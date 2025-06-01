@@ -5,6 +5,7 @@ use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\DosenController;
 use App\Http\Controllers\PeriodeController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\FeedbackPengalamanController;
 use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\ProdiController;
 use App\Http\Controllers\LogAktivitasMhsController;
@@ -210,5 +211,11 @@ Route::middleware(['auth','authorize:mahasiswa'])->group(function () {
         Route::get('/{id}/show_ajax', [LogAktivitasMhsController::class, 'showAjaxMhs']);
         Route::get('/{id}/create', [LogAktivitasMhsController::class, 'create_ajax']);
         Route::post('/ajax', [LogAktivitasMhsController::class, 'store_ajax']);
+    });
+
+    Route::group(['prefix' => 'feedback-magang'], function () {
+        Route::get('/', [FeedbackPengalamanController::class, 'index']);
+        Route::get('/feedback/{lamaran}/create', [FeedbackPengalamanController::class, 'create'])->name('feedback.create');
+        Route::post('/feedback', [FeedbackPengalamanController::class, 'store'])->name('feedback.store');
     });
 });

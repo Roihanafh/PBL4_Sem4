@@ -9,7 +9,7 @@ class FeedbackModel extends Model
 {
     use HasFactory;
 
-    protected $table = 'feedback';
+    protected $table = 't_feedback';
     protected $primaryKey = 'feedback_id';
     public $timestamps = false;
 
@@ -24,12 +24,11 @@ class FeedbackModel extends Model
 
     public function mahasiswa()
     {
-        return $this->belongsTo(MahasiswaModel::class, 'mhs_nim', 'nim');
+        return $this->belongsTo(MahasiswaModel::class, 'mhs_nim', 'mhs_nim');
     }
 
     public function lowongan()
     {
-        return $this->belongsTo(LowonganModel::class, 'target_id', 'lowongan_id')
-                    ->where('target_type', 'lowongan');
+        return $this->belongsTo(LowonganModel::class, 'lowongan_id', 'lowongan_id');
     }
 }

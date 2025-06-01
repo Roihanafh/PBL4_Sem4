@@ -166,16 +166,16 @@ class PengajuanMagangController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|in:diterima,ditolak,pending',
+            'status' => 'required|in:diterima,ditolak,pending,selesai',
             'dosen_id' => 'required_if:status,diterima|nullable|exists:m_dosen,dosen_id'
         ], [
-            'status.in' => 'Status harus berupa diterima, ditolak, atau pending.',
+            'status.in' => 'Status harus berupa diterima, ditolak, pending, atau selesai.',
             'dosen_id.required_if' => 'Dosen pembimbing wajib dipilih jika lamaran diterima.'
         ]);
 
         $lamaran = LamaranMagangModel::findOrFail($id);
         $lamaran->status = $request->status;
-        $lamaran->dosen_id = $request->status === 'diterima' ? $request->dosen_id : null;
+        $lamaran->dosen_id = $request->status === 'diterima' || $request->status === 'selesai' ? $request->dosen_id : null;
         if ($request->status === 'diterima') {
             MahasiswaModel::where('mhs_nim', $lamaran->mhs_nim)->update(['status_magang' => "Sedang Magang"]);
         }else if($request->status === 'pending' || $request->status === 'ditolak'){

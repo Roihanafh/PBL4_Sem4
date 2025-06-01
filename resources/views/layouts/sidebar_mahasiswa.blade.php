@@ -126,7 +126,7 @@
                       </a>
                     </li>
                     <li>
-                      <a>
+                      <a href="{{ url('feedback-magang') }}">
                         <span class="sub-item">Feedback pengalaman</span>
                       </a>
                     </li>

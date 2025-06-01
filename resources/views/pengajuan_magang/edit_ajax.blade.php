@@ -55,6 +55,7 @@
                                 <option value="pending" {{ $lamaran->status == 'pending' ? 'selected' : '' }}>Pending</option>
                                 <option value="diterima" {{ $lamaran->status == 'diterima' ? 'selected' : '' }}>Diterima</option>
                                 <option value="ditolak" {{ $lamaran->status == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
+                                <option value="selesai" {{ $lamaran->status == 'selesai' ? 'selected' : '' }}>Selesai</option>
                             </select>
                         </td>
                     </tr>
@@ -122,11 +123,11 @@
         let status = $('select[name="status"]').val();
         let dosenId = $('select[name="dosen_id"]').val();
 
-        if (status === 'diterima' && (!dosenId || dosenId === '')) {
+        if ((status === 'diterima' || status === 'selesai')  && (!dosenId || dosenId === '')) {
             Swal.fire({
                 icon: 'warning',
                 title: 'Validasi Gagal',
-                text: 'Pilih dosen pembimbing terlebih dahulu sebelum menerima lamaran.'
+                text: 'Pilih dosen pembimbing terlebih dahulu sebelum menerima atau menyelesaikan lamaran.'
             });
             return;
         }

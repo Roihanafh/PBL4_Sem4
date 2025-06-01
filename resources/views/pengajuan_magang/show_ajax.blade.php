@@ -51,8 +51,18 @@
                     <tr>
                         <th class="text-right" style="background-color: #f7f9fc; color: #1a2e4f;">Status Lamaran:</th>
                         <td>
-                            <span class="badge" style="{{ $lamaran->status == 'diterima' ? 'background-color: #28a745; color: white;' : ($lamaran->status == 'Ditolak' ? 'background-color: #dc3545; color: white;' : 'background-color: #f4b740; color: #1a2e4f;') }}">
-                                {{ $lamaran->status }}
+                            @php
+                                $status = $lamaran->status;
+                                $style = match($status) {
+                                    'diterima' => 'background-color: #28a745; color: white;',
+                                    'ditolak' => 'background-color: #dc3545; color: white;',
+                                    'selesai' => 'background-color: #6C63FF; color: white;',
+                                    default => 'background-color: #f4b740; color: #1a2e4f;',
+                                };
+                            @endphp
+
+                            <span class="badge" style="{{ $style }}">
+                                {{ $status }}
                             </span>
                         </td>
                     </tr>
@@ -128,7 +138,7 @@
         @endif
     </div>
 
-    @if ($lamaran->status == 'ditolak' || $lamaran->status == 'diterima')
+    @if ($lamaran->status == 'ditolak' || $lamaran->status == 'diterima' || $lamaran->status == 'selesai')
         {{-- tidak menampilkan button jika ditolak atau diterima --}}
     @else
         <div class="modal-footer">
