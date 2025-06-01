@@ -38,6 +38,8 @@
   <link rel="stylesheet" href="assets/css/kaiadmin.min.css" />
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
   <link rel="stylesheet" href="assets/css/demo.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 <body>
   <div class="wrapper sidebar_minimize">

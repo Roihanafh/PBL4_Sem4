@@ -38,49 +38,13 @@
                 <a data-bs-toggle="collapse" href="#base">
                   <i class="fas fa-user-friends"></i>
                   <p>Mahasiswa Bimbingan</p>
-                  <span class="caret"></span>
                 </a>
-                <div class="collapse" id="base">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a>
-                        <span class="sub-item">Daftar Mahasiswa Bimbingan</span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
               </li>
               <li class="nav-item">
                 <a href="{{ url('log-aktivitas') }}">
                   <i class="fas fa-laptop-code"></i>
                   <p>Monitoring dan Evaluasi Magang</p>
                 </a>
-              </li>
-              <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#charts1">
-                  <i class="fas fa-laptop-code"></i>
-                  <p>Manajemen Akun & Profil</p>
-                  <span class="caret"></span>
-                </a>
-                <div class="collapse" id="charts1">
-                  <ul class="nav nav-collapse">
-                    <li>
-                      <a>
-                        <span class="sub-item">Profil akun?</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a>
-                        <span class="sub-item">Profil akademik</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a>
-                        <span class="sub-item">Dokumen (CV, sertifikat)</span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
               </li>
             </ul>
           </div>

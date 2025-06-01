@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\MahasiswaModel;
+use App\Models\LamaranMagangModel;
+use App\Models\PerusahaanModel;
+use App\Models\LowonganModel;
 
 class WelcomeController extends Controller
 {
@@ -26,8 +30,13 @@ class WelcomeController extends Controller
         ];
 
         $activeMenu = 'dashboard';
+        $totalMhs = MahasiswaModel::count();
+        $totalMhsDiterima = LamaranMagangModel::where('status', 'diterima')->distinct('mhs_nim')->count('mhs_nim');
+        $totalPerusahaan = PerusahaanModel ::count();
+        $totalLowongan = LowonganModel ::count();
 
-        return view('welcome_dosen', compact('breadcrumb', 'activeMenu'));
+
+        return view('welcome_dosen', compact('breadcrumb', 'activeMenu', 'totalMhs', 'totalMhsDiterima', 'totalPerusahaan','totalLowongan'));
     }
 
     public function index_mahasiswa()
