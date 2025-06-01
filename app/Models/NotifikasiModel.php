@@ -9,7 +9,7 @@ class NotifikasiModel extends Model
 {
     use HasFactory;
 
-    protected $table = 'notifikasi';
+    protected $table = 't_notifikasi';
     protected $primaryKey = 'notifikasi_id';
     public $timestamps = false;
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DosenModel;
 use App\Models\LamaranMagangModel;
 use App\Models\MahasiswaModel;
+use App\Models\NotifikasiModel;
 use App\Models\PerusahaanModel;
 use App\Models\ProdiModel;
 use Illuminate\Http\Request;
@@ -116,8 +117,23 @@ class PengajuanMagangController extends Controller
         $lamaran = LamaranMagangModel::findOrFail($id);
         $lamaran->status = $request->status;
         $lamaran->dosen_id = $request->status === 'diterima' ? $request->dosen_id : null;
+        $nama_perusahaan = PerusahaanModel::select('nama')->where('perusahaan_id', $lamaran->lowongan->perusahaan_id)->first();
+        $nama_perusahaan = $nama_perusahaan->nama;
         if ($request->status === 'diterima') {
             MahasiswaModel::where('mhs_nim', $lamaran->mhs_nim)->update(['status_magang' => "Sedang Magang"]);
+            NotifikasiModel::create([
+                'lamaran_id' => $lamaran->lamaran_id,
+                'judul' => 'Pemberitahuan Lamaran Magang',
+                'pesan' => 'Selamat, lamaran magang Anda pada ' . $nama_perusahaan . ' telah diterima.',
+                'waktu_dibuat' => now()
+            ]);
+        }else if($request->status === 'ditolak'){
+            NotifikasiModel::create([
+                'lamaran_id' => $lamaran->lamaran_id,
+                'judul' => 'Pemberitahuan Lamaran Magang',
+                'pesan' => 'Maaf, lamaran magang Anda pada ' . $nama_perusahaan . ' telah ditolak.',
+                'waktu_dibuat' => now()
+            ]);
         }
         $lamaran->save();
 
@@ -176,10 +192,40 @@ class PengajuanMagangController extends Controller
         $lamaran = LamaranMagangModel::findOrFail($id);
         $lamaran->status = $request->status;
         $lamaran->dosen_id = $request->status === 'diterima' || $request->status === 'selesai' ? $request->dosen_id : null;
+        $nama_perusahaan = PerusahaanModel::select('nama')->where('perusahaan_id', $lamaran->lowongan->perusahaan_id)->first();
+        $nama_perusahaan = $nama_perusahaan->nama;
         if ($request->status === 'diterima') {
             MahasiswaModel::where('mhs_nim', $lamaran->mhs_nim)->update(['status_magang' => "Sedang Magang"]);
+            NotifikasiModel::create([
+                'lamaran_id' => $lamaran->lamaran_id,
+                'judul' => 'Pemberitahuan Lamaran Magang',
+                'pesan' => 'Selamat, lamaran magang Anda pada ' . $nama_perusahaan . ' telah dirubah menjadi diterima.',
+                'waktu_dibuat' => now()
+            ]);
         }else if($request->status === 'pending' || $request->status === 'ditolak'){
             MahasiswaModel::where('mhs_nim', $lamaran->mhs_nim)->update(['status_magang' => "Belum Magang"]);
+            NotifikasiModel::create([
+                'lamaran_id' => $lamaran->lamaran_id,
+                'judul' => 'Pemberitahuan Lamaran Magang',
+                'pesan' => 'Maaf, lamaran magang Anda pada ' . $nama_perusahaan . ' telah dirubah menjadi ' . $request->status . '(ditangguhkan).',
+                'waktu_dibuat' => now()
+            ]);
+        }else if ($request->status === 'selesai') {
+            MahasiswaModel::where('mhs_nim', $lamaran->mhs_nim)->update(['status_magang' => "Selesai Magang"]);
+            NotifikasiModel::create([
+                'lamaran_id' => $lamaran->lamaran_id,
+                'judul' => 'Pemberitahuan Lamaran Magang',
+                'pesan' => 'Selamat, magang Anda pada ' . $nama_perusahaan . ' telah selesai.',
+                'waktu_dibuat' => now()
+            ]);
+        }else if($request->status === 'ditolak'){
+            MahasiswaModel::where('mhs_nim', $lamaran->mhs_nim)->update(['status_magang' => "Belum Magang"]);
+            NotifikasiModel::create([
+                'lamaran_id' => $lamaran->lamaran_id,
+                'judul' => 'Pemberitahuan Lamaran Magang',
+                'pesan' => 'Maaf, lamaran magang Anda pada ' . $nama_perusahaan . ' telah ditolak.',
+                'waktu_dibuat' => now()
+            ]);
         }
         $lamaran->save();
 
