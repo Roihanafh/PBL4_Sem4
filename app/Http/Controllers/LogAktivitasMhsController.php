@@ -137,6 +137,17 @@ class LogAktivitasMhsController extends Controller
 
     public function index_mhs()
     {
+        $breadcrumb = (object) [
+            'title' => 'Log Aktivitas Mahasiswa',
+            'list'  => ['Home', 'Log Aktivitas']
+        ];
+
+        $page = (object) [
+            'title' => 'Data Log Aktivitas Mahasiswa'
+        ];
+
+        $activeMenu = 'log_aktivitas';
+
         $user = Auth::user();
         $mahasiswa = MahasiswaModel::where('user_id', $user->user_id)->first();
 
@@ -151,22 +162,17 @@ class LogAktivitasMhsController extends Controller
             ->where('status', 'diterima')
             ->first();
 
-        if (!$lamaran) {
-            return response()->json(['data' => [], 'recordsTotal' => 0, 'recordsFiltered' => 0]);
+        $lamaranSelesai = LamaranMagangModel::where('mhs_nim', $mhsNim)
+            ->where('status', 'selesai')
+            ->first();
+        if ($lamaranSelesai) {
+            return view('log_aktivitas_mhs.index', compact('breadcrumb', 'page', 'activeMenu', 'lamaranSelesai'));
+
+        }elseif (!$lamaran && !$lamaranSelesai) {
+            return view('log_aktivitas_mhs.index', compact('breadcrumb', 'page', 'activeMenu'));
         }
 
         $lamaranId = $lamaran->lamaran_id;
-        
-        $breadcrumb = (object) [
-            'title' => 'Log Aktivitas Mahasiswa',
-            'list'  => ['Home', 'Log Aktivitas']
-        ];
-
-        $page = (object) [
-            'title' => 'Data Log Aktivitas Mahasiswa'
-        ];
-
-        $activeMenu = 'log_aktivitas';
 
         return view('log_aktivitas_mhs.index', compact('breadcrumb', 'page', 'activeMenu', 'lamaranId'));
     }

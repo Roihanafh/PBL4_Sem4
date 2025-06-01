@@ -1,12 +1,20 @@
 @extends('layouts.template_mhs')
 
 @section('content')
+
 <div class="card">
     <div class="card-header">
         <div class="d-flex gap-2 align-items-center flex-wrap">
-            <button class="btn btn-primary btn-round ms-auto" onclick="modalAction('{{ url('/log-aktivitas-mhs/'. $lamaranId .'/create') }}')">
-                <i class="fa fa-plus"></i> Tambah Aktivitas
-            </button>
+            @if (isset($lamaranId))
+                <button class="btn btn-primary btn-round ms-auto" onclick="modalAction('{{ url('/log-aktivitas-mhs/'. $lamaranId .'/create') }}')">
+                    <i class="fa fa-plus"></i> Tambah Aktivitas
+                </button>
+
+            @else
+                <button class="btn btn-primary btn-round ms-auto" onclick="showErrorMessage()" >
+                    <i class="fa fa-plus"></i> Tambah Aktivitas
+                </button>
+            @endif
         </div>
     </div>
     <div class="card-body">
@@ -92,6 +100,15 @@
     function modalAction(url = '') {
         $('#myModal .modal-content').load(url, function () {
             $('#myModal').modal('show');
+        });
+    }
+    function showErrorMessage() {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Silakan lengkapi lamaran terlebih dahulu untuk menambahkan aktivitas.',
+            confirmButtonText: 'Tutup',
+            confirmButtonColor: '#3085d6'
         });
     }
 </script>
