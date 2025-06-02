@@ -36,8 +36,6 @@ class MahasiswaModel extends Model
     protected $casts = [
         'mhs_nim'       => 'string',
         'user_id'       => 'integer',
-        'pref'          => 'integer',
-        'skill'         => 'integer',
         'lokasi'        => 'string',
         'gaji_minimum'  => 'integer',
         'durasi'        => 'integer',

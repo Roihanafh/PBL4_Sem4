@@ -130,13 +130,52 @@
 
           {{-- Share link --}}
           <div class="mt-4">
-            <a href="javascript:void(0)" class="text-decoration-none">
-              <i class="fas fa-share-alt"></i> Bagikan Lowongan
-            </a>
+            <div class="dropdown">
+              <a class="text-decoration-none dropdown-toggle" href="#" role="button"
+                id="shareDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-share-alt"></i> Bagikan Lowongan
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="shareDropdown">
+                {{-- WhatsApp --}}
+                <li>
+                  <a class="dropdown-item"
+                    href="https://api.whatsapp.com/send?text={{ urlencode($lowongan->judul . ' di ' . $lowongan->perusahaan->nama . ' ' . url()->current()) }}"
+                    target="_blank">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                  </a>
+                </li>
+                {{-- Facebook --}}
+                <li>
+                  <a class="dropdown-item"
+                    href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url()->current()) }}"
+                    target="_blank">
+                    <i class="fab fa-facebook"></i> Facebook
+                  </a>
+                </li>
+                {{-- Instagram (copy link) --}}
+                <li>
+                  <button class="dropdown-item" onclick="copyLink()">
+                    <i class="fas fa-link"></i> Salin Tautan (Instagram)
+                  </button>
+                </li>
+              </ul>
+            </div>
           </div>
+
         </div>
       </div>
     </div>
   </div>
 </div>
 @endsection
+
+
+<script>
+  function copyLink() {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url)
+      .then(() => alert('Tautan berhasil disalin ke clipboard!'))
+      .catch(err => console.error('Gagal menyalin tautan:', err));
+  }
+</script>
+

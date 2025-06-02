@@ -5,20 +5,25 @@ namespace App\Services;
 class SmartRecommendationService
 {
     protected array $weights = [
-        'pref'   => 0.25,
-        'skill'  => 0.25,
-        'lokasi' => 0.20,
-        'gaji'   => 0.20,
-        'durasi' => 0.10,
+        'pref'   => 0.25,   // bobot preferensi kata kunci
+        'skill'  => 0.25,   // bobot keahlian
+        'lokasi' => 0.20,   // bobot lokasi
+        'gaji'   => 0.20,   // bobot gaji
+        'durasi' => 0.10,   // bobot durasi
     ];
 
     /**
      * @param array $data  
-     *   Contoh: [
-     *     ['id'=>1, 'preferensi'=>5, 'keahlian'=>4, 'lokasi'=>3, 'gaji'=>7, 'durasi'=>6],
-     *     …  
-     *   ]
-     * @return array sorted list with ['id', 'score']
+     *   Contoh elemen data:
+     *     [
+     *       'id'     => 1,
+     *       'pref'   => 0.75,
+     *       'skill'  => 0.50,
+     *       'lokasi' => 0.50,
+     *       'gaji'   => 3000000.0,   // akan dinormalisasi
+     *       'durasi' => 0.80         // sudah di‐normalize 0..1
+     *     ]
+     * @return array sorted list dengan ['id', 'score']
      */
     public function rank(array $data): array
     {
@@ -42,11 +47,12 @@ class SmartRecommendationService
         foreach ($data as &$item) {
             $utilities = [];
             foreach ($this->weights as $key => $w) {
-                // Jika cost, pakai ($max[$key] - $item[$key]) / range; 
-                // di sini semua diasumsikan benefit
-                $range = $max[$key] - $min[$key] ?: 1;
+                // Jika data sudah di‐normalize di luar (contoh durasi ∈ [0..1]),
+                // maka kita tetap melakukan: (x - min)/(max - min).
+                $range = ($max[$key] - $min[$key]) ?: 1;
                 $utilities[$key] = ($item[$key] - $min[$key]) / $range;
             }
+
             // Agregasi weighted sum
             $score = 0;
             foreach ($utilities as $key => $u) {
@@ -56,10 +62,13 @@ class SmartRecommendationService
         }
         unset($item);
 
-        // 3. Urutkan descending
+        // 3. Urutkan descending berdasarkan skor
         usort($data, fn($a, $b) => $b['score'] <=> $a['score']);
 
-        // 4. Kembalikan hanya id + score (atau seluruh item jika perlu)
-        return array_map(fn($i) => ['id' => $i['id'], 'score' => $i['score']], $data);
+        // 4. Kembalikan hanya id + score
+        return array_map(fn($i) => [
+            'id'    => $i['id'],
+            'score' => $i['score']
+        ], $data);
     }
 }

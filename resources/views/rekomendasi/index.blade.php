@@ -3,6 +3,24 @@
 @section('content')
 <div class="container mt-4">
 
+    {{-- ============================= --}}
+  {{--  DEBUG: Tampilkan data mahasiswa  --}}
+  {{-- ============================= --}}
+  <div class="card mb-4 border-danger">
+    <div class="card-header bg-danger text-white">
+      <strong>DEBUG: Data Mahasiswa (User ID: {{ Auth::id() }})</strong>
+    </div>
+    <div class="card-body text-dark">
+      <p><strong>Nama:</strong> {{ $mhs->full_name ?? '-' }}</p>
+      <p><strong>Pref (Bidang):</strong> {{ $mhs->pref ?? '-' }}</p>
+      <p><strong>Skill:</strong> {{ $mhs->skill ?? '-' }}</p>
+      <p><strong>Lokasi Preferensi:</strong> {{ $mhs->lokasi ?? '-' }}</p>
+      <p><strong>Gaji Minimum:</strong> Rp {{ number_format($mhs->gaji_minimum, 0, ',', '.') }}</p>
+      <p><strong>Durasi Preferensi:</strong> {{ $mhs->durasi }} bulan</p>
+    </div>
+  </div>
+  {{-- ===================================== --}}
+
   {{-- Filter form --}}
   <form method="GET" action="{{ url()->current() }}" class="card mb-4 p-3 bg-dark text-white">
     <div class="row g-3">
@@ -74,6 +92,8 @@
       <div class="col-md-4 mb-4">
         <div class="card h-100 shadow">
           <div class="card-body">
+          <p class="text-secondary small">
+          <strong>Score:</strong> {{ number_format($l->smart_score, 4) }}
             <h6 class="text-muted">
               {{ $l->perusahaan->nama ?? '-' }}
             </h6>
