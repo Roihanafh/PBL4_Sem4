@@ -39,7 +39,7 @@
     </div>
 
     <div class="modal-footer">
-        <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Batal</button>
+        <button type="button" class="btn btn-warning btn-batal">Batal</button>
         <button type="submit" class="btn btn-primary">Simpan</button>
     </div>
 </form>
@@ -107,5 +107,8 @@ $(document).ready(function() {
             $(element).removeClass('is-invalid');
         }
     });
-});
+     $(document).on('click', '.btn-batal', function () {
+            $('#myModal').modal('hide');
+        });
+    });
 </script>
