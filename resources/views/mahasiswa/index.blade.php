@@ -47,7 +47,7 @@
        <div class="row mb-3">
           <div class="col-md-3">
               <label for="prodi_id" class="form-label">Filter:</label>
-              <select id="prodi_id" name="prodi_id" class="form-control">
+                <select id="filter_prodi_id" name="filter_prodi_id" class="form-control">
                   <option value="">- Semua Prodi -</option>
                   @foreach($prodis as $prodi)
                       <option value="{{ $prodi->prodi_id }}">{{ $prodi->nama_prodi }}</option>
@@ -80,40 +80,49 @@
 @push('js')
 <script>
   $(function () {
-      $.ajaxSetup({
-          headers: {
-              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-          }
-      });
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
 
-      var tableMahasiswa = $('#mahasiswa-table').DataTable({
-          processing: true,
-          serverSide: true,
-          ajax: {
-              url: "{{ url('mahasiswa/list') }}",
-              type: "POST",
-              data: function (d) {
-                  d.prodi_id = $('#prodi_id').val(); // Tambahkan nilai filter prodi
-              }
-          },
-          columns: [
-              { data: 'DT_RowIndex', className: "text-center", orderable: false, searchable: false, width: "5%" },
-              { data: 'nim' },
-              { data: 'nama' },
-              { data: 'prodi' },
-              { data: 'aksi', className: "text-center", orderable: false, searchable: false, width: "10%" }
-          ]
-      });
+    var tableMahasiswa = $('#mahasiswa-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: "{{ url('mahasiswa/list') }}",
+            type: "POST",
+            data: function (d) {
+                d.prodi_id = $('#filter_prodi_id').val(); // filter di luar modal
+            }
+        },
+        columns: [
+            { data: 'DT_RowIndex', className: "text-center", orderable: false, searchable: false, width: "5%" },
+            { data: 'nim' },
+            { data: 'nama' },
+            { data: 'prodi' },
+            { data: 'aksi', className: "text-center", orderable: false, searchable: false, width: "10%" }
+        ]
+    });
 
-      $('#prodi_id').on('change', function () {
-          tableMahasiswa.ajax.reload(); // reload data ketika filter prodi berubah
-      });
+    initProdiFilterListener();
+
+    $('#myModal').on('hidden.bs.modal', function () {
+        tableMahasiswa.ajax.reload(null, false);
+        initProdiFilterListener(); // jaga-jaga
+    });
   });
-   function modalAction(url = ''){
-        $('#myModal .modal-content').load(url,function(){
-            $('#myModal').modal('show');
-        });
-    }
 
+  function initProdiFilterListener() {
+      $('#filter_prodi_id').off('change').on('change', function () {
+          $('#mahasiswa-table').DataTable().ajax.reload();
+      });
+  }
+
+  function modalAction(url = '') {
+      $('#myModal .modal-content').load(url, function () {
+          $('#myModal').modal('show');
+      });
+  }
 </script>
 @endpush

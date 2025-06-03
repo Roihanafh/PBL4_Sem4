@@ -38,28 +38,29 @@ class DosenController extends Controller
     }
 
     public function list(Request $request)
-    {
-        if ($request->ajax()) {
-           $dosen = DosenModel::select('dosen_id', 'nama', 'email', 'telp');
+{
+    if ($request->ajax()) {
+        $query = DosenModel::select('dosen_id', 'nama', 'email', 'telp');
 
-            return DataTables::of($dosen)
-                ->addIndexColumn()
-                ->addColumn('aksi', function ($dsn) {
-                    $btn  = '<div class="btn-group" role="group">';
-                    $btn .= '<button onclick="modalAction(\''.url('/dosen/' . $dsn->dosen_id . '/show_ajax').'\')" class="btn btn-primary btn-sm" style="margin-right: 5px;" title="Detail Data">';
-                    $btn .= '<i class="fas fa-info-circle"></i></button>';
-                    $btn .= '<button onclick="modalAction(\''.url('/dosen/' . $dsn->dosen_id . '/edit_ajax').'\')" class="btn btn-warning btn-sm" style="margin-right: 5px;" title="Edit Data">';
-                    $btn .= '<i class="fas fa-edit"></i></button>';
-                    $btn .= '<button onclick="modalAction(\''.url('/dosen/' . $dsn->dosen_id . '/delete_ajax').'\')" class="btn btn-danger btn-sm" title="Hapus Data">';
-                    $btn .= '<i class="fas fa-trash-alt"></i></button>';
-                    $btn .= '</div>';
-
-                    return $btn;
-                })
-                ->rawColumns(['aksi'])
-                ->make(true);
+        if ($request->filled('bidang')) {
+            $query->where('id_minat', $request->bidang);
         }
+
+        return DataTables::of($query)
+            ->addIndexColumn()
+            ->addColumn('aksi', function ($dsn) {
+                $btn  = '<div class="btn-group" role="group">';
+                $btn .= '<button onclick="modalAction(\''.url('/dosen/' . $dsn->dosen_id . '/show_ajax').'\')" class="btn btn-primary btn-sm" title="Detail Data"><i class="fas fa-info-circle"></i></button>';
+                $btn .= '<button onclick="modalAction(\''.url('/dosen/' . $dsn->dosen_id . '/edit_ajax').'\')" class="btn btn-warning btn-sm" title="Edit Data"><i class="fas fa-edit"></i></button>';
+                $btn .= '<button onclick="modalAction(\''.url('/dosen/' . $dsn->dosen_id . '/delete_ajax').'\')" class="btn btn-danger btn-sm" title="Hapus Data"><i class="fas fa-trash-alt"></i></button>';
+                $btn .= '</div>';
+                return $btn;
+            })
+            ->rawColumns(['aksi'])
+            ->make(true);
     }
+}
+
 
     public function create_ajax()
     {

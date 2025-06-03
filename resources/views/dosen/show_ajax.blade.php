@@ -36,6 +36,10 @@
                 <td>{{ $dosen->telp ?? '-' }}</td>
             </tr>
             <tr>
+                <th class="text-right">Bidang Penelitian:</th>
+                <td>{{ $dosen->bidangPenelitian->bidang ?? '-' }}</td>
+            </tr>
+            <tr>
                 <th class="text-right">Username:</th>
                 <td>{{ $dosen->user->username ?? '-' }}</td>
             </tr>
