@@ -29,10 +29,28 @@ class LogAktivitasMhsController extends Controller
 
         $activeMenu = 'log_aktivitas';
 
+        // Tambahkan Auth::user()
+        $user = Auth::user();
+
+        // Ambil data dosen berdasarkan user_id
+        $dosen = DosenModel::where('user_id', $user->user_id)->first();
+
+        if (!$dosen) {
+            return redirect()->back()->withErrors('Dosen tidak ditemukan.');
+        }
+
         $prodis = ProdiModel::all();
-        $mahasiswas = MahasiswaModel::select('full_name', 'mhs_nim')->orderBy('full_name')->get();
+
+        // Ambil mahasiswa yang memiliki lamaran dengan dosen tersebut
+        $mahasiswas = MahasiswaModel::whereIn('mhs_nim', function ($query) use ($dosen) {
+            $query->select('mhs_nim')
+                ->from('t_lamaran_magang')
+                ->where('dosen_id', $dosen->dosen_id);
+        })->get();
+
         return view('log_aktivitas.index', compact('breadcrumb', 'page', 'activeMenu', 'prodis', 'mahasiswas'));
     }
+
 
     public function list(Request $request)
     {

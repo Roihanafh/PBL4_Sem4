@@ -21,13 +21,13 @@
   <div class="col-md-4">
     <label for="mhs_nim" class="form-label">Nama Mahasiswa</label>
     <select name="mhs_nim" id="mhs_nim" class="form-control">
-      <option value="">-- Semua Mahasiswa --</option>
-      @foreach($mahasiswas as $mhs)
-        <option value="{{ $mhs->mhs_nim }}">{{ $mhs->full_name }}</option>
-      @endforeach
+        <option value="">-- Semua Mahasiswa --</option>
+        @foreach($mahasiswas as $mhs)
+            <option value="{{ $mhs->mhs_nim }}">{{ $mhs->full_name }}</option>
+        @endforeach
     </select>
-  </div>
 </div>
+
 
 
 
