@@ -122,6 +122,7 @@ class PengajuanMagangController extends Controller
         if ($request->status === 'diterima') {
             MahasiswaModel::where('mhs_nim', $lamaran->mhs_nim)->update(['status_magang' => "Sedang Magang"]);
             NotifikasiModel::create([
+                'mhs_nim' => $lamaran->mhs_nim,
                 'lamaran_id' => $lamaran->lamaran_id,
                 'judul' => 'Pemberitahuan Lamaran Magang',
                 'pesan' => 'Selamat, lamaran magang Anda pada ' . $nama_perusahaan . ' telah diterima.',
@@ -129,6 +130,7 @@ class PengajuanMagangController extends Controller
             ]);
         }else if($request->status === 'ditolak'){
             NotifikasiModel::create([
+                'mhs_nim' => $lamaran->mhs_nim,
                 'lamaran_id' => $lamaran->lamaran_id,
                 'judul' => 'Pemberitahuan Lamaran Magang',
                 'pesan' => 'Maaf, lamaran magang Anda pada ' . $nama_perusahaan . ' telah ditolak.',
@@ -197,6 +199,7 @@ class PengajuanMagangController extends Controller
         if ($request->status === 'diterima') {
             MahasiswaModel::where('mhs_nim', $lamaran->mhs_nim)->update(['status_magang' => "Sedang Magang"]);
             NotifikasiModel::create([
+                'mhs_nim' => $lamaran->mhs_nim,
                 'lamaran_id' => $lamaran->lamaran_id,
                 'judul' => 'Pemberitahuan Lamaran Magang',
                 'pesan' => 'Selamat, lamaran magang Anda pada ' . $nama_perusahaan . ' telah dirubah menjadi diterima.',
@@ -205,6 +208,7 @@ class PengajuanMagangController extends Controller
         }else if($request->status === 'pending' || $request->status === 'ditolak'){
             MahasiswaModel::where('mhs_nim', $lamaran->mhs_nim)->update(['status_magang' => "Belum Magang"]);
             NotifikasiModel::create([
+                'mhs_nim' => $lamaran->mhs_nim,
                 'lamaran_id' => $lamaran->lamaran_id,
                 'judul' => 'Pemberitahuan Lamaran Magang',
                 'pesan' => 'Maaf, lamaran magang Anda pada ' . $nama_perusahaan . ' telah dirubah menjadi ' . $request->status . '(ditangguhkan).',
@@ -213,6 +217,7 @@ class PengajuanMagangController extends Controller
         }else if ($request->status === 'selesai') {
             MahasiswaModel::where('mhs_nim', $lamaran->mhs_nim)->update(['status_magang' => "Selesai Magang"]);
             NotifikasiModel::create([
+                'mhs_nim' => $lamaran->mhs_nim,
                 'lamaran_id' => $lamaran->lamaran_id,
                 'judul' => 'Pemberitahuan Lamaran Magang',
                 'pesan' => 'Selamat, magang Anda pada ' . $nama_perusahaan . ' telah selesai.',
@@ -221,6 +226,7 @@ class PengajuanMagangController extends Controller
         }else if($request->status === 'ditolak'){
             MahasiswaModel::where('mhs_nim', $lamaran->mhs_nim)->update(['status_magang' => "Belum Magang"]);
             NotifikasiModel::create([
+                'mhs_nim' => $lamaran->mhs_nim,
                 'lamaran_id' => $lamaran->lamaran_id,
                 'judul' => 'Pemberitahuan Lamaran Magang',
                 'pesan' => 'Maaf, lamaran magang Anda pada ' . $nama_perusahaan . ' telah ditolak.',

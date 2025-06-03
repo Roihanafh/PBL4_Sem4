@@ -36,7 +36,7 @@
               </li>
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#charts1">
-                  <i class="fas fa-laptop-code"></i>
+                  <i class="fas fa-user-cog"></i>
                   <p>Manajemen Akun & Profil</p>
                   <span class="caret"></span>
                 </a>
@@ -62,7 +62,7 @@
               </li>
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#charts2">
-                  <i class="fas fa-laptop-code"></i>
+                  <i class="fas fa-briefcase"></i>
                   <p>Rekomendasi Magang</p>
                   <span class="caret"></span>
                 </a>
@@ -78,7 +78,7 @@
               </li>
               <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#pengajuan">
-                  <i class="fas fa-briefcase"></i>
+                  <i class="fas fa-file-signature"></i>
                   <p>Pengajuan Magang</p>
                   <span class="caret"></span>
                 </a>
@@ -108,8 +108,14 @@
                 </div>
               </li>
               <li class="nav-item">
+                <a href="{{ url('/message') }}">
+                  <i class="fas fa-envelope"></i>
+                  <p>Message</p>
+                </a>
+              </li>
+              <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#charts4">
-                  <i class="fas fa-laptop-code"></i>
+                  <i class="fas fa-chart-line"></i>
                   <p>Monitoring dan Evaluasi Magang</p>
                   <span class="caret"></span>
                 </a>

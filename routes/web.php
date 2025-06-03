@@ -10,8 +10,10 @@ use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\ProdiController;
 use App\Http\Controllers\LogAktivitasMhsController;
 use App\Http\Controllers\LowonganController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PengajuanMagangController;
 use App\Http\Controllers\PerusahaanController;
+use GuzzleHttp\Psr7\Message;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -217,5 +219,10 @@ Route::middleware(['auth','authorize:mahasiswa'])->group(function () {
         Route::get('/', [FeedbackPengalamanController::class, 'index']);
         Route::get('/feedback/{lamaran}/create', [FeedbackPengalamanController::class, 'create'])->name('feedback.create');
         Route::post('/feedback', [FeedbackPengalamanController::class, 'store'])->name('feedback.store');
+    });
+
+    Route::group(['prefix' => 'message'], function () {
+        Route::get('/', [MessageController::class, 'index']);
+        Route::post('/list', [MessageController::class, 'list']);
     });
 });

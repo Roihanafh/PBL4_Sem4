@@ -14,17 +14,21 @@ class NotifikasiModel extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'penerima_id',
         'lamaran_id',
         'judul',
         'pesan',
         'waktu_dibuat',
         'status_baca',
-        'tipe',
+        'mhs_nim'
     ];
 
     public function lamaran()
     {
-        return $this->belongsTo(LamaranMagangModel::class, 'lamaran_id');
+        return $this->belongsTo(LamaranMagangModel::class, 'lamaran_id', 'lamaran_id');
+    }
+
+    public function mahasiswa()
+    {
+        return $this->belongsTo(MahasiswaModel::class, 'mhs_nim', 'mhs_nim');
     }
 }
