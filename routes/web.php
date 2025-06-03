@@ -224,5 +224,7 @@ Route::middleware(['auth','authorize:mahasiswa'])->group(function () {
     Route::group(['prefix' => 'message'], function () {
         Route::get('/', [MessageController::class, 'index']);
         Route::post('/list', [MessageController::class, 'list']);
+        Route::get('/{id}/show_ajax', [MessageController::class, 'show_ajax']);
+        Route::post('/{id}/mark_as_read', [MessageController::class, 'markAsRead']);  
     });
 });

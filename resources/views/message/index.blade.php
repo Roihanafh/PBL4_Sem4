@@ -73,6 +73,31 @@
             $('#myModal').modal('show');
         });
     }
+    
+    function markAsRead(notifikasi_id) {
+        $.ajax({
+            url: '{{ url('/') }}' + '/message/' + notifikasi_id + '/mark_as_read',
+            type: 'post',
+            success: function(response) {
+                Swal.fire({
+                    icon: response.status ? 'success' : 'warning',
+                    title: response.message
+                });
+
+                if (response.status) {
+                    $('#message-table').DataTable().ajax.reload(null, false);
+                }
+            },
+            error: function(xhr) {
+                const errorMessage = xhr.responseJSON?.message ?? xhr.responseText ?? 'Terjadi kesalahan tak dikenal';
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Terjadi kesalahan',
+                    text: errorMessage
+                });
+            }
+        });
+    }
 
 </script>
 @endpush
