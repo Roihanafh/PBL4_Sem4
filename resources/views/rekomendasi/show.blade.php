@@ -1,7 +1,8 @@
+{{-- resources/views/rekomendasi/show.blade.php --}}
 @extends('layouts.template_mhs')
 
 @section('content')
-<div class="container mt-4">
+<div class="container mt-4" id="single-detail">
   {{-- Statistik ringkas --}}
   <div class="d-flex mb-4">
     <div class="me-4"><strong>Total Posisi:</strong> {{ $totalPositions }}</div>
@@ -10,28 +11,23 @@
   </div>
 
   <div class="row">
-  {{-- ======================  STYLE UNTUK KARTU BESAR  ====================== --}}
-  <style>
-    .sidebar-card         { min-height: 200px; }            /* tinggi minimum */
-    .sidebar-card strong  { font-size: 1.15rem; }           /* judul lebih besar */
-    .sidebar-card h6      { font-size: .95rem; }            /* nama perusahaan */
-  </style>
-
-  <div class="row">
-    {{-- ======================  SIDEBAR KIRI  ====================== --}}
+    {{-- ====================== SIDEBAR KIRI ====================== --}}
     <div class="col-md-4 mb-4">
       <h6 class="mb-2">Lowongan Lainnya</h6>
 
       <div class="overflow-auto" style="max-height:calc(100vh - 220px);">
         @foreach($lowonganList as $l)
-          <a href="{{ route('rekomendasi.show', $l->lowongan_id) }}" class="text-decoration-none">
+          <a href="{{ route('rekomendasi.show', $l->lowongan_id) }}"
+             class="text-decoration-none sidebar-link"
+             data-url="{{ route('rekomendasi.show', $l->lowongan_id) }}">
             <div class="card shadow-sm mb-4 sidebar-card
                 {{ $l->lowongan_id == $lowongan->lowongan_id ? 'border-primary' : '' }}">
-              <div class="card-body text-center p-4"><!-- p-4 = padding besar -->
+              <div class="card-body text-center p-4">
                 @if($l->perusahaan->logo_path)
-                  <img src="{{ asset('uploads/logos/'.$l->perusahaan->logo_path) }}"
+                  <img src="{{ asset('uploads/logos/' . $l->perusahaan->logo_path) }}"
                        alt="Logo {{ $l->perusahaan->nama }}"
-                       class="img-fluid mb-3" style="max-height:90px">
+                       class="img-fluid mb-3"
+                       style="max-height:90px">
                 @endif
 
                 <h6 class="text-muted mb-1 text-truncate">{{ $l->perusahaan->nama }}</h6>
@@ -57,8 +53,7 @@
       </div>
     </div>
 
-
-    {{-- ======================  DETAIL KANAN  ====================== --}}
+    {{-- ====================== DETAIL KANAN ====================== --}}
     <div class="col-md-8">
       <div class="card h-100 shadow-sm border-0">
         <div class="card-body">
@@ -132,27 +127,24 @@
           <div class="mt-4">
             <div class="dropdown">
               <a class="text-decoration-none dropdown-toggle" href="#" role="button"
-                id="shareDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                 id="shareDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fas fa-share-alt"></i> Bagikan Lowongan
               </a>
               <ul class="dropdown-menu" aria-labelledby="shareDropdown">
-                {{-- WhatsApp --}}
                 <li>
                   <a class="dropdown-item"
-                    href="https://api.whatsapp.com/send?text={{ urlencode($lowongan->judul . ' di ' . $lowongan->perusahaan->nama . ' ' . url()->current()) }}"
-                    target="_blank">
+                     href="https://api.whatsapp.com/send?text={{ urlencode($lowongan->judul . ' di ' . $lowongan->perusahaan->nama . ' ' . url()->current()) }}"
+                     target="_blank">
                     <i class="fab fa-whatsapp"></i> WhatsApp
                   </a>
                 </li>
-                {{-- Facebook --}}
                 <li>
                   <a class="dropdown-item"
-                    href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url()->current()) }}"
-                    target="_blank">
+                     href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url()->current()) }}"
+                     target="_blank">
                     <i class="fab fa-facebook"></i> Facebook
                   </a>
                 </li>
-                {{-- Instagram (copy link) --}}
                 <li>
                   <button class="dropdown-item" onclick="copyLink()">
                     <i class="fas fa-link"></i> Salin Tautan (Instagram)
@@ -161,7 +153,6 @@
               </ul>
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -169,8 +160,36 @@
 </div>
 @endsection
 
-
+@push('js')
 <script>
+  $(function() {
+    // Intercept clicks on “Lowongan Lainnya” in the sidebar:
+    $('#single-detail').on('click', '.sidebar-link', function(e) {
+      e.preventDefault();
+
+      // Base detail URL, e.g. "/mahasiswa/rekomendasi/5"
+      let baseUrl = $(this).data('url');
+      // Append ?ajax=1 so the controller returns JSON
+      let ajaxUrl = baseUrl + '?ajax=1';
+
+      $.ajax({
+        url: ajaxUrl,
+        method: 'GET',
+        dataType: 'json',
+        success: function(response) {
+          $('body').html(response.html);
+          // Clean the URL (remove ?ajax=1)
+          window.history.pushState(null, '', baseUrl);
+        },
+        error: function(err) {
+          console.error('Error loading detail via AJAX:', err);
+          // Fallback to full navigation:
+          window.location.href = baseUrl;
+        }
+      });
+    });
+  });
+
   function copyLink() {
     const url = window.location.href;
     navigator.clipboard.writeText(url)
@@ -178,4 +197,4 @@
       .catch(err => console.error('Gagal menyalin tautan:', err));
   }
 </script>
-
+@endpush

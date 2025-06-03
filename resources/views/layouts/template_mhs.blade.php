@@ -4,11 +4,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>MagangIn - JTI Polinema</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
-  <link
-      rel="icon"
-      href="{{ asset('img/MagangIn.png') }}"
-      type="image/x-icon"
-    />
+  <link rel="icon" href="{{ asset('img/MagangIn.png') }}" type="image/x-icon">
+
   <!-- CSRF Token -->
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -31,14 +28,16 @@
       }
     });
   </script>
-  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  <!-- CSS Files -->
+  <!-- Core CSS Files -->
   <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}" />
   <link rel="stylesheet" href="{{ asset('assets/css/plugins.min.css') }}" />
   <link rel="stylesheet" href="{{ asset('assets/css/kaiadmin.min.css') }}" />
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
   <link rel="stylesheet" href="{{ asset('assets/css/demo.css') }}" />
+
+  <!-- DataTables CSS (if you need it) -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+
   @stack('css')
 </head>
 <body>
@@ -67,34 +66,29 @@
   <script src="{{ asset('assets/js/core/popper.min.js') }}"></script>
   <script src="{{ asset('assets/js/core/bootstrap.min.js') }}"></script>
 
-  <!-- Plugins -->
+  <!-- Plugins that all pages may need (if any) -->
   <script src="{{ asset('assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js') }}"></script>
-  <script src="{{ asset('assets/js/plugin/chart.js/chart.min.js') }}"></script>
-  <script src="{{ asset('assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js') }}"></script>
-  <script src="{{ asset('assets/js/plugin/chart-circle/circles.min.js') }}"></script>
-  <script src="{{ asset('assets/js/plugin/datatables/datatables.min.js') }}"></script>
   <script src="{{ asset('assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
-  <script src="{{ asset('assets/js/plugin/jsvectormap/jsvectormap.min.js') }}"></script>
-  <script src="{{ asset('assets/js/plugin/jsvectormap/world.js') }}"></script>
   <script src="{{ asset('assets/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
   <script src="{{ asset('assets/js/kaiadmin.min.js') }}"></script>
   <script src="{{ asset('assets/js/setting-demo.js') }}"></script>
-  <script src="{{ asset('assets/js/demo.js') }}"></script>
 
-  <!-- Validation Plugins -->
-  <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/additional-methods.min.js"></script>
-
-  <!-- DataTables CDN -->
+  <!-- DataTables (if you need it) -->
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+  <!-- 
+    NOTE: We have REMOVED demo.js and jsvectormap scripts from the layout,
+    because your “rekomendasi” pages do not contain any <canvas> or vector‐map containers.
+    If you need them on other pages, load them only via @push('js') in those specific pages.
+  -->
 
   @stack('js')
 
-  <!-- Modal Global -->
+  <!-- Modal Global (you probably have some modal that gets injected via AJAX onto main layout) -->
   <div class="modal fade" id="globalModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content" id="modal-content">
-        <!-- Konten modal akan diisi dari AJAX -->
+        {{-- Konten modal akan diisi dari AJAX --}}
       </div>
     </div>
   </div>

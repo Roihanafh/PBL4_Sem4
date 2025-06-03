@@ -48,8 +48,40 @@ $(function(){
       { data: 'judul',               name: 'judul' },
       { data: 'perusahaan',          name: 'perusahaan' },
       { data: 'lokasi',              name: 'lokasi' },
-      { data: 'tanggal_mulai_magang',name: 'tanggal_mulai_magang' },
-      { data: 'deadline_lowongan',   name: 'deadline_lowongan' },
+      // Kolom "Mulai" dengan format DD-MM-YYYY tapi sort berdasarkan YYYY-MM-DD
+      {
+        data: 'tanggal_mulai_magang',
+        name: 'tanggal_mulai_magang',
+        render: function(data, type, row) {
+          if (!data) return '';
+          // Ambil bagian sebelum "T", misal "2025-06-07"
+          const datePart = data.split('T')[0];
+          // Split YYYY, MM, DD
+          const parts = datePart.split('-'); // [ "2025", "06", "07" ]
+          const formatted = parts[2] + '-' + parts[1] + '-' + parts[0]; // "07-06-2025"
+          if (type === 'display') {
+            return formatted;
+          }
+          // Untuk keperluan sorting/searching, gunakan tanggal asli (YYYY-MM-DD)
+          return datePart;
+        }
+      },
+
+      // Kolom "Deadline" dengan format DD-MM-YYYY tapi sort berdasarkan YYYY-MM-DD
+      {
+        data: 'deadline_lowongan',
+        name: 'deadline_lowongan',
+        render: function(data, type, row) {
+          if (!data) return '';
+          const datePart = data.split('T')[0];
+          const parts = datePart.split('-');
+          const formatted = parts[2] + '-' + parts[1] + '-' + parts[0];
+          if (type === 'display') {
+            return formatted;
+          }
+          return datePart;
+        }
+      },
       { data: 'periode',             name: 'periode' },
       { data: 'aksi',                orderable: false, searchable: false }
     ]

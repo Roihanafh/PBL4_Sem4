@@ -1,10 +1,11 @@
+{{-- resources/views/rekomendasi/index.blade.php --}}
 @extends('layouts.template_mhs')
 
 @section('content')
 <div class="container mt-4">
 
-    {{-- ============================= --}}
-  {{--  DEBUG: Tampilkan data mahasiswa  --}}
+  {{-- ============================= --}}
+  {{-- DEBUG: Tampilkan data mahasiswa  --}}
   {{-- ============================= --}}
   <div class="card mb-4 border-danger">
     <div class="card-header bg-danger text-white">
@@ -22,9 +23,8 @@
   {{-- ===================================== --}}
 
   {{-- Filter form --}}
-  <form method="GET" action="{{ url()->current() }}" class="card mb-4 p-3 bg-dark text-white">
+  <form id="filter-form" class="card mb-4 p-3 bg-dark text-white">
     <div class="row g-3">
-      {{-- Posisi / Jabatan --}}
       <div class="col-md-2">
         <input
           type="text"
@@ -35,7 +35,6 @@
         >
       </div>
 
-      {{-- Skill yang cocok --}}
       <div class="col-md-2">
         <input
           type="text"
@@ -46,7 +45,6 @@
         >
       </div>
 
-      {{-- Lokasi --}}
       <div class="col-md-2">
         <input
           type="text"
@@ -57,7 +55,6 @@
         >
       </div>
 
-      {{-- Gaji Minimum --}}
       <div class="col-md-2">
         <input
           type="number"
@@ -68,7 +65,6 @@
         >
       </div>
 
-      {{-- Durasi (bulan) --}}
       <div class="col-md-2">
         <select name="durasi" class="form-select">
           <option value="">Durasi (bulan)</option>
@@ -77,7 +73,6 @@
         </select>
       </div>
 
-      {{-- Submit --}}
       <div class="col-md-2">
         <button type="submit" class="btn btn-primary w-100">
           <i class="fas fa-search"></i> Cari
@@ -86,48 +81,70 @@
     </div>
   </form>
 
-  {{-- Daftar hasil --}}
+  {{-- Daftar hasil (akan di‐inject via AJAX) --}}
   <div class="row" id="rekomendasi-list">
-    @forelse($lowongan as $l)
-      <div class="col-md-4 mb-4">
-        <div class="card h-100 shadow">
-          <div class="card-body">
-          <p class="text-secondary small">
-          <strong>Score:</strong> {{ number_format($l->smart_score, 4) }}
-            <h6 class="text-muted">
-              {{ $l->perusahaan->nama ?? '-' }}
-            </h6>
-            <h5 class="card-title">
-              {{ $l->judul }}
-            </h5>
-            <p class="text-secondary">
-              {{ $l->lokasi }}
-            </p>
-            <p class="small mb-1">
-              <span class="badge bg-success">Umum</span>
-              <span class="badge bg-secondary">
-                {{ $l->periode->durasi ?? '-' }} bulan
-              </span>
-              <span class="badge bg-dark">Onsite</span>
-            </p>
-            <p class="text-danger small mb-2">
-              Penutupan: {{ $l->deadline_lowongan->format('d M Y') }}
-            </p>
-          <a href="{{ route('rekomendasi.show', $l->lowongan_id) }}"
-            class="btn btn-outline-primary w-100">
-            Lihat Detail
-          </a>
-          </div>
-          <div class="card-footer text-muted small">
-            Dibuat {{ $l->tanggal_mulai_magang?->diffForHumans() ?? '-' }}
-          </div>
-        </div>
-      </div>
-    @empty
-      <div class="col-12 text-center text-muted">
-        Tidak ada lowongan sesuai kriteria.
-      </div>
-    @endforelse
+    @include('rekomendasi.partials.list', ['lowongan' => $lowongan, 'mhs' => $mhs])
   </div>
 </div>
 @endsection
+
+@push('js')
+<script>
+  // This script runs after jQuery is loaded (the layout defines @stack('js') after jQuery).
+  $(function() {
+    // 1) Intercept the filter form submit
+    $('#filter-form').on('submit', function(e) {
+      e.preventDefault();
+      const url  = window.location.href.split('?')[0];
+      const data = $(this).serialize();
+
+      $.ajax({
+        url: url,
+        method: 'GET',
+        data: data,
+        dataType: 'json',
+        success: function(response) {
+          $('#rekomendasi-list').html(response.html);
+
+          // Update URL so filters appear in address bar
+          const newUrl = url + '?' + data;
+          window.history.pushState(null, '', newUrl);
+        },
+        error: function(err) {
+          console.error('Error loading recommendations:', err);
+          // If AJAX fails, do a full reload:
+          window.location.href = url + '?' + data;
+        }
+      });
+    });
+
+    // 2) Intercept “Lihat Detail” clicks inside the list
+    $('#rekomendasi-list').on('click', '.detail-link', function(e) {
+      e.preventDefault();
+
+      // Base detail URL, e.g. "/mahasiswa/rekomendasi/4"
+      let baseUrl = $(this).data('url');
+      // Append ?ajax=1 so the controller returns JSON
+      let ajaxUrl = baseUrl + '?ajax=1';
+
+      $.ajax({
+        url: ajaxUrl,
+        method: 'GET',
+        dataType: 'json',
+        success: function(response) {
+          // Swap out the entire <body> with the detail page HTML:
+          $('body').html(response.html);
+
+          // Clean the URL (remove ?ajax=1)
+          window.history.pushState(null, '', baseUrl);
+        },
+        error: function(err) {
+          console.error('Error loading detail via AJAX:', err);
+          // Fallback: full navigation
+          window.location.href = baseUrl;
+        }
+      });
+    });
+  });
+</script>
+@endpush
