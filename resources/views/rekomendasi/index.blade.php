@@ -7,7 +7,7 @@
   {{-- ============================= --}}
   {{-- DEBUG: Tampilkan data mahasiswa  --}}
   {{-- ============================= --}}
-  <div class="card mb-4 border-danger">
+  {{-- <div class="card mb-4 border-danger">
     <div class="card-header bg-danger text-white">
       <strong>DEBUG: Data Mahasiswa (User ID: {{ Auth::id() }})</strong>
     </div>
@@ -19,7 +19,7 @@
       <p><strong>Gaji Minimum:</strong> Rp {{ number_format($mhs->gaji_minimum, 0, ',', '.') }}</p>
       <p><strong>Durasi Preferensi:</strong> {{ $mhs->durasi }} bulan</p>
     </div>
-  </div>
+  </div> --}}
   {{-- ===================================== --}}
 
   {{-- Filter form --}}
