@@ -91,11 +91,11 @@
                     </li>
                     <li>
                       <a>
-                        <span class="sub-item">Pencarian dan filter</span>
+                        <span class="sub-item">Pencarian dan filter</span>14
                       </a>
                     </li>
                     <li>
-                      <a>
+                      <a href="{{ url('pengajuan-magang-mhs') }}">
                         <span class="sub-item">Ajukan lamaran</span>
                       </a>
                     </li>

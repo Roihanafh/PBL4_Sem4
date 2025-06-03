@@ -22,7 +22,25 @@ class MahasiswaSeeder extends Seeder
                 'telp'           => '081333537649',
                 'prodi_id'       => 1, // disesuaikan dengan migration
                 'status_magang'  => 'Belum Magang',
-            ]
+            ],
+            [
+                'mhs_nim'        => '2341720227',
+                'user_id'        => 4,
+                'full_name'      => 'Muhammad Rizky',
+                'alamat'         => 'Jl. Kembang Kertas',
+                'telp'           => '08123456789',
+                'prodi_id'       => 1, // disesuaikan dengan migration
+                'status_magang'  => 'Belum Magang',
+            ],
+            [
+                'mhs_nim'        => '2341720228',
+                'user_id'        => 5,
+                'full_name'      => 'Muhammad Fauzan',
+                'alamat'         => 'Jl. Kembang Kertas',
+                'telp'           => '08123456789',
+                'prodi_id'       => 1, // disesuaikan dengan migration
+                'status_magang'  => 'Belum Magang',
+            ],  
         ];
         DB::table('m_mahasiswa')->insert($data);
         }

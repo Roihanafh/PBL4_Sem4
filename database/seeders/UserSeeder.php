@@ -30,6 +30,16 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('mhs'),
                 'level_id' => 3, // Mahasiswa
             ],
+            [
+                'username' => 'mahasiswaa',
+                'password' => Hash::make('mhs'),
+                'level_id' => 3, // Mahasiswa
+            ],
+            [
+                'username' => 'mahasiswaaa',
+                'password' => Hash::make('mhs'),
+                'level_id' => 3, // Mahasiswa
+            ],
         ];
             DB::table('m_users')->insert($data);
     }

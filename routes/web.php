@@ -13,6 +13,7 @@ use App\Http\Controllers\LowonganController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PengajuanMagangController;
 use App\Http\Controllers\PerusahaanController;
+use App\Http\Controllers\PengajuanMagangMhsController;
 use GuzzleHttp\Psr7\Message;
 use Illuminate\Support\Facades\Route;
 
@@ -221,10 +222,23 @@ Route::middleware(['auth','authorize:mahasiswa'])->group(function () {
         Route::post('/feedback', [FeedbackPengalamanController::class, 'store'])->name('feedback.store');
     });
 
-    Route::group(['prefix' => 'message'], function () {
+    Route::group(['prefix' => 'message'], function () { 
         Route::get('/', [MessageController::class, 'index']);
         Route::post('/list', [MessageController::class, 'list']);
         Route::get('/{id}/show_ajax', [MessageController::class, 'show_ajax']);
         Route::post('/{id}/mark_as_read', [MessageController::class, 'markAsRead']);  
+    });
+
+    Route::group(['prefix' => 'pengajuan-magang-mhs'], function () {
+        Route::get('/', [PengajuanMagangMhsController::class, 'index']);
+        Route::post('/list', [PengajuanMagangMhsController::class, 'list']);
+        Route::get('/create_ajax', [PengajuanMagangMhsController::class, 'create_ajax']);
+        Route::post('/store', [PengajuanMagangMhsController::class, 'store']);
+        Route::get('/{lamaran_id}/show_ajax', [PengajuanMagangMhsController::class, 'show_ajax']);
+        Route::post('/{lamaran_id}/update_status', [PengajuanMagangMhsController::class, 'update_status']);
+        Route::get('/{lamaran_id}/edit_ajax', [PengajuanMagangMhsController::class, 'edit_ajax']);
+        Route::post('/{lamaran_id}/update', [PengajuanMagangMhsController::class, 'update']);
+        Route::get('/{lamaran_id}/delete_ajax', [PengajuanMagangMhsController::class, 'confirm_ajax']);
+        Route::delete('/{lamaran_id}/delete_ajax', [PengajuanMagangMhsController::class, 'delete_ajax']);
     });
 });
