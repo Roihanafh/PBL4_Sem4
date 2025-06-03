@@ -92,7 +92,7 @@ $(document).ready(function() {
 
                         // Reload DataTable
                         if ($.fn.DataTable.isDataTable('#mahasiswa-table')) {
-                            $('#mahasiswa-table').DataTable().ajax.reload(null, false);
+                            $('#mahasiswa-table').DataTable().ajax.reload(); // Reload semua data
                         }
                     } else {
                         $('.text-danger').text(''); // reset error text

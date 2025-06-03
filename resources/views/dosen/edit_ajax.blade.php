@@ -44,6 +44,13 @@
                        value="{{ $dosen->telp }}">
                 <small id="error-telp" class="error-text form-text text-danger"></small>
             </div>
+            
+            <div class="form-group">
+                <label>Bidang Penelitian</label>
+                <input type="text" class="form-control" 
+                    value="{{ $dosen->bidangPenelitian->bidang ?? '-' }}" readonly>
+            </div>
+
 
             <div class="form-group">
                 <label>Username</label>

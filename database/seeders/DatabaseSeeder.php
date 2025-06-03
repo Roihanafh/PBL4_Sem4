@@ -36,6 +36,8 @@ class DatabaseSeeder extends Seeder
 
             LogAktivitasMhsSeeder::class,
             FeedbackSeeder::class,
+
+            BidangPenelitianSeeder::class,
         ]);
             
     }

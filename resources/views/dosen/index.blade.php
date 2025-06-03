@@ -34,6 +34,21 @@
       </div>
     </div>
 
+    <div class="card-header">
+      <div class="d-flex gap-2 align-items-center flex-wrap">
+        <!-- existing buttons here -->
+
+        {{-- Dropdown filter bidang penelitian --}}
+        <select id="filter-bidang" class="form-select w-auto">
+          <option value="">-- Semua Bidang --</option>
+          @foreach(\App\Models\BidangPenelitianModel::all() as $bidang)
+            <option value="{{ $bidang->id_minat }}">{{ $bidang->bidang }}</option>
+          @endforeach
+        </select>
+      </div>
+    </div>
+
+
     <div class="card-body">
       <table id="dosen-table" class="display table table-striped table-hover" style="width: 100%">
         <thead class="thead-dark">
@@ -60,12 +75,15 @@
       }
     });
 
-    $('#dosen-table').DataTable({
+    let table = $('#dosen-table').DataTable({
       processing: true,
       serverSide: true,
       ajax: {
         url: "{{ url('/dosen/list') }}",
-        type: "POST"
+        type: "POST",
+        data: function (d) {
+          d.bidang = $('#filter-bidang').val();
+        }
       },
       columns: [
         { data: 'DT_RowIndex', className: "text-center", orderable: false, searchable: false, width: "5%" },
@@ -74,6 +92,11 @@
         { data: 'telp' },
         { data: 'aksi', className: "text-center", orderable: false, searchable: false, width: "15%" }
       ]
+    });
+
+    // Trigger reload on dropdown change
+    $('#filter-bidang').change(function () {
+      table.ajax.reload();
     });
   });
 
