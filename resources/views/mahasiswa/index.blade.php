@@ -98,9 +98,9 @@
         },
         columns: [
             { data: 'DT_RowIndex', className: "text-center", orderable: false, searchable: false, width: "5%" },
-            { data: 'nim' },
-            { data: 'nama' },
-            { data: 'prodi' },
+            { data: 'nim', name: 'mhs_nim' },
+            { data: 'nama', name: 'full_name' },
+            { data: 'prodi', name: 'prodi.nama_prodi' }, // tergantung struktur relasi
             { data: 'aksi', className: "text-center", orderable: false, searchable: false, width: "10%" }
         ]
     });
