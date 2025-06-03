@@ -107,13 +107,13 @@
           $('#rekomendasi-list').html(response.html);
 
           // Update URL so filters appear in address bar
-          const newUrl = url + '?' + data;
-          window.history.pushState(null, '', newUrl);
+          // const newUrl = url + '?' + data;
+          // window.history.pushState(null, '', newUrl);
         },
         error: function(err) {
           console.error('Error loading recommendations:', err);
           // If AJAX fails, do a full reload:
-          window.location.href = url + '?' + data;
+          // window.location.href = url + '?' + data;
         }
       });
     });
@@ -136,7 +136,7 @@
           $('body').html(response.html);
 
           // Clean the URL (remove ?ajax=1)
-          window.history.pushState(null, '', baseUrl);
+          // window.history.pushState(null, '', baseUrl);
         },
         error: function(err) {
           console.error('Error loading detail via AJAX:', err);

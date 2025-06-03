@@ -163,7 +163,7 @@
 @push('js')
 <script>
   $(function() {
-    // Intercept clicks on “Lowongan Lainnya” in the sidebar:
+    // 1) Intercept sidebar‐link clicks (Lowongan Lainnya)
     $('#single-detail').on('click', '.sidebar-link', function(e) {
       e.preventDefault();
 
@@ -178,8 +178,8 @@
         dataType: 'json',
         success: function(response) {
           $('body').html(response.html);
-          // Clean the URL (remove ?ajax=1)
-          window.history.pushState(null, '', baseUrl);
+          // Clean URL:
+          window.history.replaceState(null, '', '/mahasiswa/rekomendasi-magang');
         },
         error: function(err) {
           console.error('Error loading detail via AJAX:', err);
