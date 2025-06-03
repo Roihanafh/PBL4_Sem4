@@ -369,7 +369,7 @@ class LowonganController extends Controller
         // 4) Siapkan query lowongan lain untuk sidebar (sama filter-nya)
         $q = LowonganModel::with(['perusahaan', 'periode', 'lamaran'])
             ->where('status', 'aktif')
-            ->where('gaji', '>=', $mhs->gaji_minimum);
+        ->when($mhs->gaji_minimum, fn ($qry, $min) => $qry->where('gaji', '>=', $min));
 
         if ($request->filled('posisi')) {
             $q->where('judul', 'like', '%' . $request->posisi . '%');
