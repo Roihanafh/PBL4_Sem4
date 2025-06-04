@@ -72,7 +72,7 @@
                     @foreach($periode as $per)
                         <option value="{{ $per->periode_id }}"
                           {{ $lowongan->periode_id == $per->periode_id ? 'selected' : '' }}>
-                          {{ $per->nama_periode }}
+                          {{ $per->periode }}
                         </option>
                     @endforeach
                 </select>
