@@ -4,9 +4,7 @@
 <div class="card">
   <div class="card-header">
     <div class="d-flex gap-2 align-items-center flex-wrap">
-      <button class="btn btn-primary btn-round ms-auto" onclick="modalAction('{{ url('/pengajuan-magang-mhs/create_ajax') }}')">
-          <i class="fa fa-plus"></i> Ajukan Magang
-      </button>
+    
     </div>
   </div>
 

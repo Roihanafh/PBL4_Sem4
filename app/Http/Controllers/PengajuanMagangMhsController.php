@@ -41,7 +41,10 @@ class PengajuanMagangMhsController extends Controller
     public function list()
     {
         try {
-            $lamaran = LamaranMagangModel::with('lowongan', 'dosen', 'mahasiswa')->get();
+            $lamaran = LamaranMagangModel::with('lowongan', 'dosen', 'mahasiswa')
+                ->get();
+
+            $lamaran = $lamaran->where('mhs_nim', auth()->user()->mahasiswa->mhs_nim);
             
             return DataTables::of($lamaran)
                 ->addIndexColumn()
@@ -318,20 +321,21 @@ class PengajuanMagangMhsController extends Controller
         ]);
     }
 
-    public function create_ajax()
+    public function create_ajax($id)
     {
-        // Ambil data lowongan magang yang tersedia
-        $lowongan = LowonganModel::all(); // Perbaikan: Menggunakan LowonganMagangModel dan nama variabel lowongans
+        // Fetch single LowonganModel instance by ID
+        $lowongan = LowonganModel::find($id);
+        // Fetch dosen data (if needed)
         $dosen = DosenModel::all();
-        return view('pengajuan_magang_mhs.create_ajax')
-        ->with([
-            'lowongan' => $lowongan,
-            'dosen' => $dosen,
-            'breadcrumb' => (object)[
-                'title' => 'Lamaran Magang' // bisa sesuaikan judulnya
-            ]
-        ]);
-    
+        
+        return view('rekomendasi.create_ajax')
+            ->with([
+                'lowongan' => $lowongan,
+                'dosen' => $dosen,
+                'breadcrumb' => (object)[
+                    'title' => 'Lamaran Magang'
+                ]
+            ]);
     }
     public function confirm_ajax(String $lamaran_id)
     {

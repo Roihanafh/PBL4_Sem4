@@ -69,7 +69,7 @@
           {{ $lowongan->kuota }} Posisi &bull; {{ $lowongan->lamaran->count() }} Pelamar
           </small>
         </div>
-        <button onclick="loadModal('{{ url('pengajuan-magang-mhs/create_ajax') }}')" class="btn btn-primary">
+        <button onclick="loadModal('{{ url('rekomendasi/' . $lowongan->lowongan_id . '/create_ajax') }}')" class="btn btn-primary">
           Daftar Sekarang
         </button>
         </div>
