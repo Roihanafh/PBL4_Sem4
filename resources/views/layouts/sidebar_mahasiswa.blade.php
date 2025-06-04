@@ -85,7 +85,7 @@
                 <div class="collapse" id="pengajuan">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a>
+                      <a >
                         <span class="sub-item">Detail lowongan</span>
                       </a>
                     </li>
@@ -100,7 +100,7 @@
                       </a>
                     </li>
                     <li>
-                      <a>
+                      <a href="{{ url('pengajuan-magang-mhs') }}">
                         <span class="sub-item">Status pengajuan</span>
                       </a>
                     </li>

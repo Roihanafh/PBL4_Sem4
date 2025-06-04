@@ -2,169 +2,191 @@
 @extends('layouts.template_mhs')
 
 @section('content')
-<div class="container mt-4" id="single-detail">
-  {{-- Statistik ringkas --}}
-  <div class="d-flex mb-4">
+  <div class="container mt-4" id="single-detail">
+    {{-- Modal Container --}}
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static"
+    data-keyboard="false">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content"></div>
+    </div>
+    </div>
+    {{-- Statistik ringkas --}}
+    <div class="d-flex mb-4">
     <div class="me-4"><strong>Total Posisi:</strong> {{ $totalPositions }}</div>
     <div class="me-4"><strong>Total Perusahaan:</strong> {{ $totalCompanies }}</div>
     <div><strong>Total Job:</strong> {{ $totalJobs }}</div>
-  </div>
+    </div>
 
-  <div class="row">
+    <div class="row">
     {{-- ====================== SIDEBAR KIRI ====================== --}}
     <div class="col-md-4 mb-4">
       <h6 class="mb-2">Lowongan Lainnya</h6>
 
       <div class="overflow-auto" style="max-height:calc(100vh - 220px);">
-        @foreach($lowonganList as $l)
-          <a href="{{ route('rekomendasi.show', $l->lowongan_id) }}"
-             class="text-decoration-none sidebar-link"
-             data-url="{{ route('rekomendasi.show', $l->lowongan_id) }}">
-            <div class="card shadow-sm mb-4 sidebar-card
-                {{ $l->lowongan_id == $lowongan->lowongan_id ? 'border-primary' : '' }}">
-              <div class="card-body text-center p-4">
-                @if($l->perusahaan->logo_path)
-                  <img src="{{ asset('uploads/logos/' . $l->perusahaan->logo_path) }}"
-                       alt="Logo {{ $l->perusahaan->nama }}"
-                       class="img-fluid mb-3"
-                       style="max-height:90px">
-                @endif
+      @foreach($lowonganList as $l)
+      <a href="{{ route('rekomendasi.show', $l->lowongan_id) }}" class="text-decoration-none sidebar-link"
+        data-url="{{ route('rekomendasi.show', $l->lowongan_id) }}">
+        <div class="card shadow-sm mb-4 sidebar-card
+      {{ $l->lowongan_id == $lowongan->lowongan_id ? 'border-primary' : '' }}">
+        <div class="card-body text-center p-4">
+        @if($l->perusahaan->logo_path)
+        <img src="{{ asset('uploads/logos/' . $l->perusahaan->logo_path) }}" alt="Logo {{ $l->perusahaan->nama }}"
+        class="img-fluid mb-3" style="max-height:90px">
+      @endif
 
-                <h6 class="text-muted mb-1 text-truncate">{{ $l->perusahaan->nama }}</h6>
-                <strong class="d-block mb-1 text-truncate">{{ $l->judul }}</strong>
+        <h6 class="text-muted mb-1 text-truncate">{{ $l->perusahaan->nama }}</h6>
+        <strong class="d-block mb-1 text-truncate">{{ $l->judul }}</strong>
 
-                <small class="text-secondary d-block mb-1">
-                  <i class="fas fa-map-marker-alt"></i> {{ $l->lokasi }}
-                </small>
+        <small class="text-secondary d-block mb-1">
+        <i class="fas fa-map-marker-alt"></i> {{ $l->lokasi }}
+        </small>
 
-                <div class="small mb-2">
-                  <span class="badge bg-success">Umum</span>
-                  <span class="badge bg-secondary">{{ $l->periode->durasi }} bln</span>
-                  <span class="badge bg-dark">Onsite</span>
-                </div>
+        <div class="small mb-2">
+        <span class="badge bg-success">Umum</span>
+        <span class="badge bg-secondary">{{ $l->periode->durasi }} bln</span>
+        <span class="badge bg-dark">Onsite</span>
+        </div>
 
-                <small class="text-danger d-block">
-                  Penutupan: {{ $l->deadline_lowongan->format('d M Y') }}
-                </small>
-              </div>
-            </div>
-          </a>
-        @endforeach
+        <small class="text-danger d-block">
+        Penutupan: {{ $l->deadline_lowongan->format('d M Y') }}
+        </small>
+        </div>
+        </div>
+      </a>
+    @endforeach
       </div>
     </div>
 
     {{-- ====================== DETAIL KANAN ====================== --}}
     <div class="col-md-8">
       <div class="card h-100 shadow-sm border-0">
-        <div class="card-body">
-          {{-- Ringkasan posisi & pelamar --}}
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <div>
-              <span class="badge bg-success">Umum</span>
-              <small class="ms-2">
-                {{ $lowongan->kuota }} Posisi &bull; {{ $lowongan->lamaran->count() }} Pelamar
-              </small>
-            </div>
-            <a href="#"
-               onclick="alert('Fitur lamaran akan menyusul!')"
-               class="btn btn-primary">
-              Daftar Sekarang
-            </a>
-          </div>
+      <div class="card-body">
+        {{-- Ringkasan posisi & pelamar --}}
+        <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <span class="badge bg-success">Umum</span>
+          <small class="ms-2">
+          {{ $lowongan->kuota }} Posisi &bull; {{ $lowongan->lamaran->count() }} Pelamar
+          </small>
+        </div>
+        <button onclick="loadModal('{{ url('pengajuan-magang-mhs/create_ajax') }}')" class="btn btn-primary">
+          Daftar Sekarang
+        </button>
+        </div>
 
-          {{-- Judul & perusahaan --}}
-          <h4>{{ $lowongan->judul }}</h4>
-          <h6 class="text-muted">{{ $lowongan->perusahaan->nama }}</h6>
-          <p class="text-secondary mb-4">
-            <i class="fas fa-map-marker-alt"></i> {{ $lowongan->lokasi }}
-            &nbsp;&bull;&nbsp;
-            <i class="fas fa-briefcase"></i> Onsite
-          </p>
+        {{-- Judul & perusahaan --}}
+        <h4>{{ $lowongan->judul }}</h4>
+        <h6 class="text-muted">{{ $lowongan->perusahaan->nama }}</h6>
+        <p class="text-secondary mb-4">
+        <i class="fas fa-map-marker-alt"></i> {{ $lowongan->lokasi }}
+        &nbsp;&bull;&nbsp;
+        <i class="fas fa-briefcase"></i> Onsite
+        </p>
 
-          {{-- Tabs Deskripsi / Perusahaan --}}
-          <ul class="nav nav-tabs mb-4">
-            <li class="nav-item">
-              <a class="nav-link active" data-bs-toggle="tab" href="#deskripsi">Deskripsi Lowongan</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-bs-toggle="tab" href="#perusahaan">Perusahaan</a>
-            </li>
+        {{-- Tabs Deskripsi / Perusahaan --}}
+        <ul class="nav nav-tabs mb-4">
+        <li class="nav-item">
+          <a class="nav-link active" data-bs-toggle="tab" href="#deskripsi">Deskripsi Lowongan</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-bs-toggle="tab" href="#perusahaan">Perusahaan</a>
+        </li>
+        </ul>
+
+        <div class="tab-content">
+        {{-- Tab Deskripsi --}}
+        <div class="tab-pane fade show active" id="deskripsi">
+          <h5><i class="fas fa-info-circle"></i> Rincian Lowongan</h5>
+          <p>{!! nl2br(e($lowongan->deskripsi)) !!}</p>
+
+          <h5 class="mt-4"><i class="fas fa-file-pdf"></i> Silabus</h5>
+          @if($lowongan->sylabus_path)
+        <a href="{{ asset($lowongan->sylabus_path) }}" target="_blank" class="btn btn-outline-primary mb-4">
+        <i class="fas fa-download"></i> Unduh Silabus
+        </a>
+      @else
+        <p class="text-muted">Tidak ada silabus tersedia.</p>
+      @endif
+
+          <h5 class="mt-4"><i class="fas fa-calendar-alt"></i> Tanggal Penting</h5>
+          <ul>
+          <li>Durasi: {{ $lowongan->periode->durasi }} bulan</li>
+          <li>Penutupan lamaran: {{ $lowongan->deadline_lowongan->format('d M Y') }}</li>
+          <li>Pengumuman: {{ optional($lowongan->pengumuman)->format('d M Y') ?? '-' }}</li>
           </ul>
+        </div>
 
-          <div class="tab-content">
-            {{-- Tab Deskripsi --}}
-            <div class="tab-pane fade show active" id="deskripsi">
-              <h5><i class="fas fa-info-circle"></i> Rincian Lowongan</h5>
-              <p>{!! nl2br(e($lowongan->deskripsi)) !!}</p>
+        {{-- Tab Perusahaan --}}
+        <div class="tab-pane fade" id="perusahaan">
+          <h5><i class="fas fa-building"></i> {{ $lowongan->perusahaan->nama }}</h5>
+          <p>{{ $lowongan->perusahaan->deskripsi ?? '—' }}</p>
+        </div>
+        </div>
 
-              <h5 class="mt-4"><i class="fas fa-file-pdf"></i> Silabus</h5>
-              @if($lowongan->sylabus_path)
-                <a href="{{ asset($lowongan->sylabus_path) }}"
-                   target="_blank"
-                   class="btn btn-outline-primary mb-4">
-                  <i class="fas fa-download"></i> Unduh Silabus
-                </a>
-              @else
-                <p class="text-muted">Tidak ada silabus tersedia.</p>
-              @endif
-
-              <h5 class="mt-4"><i class="fas fa-calendar-alt"></i> Tanggal Penting</h5>
-              <ul>
-                <li>Durasi: {{ $lowongan->periode->durasi }} bulan</li>
-                <li>Penutupan lamaran: {{ $lowongan->deadline_lowongan->format('d M Y') }}</li>
-                <li>Pengumuman: {{ optional($lowongan->pengumuman)->format('d M Y') ?? '-' }}</li>
-              </ul>
-            </div>
-
-            {{-- Tab Perusahaan --}}
-            <div class="tab-pane fade" id="perusahaan">
-              <h5><i class="fas fa-building"></i> {{ $lowongan->perusahaan->nama }}</h5>
-              <p>{{ $lowongan->perusahaan->deskripsi ?? '—' }}</p>
-            </div>
-          </div>
-
-          {{-- Share link --}}
-          <div class="mt-4">
-            <div class="dropdown">
-              <a class="text-decoration-none dropdown-toggle" href="#" role="button"
-                 id="shareDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fas fa-share-alt"></i> Bagikan Lowongan
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="shareDropdown">
-                <li>
-                  <a class="dropdown-item"
-                     href="https://api.whatsapp.com/send?text={{ urlencode($lowongan->judul . ' di ' . $lowongan->perusahaan->nama . ' ' . url()->current()) }}"
-                     target="_blank">
-                    <i class="fab fa-whatsapp"></i> WhatsApp
-                  </a>
-                </li>
-                <li>
-                  <a class="dropdown-item"
-                     href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url()->current()) }}"
-                     target="_blank">
-                    <i class="fab fa-facebook"></i> Facebook
-                  </a>
-                </li>
-                <li>
-                  <button class="dropdown-item" onclick="copyLink()">
-                    <i class="fas fa-link"></i> Salin Tautan (Instagram)
-                  </button>
-                </li>
-              </ul>
-            </div>
-          </div>
+        {{-- Share link --}}
+        <div class="mt-4">
+        <div class="dropdown">
+          <a class="text-decoration-none dropdown-toggle" href="#" role="button" id="shareDropdown"
+          data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="fas fa-share-alt"></i> Bagikan Lowongan
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="shareDropdown">
+          <li>
+            <a class="dropdown-item"
+            href="https://api.whatsapp.com/send?text={{ urlencode($lowongan->judul . ' di ' . $lowongan->perusahaan->nama . ' ' . url()->current()) }}"
+            target="_blank">
+            <i class="fab fa-whatsapp"></i> WhatsApp
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item"
+            href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url()->current()) }}"
+            target="_blank">
+            <i class="fab fa-facebook"></i> Facebook
+            </a>
+          </li>
+          <li>
+            <button class="dropdown-item" onclick="copyLink()">
+            <i class="fas fa-link"></i> Salin Tautan (Instagram)
+            </button>
+          </li>
+          </ul>
+        </div>
         </div>
       </div>
+      </div>
+    </div>
     </div>
   </div>
-</div>
 @endsection
 
 @push('js')
-<script>
-  $(function() {
+  <script>
+    function loadModal(url) {
+    $('#myModal .modal-content').load(url, function () {
+      $('#myModal').modal('show');
+
+      // Re-bind the close button event after content loads
+      $(document).off('click', '[data-dismiss="modal"]').on('click', '[data-dismiss="modal"]', function () {
+      $('#myModal').modal('hide');
+      });
+    });
+    }
+
+    function modalAction(url = '') {
+    $('#myModal .modal-content').load(url, function () {
+      $('#myModal').modal('show');
+
+      // Re-bind the close button event after content loads
+      $(document).off('click', '[data-dismiss="modal"]').on('click', '[data-dismiss="modal"]', function () {
+      $('#myModal').modal('hide');
+      });
+    });
+    }
+    $(function () {
+
     // 1) Intercept sidebar‐link clicks (Lowongan Lainnya)
-    $('#single-detail').on('click', '.sidebar-link', function(e) {
+    $('#single-detail').on('click', '.sidebar-link', function (e) {
       e.preventDefault();
 
       // Base detail URL, e.g. "/mahasiswa/rekomendasi/5"
@@ -173,28 +195,28 @@
       let ajaxUrl = baseUrl + '?ajax=1';
 
       $.ajax({
-        url: ajaxUrl,
-        method: 'GET',
-        dataType: 'json',
-        success: function(response) {
-          $('body').html(response.html);
-          // Clean URL:
-          window.history.replaceState(null, '', '/mahasiswa/rekomendasi-magang');
-        },
-        error: function(err) {
-          console.error('Error loading detail via AJAX:', err);
-          // Fallback to full navigation:
-          window.location.href = baseUrl;
-        }
+      url: ajaxUrl,
+      method: 'GET',
+      dataType: 'json',
+      success: function (response) {
+        $('body').html(response.html);
+        // Clean URL:
+        window.history.replaceState(null, '', '/mahasiswa/rekomendasi-magang');
+      },
+      error: function (err) {
+        console.error('Error loading detail via AJAX:', err);
+        // Fallback to full navigation:
+        window.location.href = baseUrl;
+      }
       });
     });
-  });
+    });
 
-  function copyLink() {
+    function copyLink() {
     const url = window.location.href;
     navigator.clipboard.writeText(url)
       .then(() => alert('Tautan berhasil disalin ke clipboard!'))
       .catch(err => console.error('Gagal menyalin tautan:', err));
-  }
-</script>
+    }
+  </script>
 @endpush

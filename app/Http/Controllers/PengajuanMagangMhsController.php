@@ -323,7 +323,15 @@ class PengajuanMagangMhsController extends Controller
         // Ambil data lowongan magang yang tersedia
         $lowongan = LowonganModel::all(); // Perbaikan: Menggunakan LowonganMagangModel dan nama variabel lowongans
         $dosen = DosenModel::all();
-        return view('pengajuan_magang_mhs.create_ajax')->with(['lowongan'=>$lowongan, 'dosen'=>$dosen]);
+        return view('pengajuan_magang_mhs.create_ajax')
+        ->with([
+            'lowongan' => $lowongan,
+            'dosen' => $dosen,
+            'breadcrumb' => (object)[
+                'title' => 'Lamaran Magang' // bisa sesuaikan judulnya
+            ]
+        ]);
+    
     }
     public function confirm_ajax(String $lamaran_id)
     {
