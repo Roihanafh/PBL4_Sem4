@@ -39,7 +39,7 @@
 
                 <div class="small mb-2">
                   <span class="badge bg-success">Umum</span>
-                  <span class="badge bg-secondary">{{ $l->periode->durasi }} bln</span>
+                  <span class="badge bg-secondary">{{ $l->durasi }} bln</span>
                   <span class="badge bg-dark">Onsite</span>
                 </div>
 
@@ -110,7 +110,7 @@
 
               <h5 class="mt-4"><i class="fas fa-calendar-alt"></i> Tanggal Penting</h5>
               <ul>
-                <li>Durasi: {{ $lowongan->periode->durasi }} bulan</li>
+                <li>Durasi: {{ $lowongan->durasi }} bulan</li>
                 <li>Penutupan lamaran: {{ $lowongan->deadline_lowongan->format('d M Y') }}</li>
                 <li>Pengumuman: {{ optional($lowongan->pengumuman)->format('d M Y') ?? '-' }}</li>
               </ul>

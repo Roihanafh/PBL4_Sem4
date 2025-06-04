@@ -11,7 +11,7 @@
         <p class="text-secondary">{{ $l->lokasi }}</p>
         <p class="small mb-1">
           <span class="badge bg-success">Umum</span>
-          <span class="badge bg-secondary">{{ $l->periode->durasi ?? '-' }} bulan</span>
+          <span class="badge bg-secondary">{{ $l->durasi ?? '-' }} bulan</span>
           <span class="badge bg-dark">Onsite</span>
         </p>
         <p class="text-danger small mb-2">

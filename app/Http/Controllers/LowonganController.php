@@ -32,10 +32,30 @@ class LowonganController extends Controller
 
     public function list(Request $request)
     {
+
+        // 1) Deactivate any lowongan whose deadline has passed
+        LowonganModel::where('status', 'aktif')
+        ->where('deadline_lowongan', '<', Carbon::today()->toDateString())
+        ->update(['status' => 'nonaktif']);
+
         if ($request->ajax()) {
             $q = LowonganModel::with(['perusahaan', 'periode'])
                 ->where('status', 'aktif')       // ⬅ hanya ambil yang aktif
-                ->select(/* ... */);
+                ->select(
+                    'lowongan_id',
+                    'judul',
+                    'deskripsi',
+                    'tanggal_mulai_magang',
+                    'deadline_lowongan',
+                    'lokasi',
+                    'perusahaan_id',
+                    'periode_id',
+                    'sylabus_path',
+                    'status',
+                    'gaji',
+                    'kuota',
+                    'durasi'
+                );
 
             return DataTables::of($q)
                 ->addIndexColumn()
@@ -156,6 +176,12 @@ class LowonganController extends Controller
 
     public function rekomendasi(Request $request, SmartRecommendationService $smart)
     {
+
+        // 1) Deactivate any lowongan whose deadline has passed
+        LowonganModel::where('status', 'aktif')
+        ->where('deadline_lowongan', '<', Carbon::today()->toDateString())
+        ->update(['status' => 'nonaktif']);
+
         // ---------------------------
         // 1. Ambil data mahasiswa
         // ---------------------------
@@ -192,9 +218,7 @@ class LowonganController extends Controller
             $q->where('gaji', '>=', $request->gaji);
         }
         if ($request->filled('durasi')) {
-            $q->whereHas('periode', fn($sub) =>
-                $sub->where('durasi', $request->durasi)
-            );
+            $q->where('durasi', $request->durasi);
         }
 
         // 4. Eksekusi query
@@ -337,9 +361,7 @@ class LowonganController extends Controller
             $q->where('gaji', '>=', $request->gaji);
         }
         if ($request->filled('durasi')) {
-            $q->whereHas('periode', fn($sub) =>
-                $sub->where('durasi', $request->durasi)
-            );
+            $q->where('durasi', $request->durasi);
         }
 
         // 5) Eksekusi → daftar lowongan lain
