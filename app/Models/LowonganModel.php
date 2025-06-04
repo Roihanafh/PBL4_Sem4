@@ -24,7 +24,8 @@ class LowonganModel extends Model
         'sylabus_path',
         'status', 
         'gaji',        
-        'kuota',  
+        'kuota', 
+        'durasi',
     ];
 
     /**

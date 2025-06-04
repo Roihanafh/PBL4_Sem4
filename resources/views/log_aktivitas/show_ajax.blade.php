@@ -32,6 +32,15 @@
             <td>{{ optional(optional($aktivitas->lamaran->mahasiswa)->prodi)->nama_prodi }}</td>
         </tr>
         <tr>
+            <th class="text-right">Judul Magang:</th>
+            <td>{{ optional($aktivitas->lamaran->lowongan)->judul }}</td>
+        </tr>
+        <tr>
+            <th class="text-right">Perusahaan:</th>
+            <td>{{ optional(optional($aktivitas->lamaran->lowongan)->perusahaan)->nama }}</td>
+        </tr>
+
+        <tr>
             <th class="text-right">Keterangan:</th>
             <td>{{ $aktivitas->keterangan }}</td>
         </tr>

@@ -97,7 +97,7 @@ class LogAktivitasMhsController extends Controller
             ->addColumn('nama', fn($item) => optional($item->lamaran->mahasiswa)->full_name ?? '-')
             ->addColumn('prodi', fn($item) => optional(optional($item->lamaran->mahasiswa)->prodi)->nama_prodi ?? '-')
             ->addColumn('keterangan', fn($item) => $item->keterangan)
-            ->addColumn('waktu', fn($item) => $item->waktu->format('d-m-Y H:i'))
+            ->addColumn('waktu', fn($item) => $item->waktu->format('d-m-Y'))
             ->addColumn('aksi', function ($item) {
                 return '<button onclick="modalAction(\'' . url('/log-aktivitas/' . $item->aktivitas_id . '/show_ajax') . '\')" class="btn btn-info btn-sm"><i class="fa fa-eye"></i></button>';
             })
@@ -121,7 +121,11 @@ class LogAktivitasMhsController extends Controller
 
     public function showAjax($id)
     {
-        $aktivitas = LogAktivitasMhsModel::with(['lamaran.mahasiswa.prodi'])->findOrFail($id);
+        $aktivitas = LogAktivitasMhsModel::with([
+            'lamaran.mahasiswa.prodi',
+            'lamaran.lowongan.perusahaan'
+        ])->findOrFail($id);
+
         $komentar = KomenLogAktivitasModel::where('aktivitas_id', $id)
             ->with('dosen')
             ->latest('created_at')
@@ -129,6 +133,7 @@ class LogAktivitasMhsController extends Controller
 
         return view('log_aktivitas.show_ajax', compact('aktivitas', 'komentar'));
     }
+
 
     public function storeKomentar(Request $request, $id)
     {
