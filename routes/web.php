@@ -14,6 +14,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PengajuanMagangController;
 use App\Http\Controllers\PerusahaanController;
 use App\Http\Controllers\PengajuanMagangMhsController;
+use App\Http\Controllers\MahasiswaBimbinganController;
 use GuzzleHttp\Psr7\Message;
 use Illuminate\Support\Facades\Route;
 
@@ -185,6 +186,16 @@ Route::middleware(['auth', 'authorize:dosen'])->group(function () {
         Route::put('/{dosen_id}/update_dosen', [DosenController::class, 'update_dosen']);
         Route::delete('/{dosen_id}/hapus-foto', [DosenController::class, 'hapus_foto_profile'])->name('dosen.hapus_foto');
     });
+
+  
+    Route::middleware(['auth', 'authorize:dosen'])->group(function () {
+        Route::get('/mahasiswa-bimbingan', [MahasiswaBimbinganController::class, 'index']);
+        Route::post('/mahasiswa-bimbingan/list', [MahasiswaBimbinganController::class, 'list']);
+        Route::get('/mahasiswa-bimbingan/show_ajax/{nim}', [MahasiswaBimbinganController::class, 'show_ajax'])->name('mahasiswa-bimbingan.show_ajax');
+
+});
+
+
 });
 
 //route mahasiswa beserta auth nya

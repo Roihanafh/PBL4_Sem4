@@ -35,7 +35,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a data-bs-toggle="collapse" href="#base">
+                <a href="{{ url('/mahasiswa-bimbingan') }}">
                   <i class="fas fa-user-friends"></i>
                   <p>Mahasiswa Bimbingan</p>
                 </a>
