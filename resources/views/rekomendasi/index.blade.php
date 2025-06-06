@@ -25,6 +25,7 @@
   {{-- Filter form --}}
   <form id="filter-form" class="card mb-4 p-3 bg-dark text-white">
     <div class="row g-3">
+      {{-- 1) Posisi / Jabatan --}}
       <div class="col-md-2">
         <input
           type="text"
@@ -35,16 +36,62 @@
         >
       </div>
 
+      {{-- 2) Skill yang cocok → dropdown multi-checkbox --}}
       <div class="col-md-2">
-        <input
-          type="text"
-          name="skill"
-          class="form-control"
-          placeholder="Skill yang cocok"
-          value="{{ request('skill') }}"
-        >
+        @php
+          // Daftar skills yang ingin ditampilkan di dropdown
+          $allSkills = [
+            'Java', 'Python', 'JavaScript', 'PHP',
+            'C#', 'C++', 'HTML', 'CSS', 'SQL',
+            'Git', 'Linux'
+          ];
+          // Ambil nilai yang dicentang (jika ada)
+          $selected = request('skills', []);
+        @endphp
+
+        <div class="dropdown">
+          <button
+            class="btn btn-light dropdown-toggle w-100 text-start"
+            type="button"
+            id="skillsDropdown"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Skill yang cocok
+            @if(!empty($selected))
+              ({{ count($selected) }})
+            @endif
+          </button>
+
+          <div
+            class="dropdown-menu p-3"
+            aria-labelledby="skillsDropdown"
+            style="max-height: 200px; overflow-y: auto;"
+            data-bs-auto-close="outside"
+          >
+            @foreach($allSkills as $skillOption)
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  name="skills[]"
+                  id="skill_{{ \Str::slug($skillOption) }}"
+                  value="{{ $skillOption }}"
+                  {{ in_array($skillOption, (array)$selected) ? 'checked' : '' }}
+                >
+                <label
+                  class="form-check-label"
+                  for="skill_{{ \Str::slug($skillOption) }}"
+                >
+                  {{ $skillOption }}
+                </label>
+              </div>
+            @endforeach
+          </div>
+        </div>
       </div>
 
+      {{-- 3) Lokasi --}}
       <div class="col-md-2">
         <input
           type="text"
@@ -55,15 +102,17 @@
         >
       </div>
 
+      {{-- 4) Tipe Bekerja --}}
       <div class="col-md-2">
         <select name="tipe_bekerja" class="form-select">
           <option value="">Tipe Bekerja</option>
-          <option value="remote"   {{ request('tipe_bekerja') === 'remote'   ? 'selected' : '' }}>Remote</option>
-          <option value="on_site"  {{ request('tipe_bekerja') === 'on_site'  ? 'selected' : '' }}>On-Site</option>
-          <option value="hybrid"   {{ request('tipe_bekerja') === 'hybrid'   ? 'selected' : '' }}>Hybrid</option>
+          <option value="remote"  {{ request('tipe_bekerja') === 'remote'  ? 'selected' : '' }}>Remote</option>
+          <option value="on_site" {{ request('tipe_bekerja') === 'on_site' ? 'selected' : '' }}>On-Site</option>
+          <option value="hybrid"  {{ request('tipe_bekerja') === 'hybrid'  ? 'selected' : '' }}>Hybrid</option>
         </select>
       </div>
 
+      {{-- 5) Durasi --}}
       <div class="col-md-2">
         <select name="durasi" class="form-select">
           <option value="">Durasi (bulan)</option>
@@ -72,6 +121,7 @@
         </select>
       </div>
 
+      {{-- 6) Tombol Cari --}}
       <div class="col-md-2">
         <button type="submit" class="btn btn-primary w-100">
           <i class="fas fa-search"></i> Cari
@@ -79,7 +129,6 @@
       </div>
     </div>
   </form>
-
   {{-- Daftar hasil (akan di‐inject via AJAX) --}}
   <div class="row" id="rekomendasi-list">
     @include('rekomendasi.partials.list', ['lowongan' => $lowongan, 'mhs' => $mhs])

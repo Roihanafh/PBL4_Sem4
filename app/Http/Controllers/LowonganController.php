@@ -52,7 +52,7 @@ class LowonganController extends Controller
                     'periode_id',
                     'sylabus_path',
                     'status',
-                    'gaji',
+                    'tipe_bekerja',
                     'kuota',
                     'durasi'
                 );
@@ -206,8 +206,14 @@ public function rekomendasi(Request $request, SmartRecommendationService $smart)
     if ($request->filled('posisi')) {
         $q->where('judul', 'like', '%' . $request->posisi . '%');
     }
-    if ($request->filled('skill')) {
-        $q->where('deskripsi', 'like', '%' . $request->skill . '%');
+    // 5) Filter “Skill yang cocok” (multi‐checkbox)
+    if ($request->has('skills')) {
+        $selectedSkills = array_filter($request->input('skills'));
+        $q->where(function($sub) use ($selectedSkills) {
+            foreach ($selectedSkills as $skill) {
+                $sub->orWhere('deskripsi', 'like', '%' . $skill . '%');
+            }
+        });
     }
     if ($request->filled('lokasi')) {
         $q->where('lokasi', 'like', '%' . $request->lokasi . '%');

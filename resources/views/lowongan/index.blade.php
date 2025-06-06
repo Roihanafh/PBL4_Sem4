@@ -12,8 +12,19 @@
     <table id="lowongan-table" class="table table-striped">
       <thead>
         <tr>
-          <th>No.</th><th>Judul</th><th>Perusahaan</th><th>Lokasi</th>
-          <th>Mulai</th><th>Deadline</th><th>Periode</th><th>Aksi</th>
+      <th>No.</th>
+      <th>Judul</th>
+      <th>Deskripsi</th>
+      <th>Perusahaan</th>
+      <th>Lokasi</th>
+      <th>Mulai</th>
+      <th>Deadline</th>
+      <th>Periode</th>
+      <th>Status</th>
+      <th>Kuota</th>
+      <th>Durasi</th>
+      <th>Tipe Bekerja</th>
+      <th>Aksi</th>
         </tr>
       </thead>
     </table>
@@ -45,29 +56,21 @@ $(function(){
     },
     columns: [
       { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-      { data: 'judul',               name: 'judul' },
-      { data: 'perusahaan',          name: 'perusahaan' },
-      { data: 'lokasi',              name: 'lokasi' },
-      // Kolom "Mulai" dengan format DD-MM-YYYY tapi sort berdasarkan YYYY-MM-DD
+      { data: 'judul', name: 'judul' },
+      { data: 'deskripsi', name: 'deskripsi' },
+      { data: 'perusahaan', name: 'perusahaan', orderable: false, searchable: false },
+      { data: 'lokasi', name: 'lokasi' },
       {
         data: 'tanggal_mulai_magang',
         name: 'tanggal_mulai_magang',
         render: function(data, type, row) {
           if (!data) return '';
-          // Ambil bagian sebelum "T", misal "2025-06-07"
           const datePart = data.split('T')[0];
-          // Split YYYY, MM, DD
-          const parts = datePart.split('-'); // [ "2025", "06", "07" ]
-          const formatted = parts[2] + '-' + parts[1] + '-' + parts[0]; // "07-06-2025"
-          if (type === 'display') {
-            return formatted;
-          }
-          // Untuk keperluan sorting/searching, gunakan tanggal asli (YYYY-MM-DD)
-          return datePart;
+          const parts = datePart.split('-'); // [YYYY,MM,DD]
+          const formatted = parts[2] + '-' + parts[1] + '-' + parts[0];
+          return (type === 'display') ? formatted : datePart;
         }
       },
-
-      // Kolom "Deadline" dengan format DD-MM-YYYY tapi sort berdasarkan YYYY-MM-DD
       {
         data: 'deadline_lowongan',
         name: 'deadline_lowongan',
@@ -76,14 +79,15 @@ $(function(){
           const datePart = data.split('T')[0];
           const parts = datePart.split('-');
           const formatted = parts[2] + '-' + parts[1] + '-' + parts[0];
-          if (type === 'display') {
-            return formatted;
-          }
-          return datePart;
+          return (type === 'display') ? formatted : datePart;
         }
       },
-      { data: 'periode',             name: 'periode' },
-      { data: 'aksi',                orderable: false, searchable: false }
+      { data: 'periode', name: 'periode', orderable: false, searchable: false },
+      { data: 'status', name: 'status' },
+      { data: 'kuota', name: 'kuota' },
+      { data: 'durasi', name: 'durasi' },
+      { data: 'tipe_bekerja', name: 'tipe_bekerja' },
+      { data: 'aksi', orderable: false, searchable: false }
     ]
   });
 });
