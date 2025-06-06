@@ -1,3 +1,5 @@
+{{-- resources/views/welcome_mahasiswa.blade.php --}}
+
 @extends('layouts.template_mhs')
 
 @push('css')
@@ -25,7 +27,7 @@
     transform: translateY(-4px) scale(1.02);
     box-shadow: 0 10px 24px rgba(0,0,0,.08);
   }
-  .fade-slide { /* existing rules keep */
+  .fade-slide {
     opacity: 0;
     transform: translateY(24px);
   }
@@ -44,9 +46,149 @@
     font-weight: 600;
     border-radius: .35rem;
   }
+
   /* ===== Hero Banner Background ===== */
-  .hero-bg { z-index: 0; border-radius: inherit; }
-  .hero-banner > * { position: relative; z-index: 1; }
+  .hero-bg {
+    z-index: 0;
+    border-radius: inherit;
+  }
+  .hero-banner > * {
+    position: relative;
+    z-index: 1;
+  }
+
+
+    /* Stepper Container */
+  .stepper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* Each Step Box */
+  .stepper-item {
+    position: relative;
+    text-align: center;
+    flex: 1;
+  }
+
+  /* The Circle for Each Step */
+  .stepper-circle {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: var(--primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform .3s ease, box-shadow .3s ease;
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+
+  /* Hover State on the Circle */
+  .stepper-item:hover .stepper-circle {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Step Label */
+  .stepper-label {
+    font-size: 0.9rem;
+    color: var(--secondary);
+  }
+
+  /* Arrow Icon Between Steps */
+  .stepper-arrow {
+    position: absolute;
+    top: 50%;
+    right: -16px;
+    transform: translateY(-50%);
+    color: var(--secondary);
+    font-size: 1.2rem;
+  }
+
+  /* Hide the arrow on the last step */
+  .stepper-item:last-child .stepper-arrow {
+    display: none;
+  }
+
+
+    /* Container Card */
+  .info-card {
+    background: #ffffff;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Colored header bar */
+  .info-card-header {
+    background: linear-gradient(90deg, rgba(99,102,241,0.9) 0%, rgba(99,102,241,0.6) 100%);
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+  }
+  .info-card-header i {
+    font-size: 1.5rem;
+    color: #ffffff;
+    margin-right: 0.75rem;
+  }
+  .info-card-header h5 {
+    margin: 0;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 1.25rem;
+  }
+
+  /* Body with left accent border */
+  .info-card-body {
+    border-left: 4px solid #6366f1; /* Indigo 500 */
+    padding: 1.5rem;
+  }
+
+  /* Paragraph text */
+  .info-card-body p {
+    color: #374151; /* Slate 700 */
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  /* Custom bullets */
+  .info-list {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+  }
+  .info-list li {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+  }
+  .info-list li i {
+    font-size: 1rem;
+    margin-right: 0.5rem;
+    color: #6366f1; /* Indigo 500 */
+    margin-top: 0.15rem;
+  }
+  .info-list li span {
+    color: #4B5563; /* Gray-700 */
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  /* Hover effect—slight lift on entire card */
+  .info-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
 </style>
 @endpush
 
@@ -56,14 +198,98 @@
   <div class="row mb-5">
     <div class="col-12">
       <div class="bg-white rounded-4 shadow-sm p-4 position-relative overflow-hidden">
-        <div class="hero-bg position-absolute" style="inset:0; background: radial-gradient(circle at 0% 50%, rgba(99,102,241,.25) 0%, rgba(99,102,241,0) 60%), linear-gradient(90deg, rgba(99,102,241,.15) 0%, rgba(255,255,255,0) 70%);"></div>
+        <div class="hero-bg position-absolute"
+             style="inset:0;
+                    background: radial-gradient(circle at 0% 50%, rgba(99,102,241,.25) 0%, rgba(99,102,241,0) 60%),
+                                linear-gradient(90deg, rgba(99,102,241,.15) 0%, rgba(255,255,255,0) 70%);">
+        </div>
         <h3 class="fw-bold mb-1 position-relative">
           Selamat Datang, <span class="text-primary">{{ Auth::user()->name }}</span> 👋
         </h3>
-        <p class="mb-0 text-secondary position-relative">Ringkasan aktivitas &amp; rekomendasi magang Anda.</p>
+        <p class="mb-0 text-secondary position-relative">
+          Ringkasan aktivitas &amp; rekomendasi magang Anda.
+        </p>
       </div>
     </div>
   </div>
+
+  <!-- ========= 1.1 How It Works (Stepper) ========= -->
+<div class="row mb-5">
+  <div class="col-12">
+    <div class="bg-white rounded-4 shadow-sm p-4">
+      <h4 class="fw-semibold mb-3">Cara Kerja Website Magang</h4>
+
+      <div class="stepper">
+        {{-- Step 1 --}}
+        <div class="stepper-item">
+          <div class="stepper-circle">1</div>
+          <div class="stepper-label">Cari Lowongan</div>
+          <i class="fas fa-chevron-right stepper-arrow"></i>
+        </div>
+
+        {{-- Step 2 --}}
+        <div class="stepper-item">
+          <div class="stepper-circle">2</div>
+          <div class="stepper-label">Ajukan Lamaran</div>
+          <i class="fas fa-chevron-right stepper-arrow"></i>
+        </div>
+
+        {{-- Step 3 --}}
+        <div class="stepper-item">
+          <div class="stepper-circle">3</div>
+          <div class="stepper-label">Proses Seleksi</div>
+          <i class="fas fa-chevron-right stepper-arrow"></i>
+        </div>
+
+        {{-- Step 4 --}}
+        <div class="stepper-item">
+          <div class="stepper-circle">4</div>
+          <div class="stepper-label">Mulai Magang</div>
+          {{-- no arrow on last step --}}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+  <!-- ========= 1.5 Welcome Overview ========= -->
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="info-card">
+      {{-- 1. Colored header with icon + title --}}
+      <div class="info-card-header">
+        <i class="fas fa-clipboard-check"></i>
+        <h5>Tentang Portal Magang</h5>
+      </div>
+
+      {{-- 2. Body with border-left accent and custom bullets --}}
+      <div class="info-card-body">
+        <p>
+          Portal ini membantu mahasiswa mencari dan mengajukan magang di berbagai perusahaan mitra. Anda dapat:
+        </p>
+        <ul class="info-list">
+          <li>
+            <i class="fas fa-search"></i>
+            <span>Mencari lowongan berdasarkan <strong>posisi</strong>, <strong>lokasi</strong>, dan <strong>skill</strong></span>
+          </li>
+          <li>
+            <i class="fas fa-clock"></i>
+            <span>Melihat status lamaran secara <strong>real time</strong></span>
+          </li>
+          <li>
+            <i class="fas fa-calendar-alt"></i>
+            <span>Mengecek <strong>deadline</strong> terdekat agar tidak terlewat</span>
+          </li>
+          <li>
+            <i class="fas fa-chart-line"></i>
+            <span>Lihat <strong>rekomendasi otomatis</strong> berdasarkan profil Anda</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
 
   <!-- ========= 2. Metrics ========= -->
   <div class="row g-4 mb-5">
@@ -79,7 +305,7 @@
         </div>
       </div>
     </div>
-    <!-- In-Progress Applications -->
+    <!-- In Progress Applications -->
     <div class="col-12 col-md-4">
       <div class="card card-stat shadow-sm border-0 h-100">
         <div class="card-body d-flex align-items-center gap-3">
@@ -91,14 +317,78 @@
         </div>
       </div>
     </div>
-    <!-- Placeholder Metric -->
+    <!-- Completed (Placeholder) -->
     <div class="col-12 col-md-4">
       <div class="card card-stat shadow-sm border-0 h-100">
         <div class="card-body d-flex align-items-center gap-3">
           <span class="fs-2 text-success"><i class="fas fa-clipboard-list"></i></span>
           <div>
             <span class="small text-secondary d-block">Completed</span>
-            <h2 class="fw-semibold mb-0 counter" data-count="{{ $inProgressApplications == 0 ? 0 : ($inProgressApplications - 1) }}">0</h2>
+            <h2 class="fw-semibold mb-0 counter"
+                data-count="{{ $inProgressApplications == 0 ? 0 : ($inProgressApplications - 1) }}">0</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= 2.1 Tips & Info ========= -->
+  <div class="row mb-5">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white fw-semibold">
+          <i class="fas fa-info-circle text-secondary me-2"></i>Tips &amp; Informasi
+        </div>
+        <div class="card-body p-0">
+          <div class="accordion" id="tipsAccordion">
+            <!-- Tip 1 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button collapsed" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                  Bagaimana Cara Melihat Detail Lowongan?
+                </button>
+              </h2>
+              <div id="collapseOne" class="accordion-collapse collapse"
+                   data-bs-parent="#tipsAccordion">
+                <div class="accordion-body">
+                  Klik tombol “Detail” pada setiap kartu lowongan untuk melihat informasi lengkap (deskripsi,
+                  persyaratan, deadline, dan lainnya).
+                </div>
+              </div>
+            </div>
+            <!-- Tip 2 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingTwo">
+                <button class="accordion-button collapsed" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                  Kapan Waktu Terbaik untuk Mengajukan Lamaran?
+                </button>
+              </h2>
+              <div id="collapseTwo" class="accordion-collapse collapse"
+                   data-bs-parent="#tipsAccordion">
+                <div class="accordion-body">
+                  Usahakan mengajukan lamaran minimal satu minggu sebelum deadline. Perhatikan juga badge
+                  “Upcoming Deadlines” di atas untuk lowongan yang segera berakhir.
+                </div>
+              </div>
+            </div>
+            <!-- Tip 3 -->
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingThree">
+                <button class="accordion-button collapsed" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#collapseThree">
+                  Bagaimana Menghubungi Perusahaan?
+                </button>
+              </h2>
+              <div id="collapseThree" class="accordion-collapse collapse"
+                   data-bs-parent="#tipsAccordion">
+                <div class="accordion-body">
+                  Setelah status lamaran berubah ke “Under Review”, Anda dapat melihat detail kontak HR di halaman
+                  detail lowongan. Pastikan email dan CV Anda selalu terbarui.
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -111,7 +401,8 @@
     <div class="col-12 col-lg-5">
       <div class="card border-0 shadow-sm h-100">
         <div class="card-header bg-white border-0 fw-semibold">
-          <i class="fas fa-calendar-alt text-danger me-2"></i>Upcoming Deadlines (<span class="text-danger">≤ 7 hari</span>)
+          <i class="fas fa-calendar-alt text-danger me-2"></i>
+          Upcoming Deadlines (<span class="text-danger">≤ 7 hari</span>)
         </div>
         <div class="card-body p-0">
           @if($upcomingDeadlines->isEmpty())
@@ -169,18 +460,20 @@
                         @switch($app->status)
                           @case('submitted')
                             <span class="badge bg-warning bg-opacity-25 text-warning">Submitted</span>
-                          @break
+                            @break
                           @case('under_review')
                             <span class="badge bg-info bg-opacity-25 text-info">Under Review</span>
-                          @break
+                            @break
                           @case('diterima')
                             <span class="badge bg-success bg-opacity-25 text-success">Diterima</span>
-                          @break
+                            @break
                           @case('ditolak')
                             <span class="badge bg-danger bg-opacity-25 text-danger">Ditolak</span>
-                          @break
+                            @break
                           @default
-                            <span class="badge bg-secondary bg-opacity-25 text-secondary">{{ ucfirst($app->status) }}</span>
+                            <span class="badge bg-secondary bg-opacity-25 text-secondary">
+                              {{ ucfirst($app->status) }}
+                            </span>
                         @endswitch
                       </td>
                     </tr>
@@ -189,6 +482,29 @@
               </table>
             </div>
           @endif
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= 3.5 Quick Links ========= -->
+  <div class="row mb-5">
+    <div class="col-12">
+      <div class="card border-0 shadow-sm p-4">
+        <h5 class="mb-3">Quick Links</h5>
+        <div class="d-flex flex-wrap gap-3">
+          <a href="{{ url('/profile') }}" class="btn btn-sm btn-secondary">
+            <i class="fas fa-user me-1"></i> My Profile
+          </a>
+          <a href="{{ url('/lamaran') }}" class="btn btn-sm btn-secondary">
+            <i class="fas fa-clipboard-check me-1"></i> Lihat Lamaran Saya
+          </a>
+          <a href="{{ url('/panduan') }}" class="btn btn-sm btn-secondary">
+            <i class="fas fa-book me-1"></i> Panduan Penggunaan
+          </a>
+          <a href="{{ url('/logout') }}" class="btn btn-sm btn-danger">
+            <i class="fas fa-sign-out-alt me-1"></i> Logout
+          </a>
         </div>
       </div>
     </div>
@@ -208,7 +524,7 @@
   // ===== Counter Animation =====
   const animateCounter = (el) => {
     const target = +el.dataset.count;
-    const increment = Math.ceil(target / 60); // ~1s
+    const increment = Math.ceil(target / 60);
     let current = 0;
     const step = () => {
       current += increment;
@@ -235,7 +551,7 @@
 
   document.querySelectorAll('.fade-slide').forEach(el => observer.observe(el));
 
-  // ===== CSRF Setup =====
+  // ===== CSRF Setup for AJAX =====
   $.ajaxSetup({
     headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
   });
@@ -245,6 +561,26 @@
     e.preventDefault();
     const url = $(this).data('url');
     $('#myModal .modal-content').load(url, () => $('#myModal').modal('show'));
+  });
+
+  // ===== Welcome Toast =====
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!sessionStorage.getItem('welcomeToastShown')) {
+      const toastHtml = `
+        <div class="toast align-items-center text-white bg-primary border-0 position-fixed top-0 end-0 m-3" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="d-flex">
+            <div class="toast-body">
+              Welcome back, {{ Auth::user()->name }}! Ready to find your next internship?
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+          </div>
+        </div>`;
+      document.body.insertAdjacentHTML('beforeend', toastHtml);
+      const toastEl = document.querySelector('.toast');
+      const bsToast = new bootstrap.Toast(toastEl, { delay: 4500 });
+      bsToast.show();
+      sessionStorage.setItem('welcomeToastShown', 'true');
+    }
   });
 </script>
 @endpush

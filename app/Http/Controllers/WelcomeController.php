@@ -79,6 +79,7 @@ class WelcomeController extends Controller
         $upcomingDeadlines = LowonganModel::where('status', 'aktif')
             ->whereBetween('deadline_lowongan', [$today, $inSevenDays])
             ->orderBy('deadline_lowongan', 'asc')
+            ->limit(10)  
             ->get();
 
         // 5. Recent Applications = 5 lamaran apa saja (tanpa orderBy, karena tidak ada 'id' atau 'created_at')
