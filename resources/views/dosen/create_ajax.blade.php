@@ -40,6 +40,19 @@
         </div>
     </div>
 
+    <div class="form-group text-left">
+                <label for="id_minat">Bidang Penelitian</label>
+                <select name="id_minat" class="form-control">
+                    <option value="">-- Pilih Bidang Penelitian --</option>
+                    @foreach($bidang_penelitian as $bidang)
+                        <option value="{{ $bidang->id_minat }}"
+                            {{ old('id_minat') == $bidang->id_minat ? 'selected' : '' }}>
+                            {{ $bidang->bidang }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
     <div class="modal-footer">
         <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Batal</button>
         <button type="submit" class="btn btn-primary">Simpan</button>
@@ -53,7 +66,8 @@ $(document).ready(function() {
             password: { required: true, minlength: 5, maxlength: 20 },
             nama: { required: true, minlength: 3, maxlength: 100 },
             email: { email: true },
-            telp: { maxlength: 20 }
+            telp: { maxlength: 20 },
+            id_minat: { required: true }
         },
         submitHandler: function(form) {
             $.ajax({

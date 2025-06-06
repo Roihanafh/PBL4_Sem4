@@ -110,6 +110,7 @@
                 <th>Email</th>
                 <th>Nomor Telepon</th>
                 <th>Level Pengguna</th>
+                <th>Bidang Penelitian</th> <!-- Tambahan -->
             </tr>
         </thead>
         <tbody>
@@ -119,8 +120,9 @@
                 <td>{{ $d->username ?? '-' }}</td>
                 <td>{{ $d->nama }}</td>
                 <td>{{ $d->email }}</td>
-                <td>{{ $d->telp}}</td>
-                <td>{{ $d->level_nama ?? 'Dosen' }}</td>
+                <td>{{ $d->telp }}</td>
+                <td>{{ $d->level_name ?? 'Dosen' }}</td>
+                <td>{{ $d->bidang_penelitian ?? '-' }}</td> <!-- Tambahan -->
             </tr>
             @endforeach
         </tbody>

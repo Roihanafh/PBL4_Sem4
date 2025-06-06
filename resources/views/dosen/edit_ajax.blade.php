@@ -45,10 +45,17 @@
                 <small id="error-telp" class="error-text form-text text-danger"></small>
             </div>
             
-            <div class="form-group">
-                <label>Bidang Penelitian</label>
-                <input type="text" class="form-control" 
-                    value="{{ $dosen->bidangPenelitian->bidang ?? '-' }}" readonly>
+            <div class="form-group text-left">
+                <label for="id_minat">Bidang Penelitian</label>
+                <select name="id_minat" class="form-control">
+                    <option value="">-- Pilih Bidang Penelitian --</option>
+                    @foreach($bidang_penelitian as $bidang)
+                        <option value="{{ $bidang->id_minat }}"
+                            {{ (old('id_minat', $dosen->id_minat) == $bidang->id_minat) ? 'selected' : '' }}>
+                            {{ $bidang->bidang }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
 
 
@@ -76,11 +83,12 @@
     $(document).ready(function () {
         $("#form-edit").validate({
             rules: {
-                nama: { required: true, maxlength: 100 },
-                email: { required: true, email: true },
-                telp: { maxlength: 20 },
-                username: { required: true, maxlength: 20 },
-                password: { minlength: 5, maxlength: 20 }
+            username: { required: true, minlength: 3, maxlength: 20 },
+            password: { minlength: 5, maxlength: 20 },
+            nama: { required: true, minlength: 3, maxlength: 100 },
+            email: { email: true },
+            telp: { maxlength: 20 },
+            id_minat: { required: true }
             },
             submitHandler: function(form) {
                 $.ajax({

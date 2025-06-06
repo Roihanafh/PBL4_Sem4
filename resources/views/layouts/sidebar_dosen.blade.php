@@ -42,7 +42,7 @@
               </li>
               <li class="nav-item">
                 <a href="{{ url('log-aktivitas') }}">
-                  <i class="fas fa-laptop-code"></i>
+                  <i class="fas fa-clipboard-check"></i>
                   <p>Monitoring dan Evaluasi Magang</p>
                 </a>
               </li>

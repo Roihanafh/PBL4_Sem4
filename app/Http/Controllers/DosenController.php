@@ -64,7 +64,9 @@ class DosenController extends Controller
 
     public function create_ajax()
     {
-        return view('dosen.create_ajax');
+        $bidang_penelitian = BidangPenelitianModel::all();  // ambil semua bidang penelitian
+
+        return view('dosen.create_ajax', compact('bidang_penelitian'));
     }
 
     public function store_ajax(Request $request)
@@ -82,11 +84,12 @@ class DosenController extends Controller
             'level_id' => 2, // misal: level 2 untuk dosen
         ]);
 
-        // Validasi data untuk tabel m_dosen
+        // Validasi data untuk tabel m_dosen termasuk bidang penelitian
         $validatedDosen = $request->validate([
             'nama' => 'required',
             'email' => 'required|email|unique:m_dosen,email',
             'telp' => 'nullable',
+            'id_minat' => 'required|exists:d_bidang_penelitian,id_minat', // tambahkan validasi bidang penelitian
         ]);
 
         // Simpan ke tabel m_dosen
@@ -95,6 +98,7 @@ class DosenController extends Controller
             'nama' => $validatedDosen['nama'],
             'email' => $validatedDosen['email'],
             'telp' => $validatedDosen['telp'] ?? null,
+            'id_minat' => $validatedDosen['id_minat'], // simpan bidang penelitian
         ]);
 
         return response()->json([
@@ -102,6 +106,7 @@ class DosenController extends Controller
             'message' => 'Data dosen berhasil disimpan'
         ]);
     }
+
 
     public function confirm_ajax($dosen_id)
     {
@@ -138,8 +143,8 @@ class DosenController extends Controller
 
     public function show_ajax($dosen_id)
     {
-        // Ambil data dosen beserta relasi user-nya
-        $dosen = DosenModel::with('user')->where('dosen_id', $dosen_id)->first();
+        // Ambil data dosen beserta relasi user dan bidang minat
+        $dosen = DosenModel::with(['user', 'bidangPenelitian'])->where('dosen_id', $dosen_id)->first();
 
         // Jika data tidak ditemukan
         if (!$dosen) {
@@ -155,11 +160,13 @@ class DosenController extends Controller
         ]);
     }
 
+
     public function edit_ajax($dosen_id)
     {
-        $dosen = DosenModel::with('user')->find($dosen_id);
+        $dosen = DosenModel::with('user', 'bidangPenelitian')->find($dosen_id);
+        $bidang_penelitian = BidangPenelitianModel::all();
 
-        return view('dosen.edit_ajax', compact('dosen'));
+        return view('dosen.edit_ajax', compact('dosen', 'bidang_penelitian'));
     }
 
     public function update_ajax(Request $request, $dosen_id)
@@ -180,6 +187,7 @@ class DosenController extends Controller
             'nama'      => 'required|max:100',
             'email'     => 'required|email|max:100',
             'telp'      => 'nullable|max:20',
+            'id_minat'  => 'nullable|exists:d_bidang_penelitian,id_minat', // validasi bidang penelitian
         ]);
 
         if ($validator->fails()) {
@@ -195,6 +203,7 @@ class DosenController extends Controller
             $dosen->nama = $request->nama;
             $dosen->email = $request->email;
             $dosen->telp = $request->telp;
+            $dosen->id_minat = $request->id_minat; // update bidang penelitian
             $dosen->save();
 
             // Update user
@@ -216,20 +225,22 @@ class DosenController extends Controller
                 'error' => $e->getMessage()
             ]);
         }
-
     }
 
-   public function export_pdf()
+
+    public function export_pdf()
     {
         $dosen = DB::table('m_dosen')
             ->join('m_users', 'm_dosen.user_id', '=', 'm_users.user_id')
             ->join('r_auth_level', 'm_users.level_id', '=', 'r_auth_level.level_id')
+            ->leftJoin('d_bidang_penelitian', 'm_dosen.id_minat', '=', 'd_bidang_penelitian.id_minat') // tambahkan join ini
             ->select(
                 'm_users.username', 
                 'm_dosen.nama', 
                 'm_dosen.email',      
                 'm_dosen.telp',   
-                'r_auth_level.level_name'
+                'r_auth_level.level_name',
+                'd_bidang_penelitian.bidang as bidang_penelitian' // sesuaikan nama kolom
             )
             ->orderBy('m_dosen.dosen_id', 'asc')
             ->get();
@@ -242,13 +253,17 @@ class DosenController extends Controller
         return $pdf->stream('Data Dosen ' . date('Y-m-d H:i:s') . '.pdf');
     }
 
+
     public function export_excel()
     {
-        // Ambil data dosen dengan relasi user dan level
-        $dosen = DosenModel::select('nama', 'user_id', 'email', 'telp') // misal ada email dan telepon di model dosen
-            ->with(['user' => function ($query) {
-                $query->select('user_id', 'username', 'level_id');
-            }, 'user.level']) // Pastikan relasi user() dan level() ada di model DosenModel
+        $dosen = DosenModel::select('nama', 'user_id', 'email', 'telp', 'id_minat')
+            ->with([
+                'user' => function ($query) {
+                    $query->select('user_id', 'username', 'level_id');
+                },
+                'user.level',
+                'bidangPenelitian:id_minat,bidang' // sesuaikan jika nama kolom berbeda
+            ])
             ->orderBy('dosen_id')
             ->get();
 
@@ -262,8 +277,9 @@ class DosenController extends Controller
         $sheet->setCellValue('D1', 'Email');
         $sheet->setCellValue('E1', 'No. Telepon');
         $sheet->setCellValue('F1', 'Level');
+        $sheet->setCellValue('G1', 'Bidang Penelitian');
 
-        $sheet->getStyle('A1:F1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:G1')->getFont()->setBold(true);
 
         $no = 1;
         $baris = 2;
@@ -275,11 +291,12 @@ class DosenController extends Controller
             $sheet->setCellValue('D' . $baris, $data->email ?? '-');
             $sheet->setCellValue('E' . $baris, $data->telp ?? '-');
             $sheet->setCellValue('F' . $baris, $data->user->level->level_name ?? '-');
+            $sheet->setCellValue('G' . $baris, $data->bidangPenelitian->bidang ?? '-'); // sesuaikan nama kolom jika perlu
             $no++;
             $baris++;
         }
 
-        foreach (range('A', 'F') as $columnID) {
+        foreach (range('A', 'G') as $columnID) {
             $sheet->getColumnDimension($columnID)->setAutoSize(true);
         }
 
@@ -290,7 +307,6 @@ class DosenController extends Controller
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="' . $filename . '"');
         header('Cache-Control: max-age=0');
-        header('Cache-Control: max-age=1');
         header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
         header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
         header('Cache-Control: cache, must-revalidate');
@@ -338,19 +354,20 @@ class DosenController extends Controller
                     foreach ($data as $index => $row) {
                         if ($index <= 1) continue; // Skip header
 
-                        $username = trim($row['A']);
-                        $password = trim($row['B']);
-                        $nama     = trim($row['C']);
-                        $email    = trim($row['D']);
-                        $telp     = trim($row['E'] ?? '');
+                        $username  = trim($row['A']);
+                        $password  = trim($row['B']);
+                        $nama      = trim($row['C']);
+                        $email     = trim($row['D']);
+                        $telp      = trim($row['E'] ?? '');
+                        $id_minat  = intval($row['F'] ?? 0); // Ambil dari kolom F
 
-                        if (!$username || !$password || !$nama || !$email) continue;
+                        if (!$username || !$password || !$nama || !$email || !$id_minat) continue;
                         if (in_array($username, $existingUsernames) || in_array($email, $existingEmails)) continue;
 
                         $user = UserModel::create([
                             'username' => $username,
                             'password' => bcrypt($password),
-                            'level_id' => 2, // level 2 = dosen
+                            'level_id' => 2,
                             'created_at' => now()
                         ]);
 
@@ -359,6 +376,7 @@ class DosenController extends Controller
                             'nama' => $nama,
                             'email' => $email,
                             'telp' => $telp ?: null,
+                            'id_minat' => $id_minat,
                             'created_at' => now()
                         ]);
 
@@ -385,6 +403,8 @@ class DosenController extends Controller
 
         return redirect('/');
     }
+
+
 
     public function show_dosen($dosen_id)
     {
