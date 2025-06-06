@@ -56,13 +56,12 @@
       </div>
 
       <div class="col-md-2">
-        <input
-          type="number"
-          name="gaji"
-          class="form-control"
-          placeholder="Gaji Minimum"
-          value="{{ request('gaji') }}"
-        >
+        <select name="tipe_bekerja" class="form-select">
+          <option value="">Tipe Bekerja</option>
+          <option value="remote"   {{ request('tipe_bekerja') === 'remote'   ? 'selected' : '' }}>Remote</option>
+          <option value="on_site"  {{ request('tipe_bekerja') === 'on_site'  ? 'selected' : '' }}>On-Site</option>
+          <option value="hybrid"   {{ request('tipe_bekerja') === 'hybrid'   ? 'selected' : '' }}>Hybrid</option>
+        </select>
       </div>
 
       <div class="col-md-2">

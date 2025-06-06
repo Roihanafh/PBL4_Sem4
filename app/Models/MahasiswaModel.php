@@ -29,17 +29,17 @@ class MahasiswaModel extends Model
         'pref',           // preferensi kerja
         'skill',          // keahlian
         'lokasi',         // lokasi favorit
-        'gaji_minimum',   // range salary (minimum)
         'durasi',         // periode magang (bulan)
+        'tipe_bekerja', 
     ];
 
     protected $casts = [
         'mhs_nim'       => 'string',
         'user_id'       => 'integer',
         'lokasi'        => 'string',
-        'gaji_minimum'  => 'integer',
         'durasi'        => 'integer',
         'status_magang' => 'string',
+        'tipe_bekerja'  => 'string',
     ];
 
     public function user()

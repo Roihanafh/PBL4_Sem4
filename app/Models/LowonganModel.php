@@ -26,6 +26,7 @@ class LowonganModel extends Model
         'gaji',        
         'kuota', 
         'durasi',
+        'tipe_bekerja', 
     ];
 
     /**
@@ -37,6 +38,7 @@ class LowonganModel extends Model
         'gaji'                 => 'integer',
         'status'               => 'string',
         'kuota'                => 'integer',
+        'tipe_bekerja'  => 'string',
     ];
 
     // Relasi ke perusahaan
