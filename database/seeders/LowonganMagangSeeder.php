@@ -24,7 +24,6 @@ class LowonganMagangSeeder extends Seeder
                 'periode_id'           => 1,
                 'sylabus_path'         => 'sylabus/magang_frontend.pdf',
                 'status'               => 'aktif',
-                'gaji'                 => 3000000,
                 'kuota'                => 3,
             ],
             [
@@ -37,7 +36,6 @@ class LowonganMagangSeeder extends Seeder
                 'periode_id'           => 1,
                 'sylabus_path'         => 'sylabus/magang_backend.pdf',
                 'status'               => 'aktif',
-                'gaji'                 => 3500000,
                 'kuota'                => 2,
             ],
             [
@@ -50,7 +48,6 @@ class LowonganMagangSeeder extends Seeder
                 'periode_id'           => 1,
                 'sylabus_path'         => 'sylabus/magang_data_analyst.pdf',
                 'status'               => 'aktif',
-                'gaji'                 => 2800000,
                 'kuota'                => 4,
             ],
             [
@@ -63,7 +60,6 @@ class LowonganMagangSeeder extends Seeder
                 'periode_id'           => 2,
                 'sylabus_path'         => 'sylabus/magang_uiux.pdf',
                 'status'               => 'aktif',
-                'gaji'                 => 2500000,
                 'kuota'                => 2,
             ],
             [
@@ -76,7 +72,6 @@ class LowonganMagangSeeder extends Seeder
                 'periode_id'           => 1,
                 'sylabus_path'         => 'sylabus/magang_mobile_dev.pdf',
                 'status'               => 'aktif',
-                'gaji'                 => 3200000,
                 'kuota'                => 3,
             ],
             [
@@ -89,7 +84,6 @@ class LowonganMagangSeeder extends Seeder
                 'periode_id'           => 2,
                 'sylabus_path'         => 'sylabus/magang_devops.pdf',
                 'status'               => 'aktif',
-                'gaji'                 => 4000000,
                 'kuota'                => 2,
             ],
             [
@@ -102,7 +96,6 @@ class LowonganMagangSeeder extends Seeder
                 'periode_id'           => 1,
                 'sylabus_path'         => 'sylabus/magang_data_engineer.pdf',
                 'status'               => 'aktif',
-                'gaji'                 => 3100000,
                 'kuota'                => 3,
             ],
             [
@@ -115,7 +108,6 @@ class LowonganMagangSeeder extends Seeder
                 'periode_id'           => 2,
                 'sylabus_path'         => 'sylabus/magang_sosmed.pdf',
                 'status'               => 'aktif',
-                'gaji'                 => 2300000,
                 'kuota'                => 4,
             ],
             [
@@ -128,7 +120,6 @@ class LowonganMagangSeeder extends Seeder
                 'periode_id'           => 1,
                 'sylabus_path'         => 'sylabus/magang_business_analyst.pdf',
                 'status'               => 'aktif',
-                'gaji'                 => 2900000,
                 'kuota'                => 2,
             ],
             [
@@ -141,7 +132,6 @@ class LowonganMagangSeeder extends Seeder
                 'periode_id'           => 2,
                 'sylabus_path'         => 'sylabus/magang_graphic_designer.pdf',
                 'status'               => 'aktif',
-                'gaji'                 => 2400000,
                 'kuota'                => 3,
             ],
             [
@@ -154,7 +144,6 @@ class LowonganMagangSeeder extends Seeder
                 'periode_id'           => 1,
                 'sylabus_path'         => 'sylabus/magang_sales_marketing.pdf',
                 'status'               => 'aktif',
-                'gaji'                 => 2200000,
                 'kuota'                => 4,
             ],
             [
@@ -167,7 +156,6 @@ class LowonganMagangSeeder extends Seeder
                 'periode_id'           => 2,
                 'sylabus_path'         => 'sylabus/magang_customer_service.pdf',
                 'status'               => 'aktif',
-                'gaji'                 => 2100000,
                 'kuota'                => 5,
             ],
             [
@@ -180,7 +168,6 @@ class LowonganMagangSeeder extends Seeder
                 'periode_id'           => 1,
                 'sylabus_path'         => 'sylabus/magang_ai_research.pdf',
                 'status'               => 'aktif',
-                'gaji'                 => 3800000,
                 'kuota'                => 2,
             ],
             [
@@ -193,7 +180,6 @@ class LowonganMagangSeeder extends Seeder
                 'periode_id'           => 2,
                 'sylabus_path'         => 'sylabus/magang_software_tester.pdf',
                 'status'               => 'aktif',
-                'gaji'                 => 2700000,
                 'kuota'                => 3,
             ],
             [
@@ -206,7 +192,6 @@ class LowonganMagangSeeder extends Seeder
                 'periode_id'           => 1,
                 'sylabus_path'         => 'sylabus/magang_video_editor.pdf',
                 'status'               => 'aktif',
-                'gaji'                 => 2300000,
                 'kuota'                => 3,
             ],
             [
@@ -219,7 +204,6 @@ class LowonganMagangSeeder extends Seeder
                 'periode_id'           => 2,
                 'sylabus_path'         => 'sylabus/magang_animator.pdf',
                 'status'               => 'aktif',
-                'gaji'                 => 2600000,
                 'kuota'                => 2,
             ],
             [
@@ -232,7 +216,6 @@ class LowonganMagangSeeder extends Seeder
                 'periode_id'           => 1,
                 'sylabus_path'         => 'sylabus/magang_rnd_engineer.pdf',
                 'status'               => 'aktif',
-                'gaji'                 => 3700000,
                 'kuota'                => 2,
             ],
             [
@@ -245,7 +228,6 @@ class LowonganMagangSeeder extends Seeder
                 'periode_id'           => 2,
                 'sylabus_path'         => 'sylabus/magang_it_support.pdf',
                 'status'               => 'aktif',
-                'gaji'                 => 2400000,
                 'kuota'                => 4,
             ],
             [
@@ -258,7 +240,6 @@ class LowonganMagangSeeder extends Seeder
                 'periode_id'           => 1,
                 'sylabus_path'         => 'sylabus/magang_cloud_infra.pdf',
                 'status'               => 'aktif',
-                'gaji'                 => 3600000,
                 'kuota'                => 2,
             ],
             [
@@ -271,7 +252,6 @@ class LowonganMagangSeeder extends Seeder
                 'periode_id'           => 2,
                 'sylabus_path'         => 'sylabus/magang_network_engineer.pdf',
                 'status'               => 'aktif',
-                'gaji'                 => 2500000,
                 'kuota'                => 3,
             ],
         ];

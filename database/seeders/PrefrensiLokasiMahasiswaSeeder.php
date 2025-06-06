@@ -16,7 +16,7 @@ class PrefrensiLokasiMahasiswaSeeder extends Seeder
         $listMahasiswaNIM = DB::table('m_mahasiswa')->pluck('mhs_nim');
 
         foreach ($listMahasiswaNIM as $nim) {
-            for ($i = 0; $i < 2; $i++) { // langsung pakai angka (misal: 2 preferensi lokasi per mahasiswa)
+            for ($i = 0; $i < 1; $i++) { // langsung pakai angka (misal: 2 preferensi lokasi per mahasiswa)
                 $provinsi = DB::table('m_provinsi')
                     ->select('id', 'nama')
                     ->where('id', $listProvinsiID->random())
