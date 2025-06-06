@@ -21,6 +21,9 @@ class MahasiswaSeeder extends Seeder
                 'alamat'         => 'Jl. Kembang Kertas',
                 'telp'           => '081333537649',
                 'prodi_id'       => 1, // disesuaikan dengan migration
+                'angkatan'       => '2023',
+                'jenis_kelamin'  => 'L',
+                'ipk'            => 3.5,
                 'status_magang'  => 'Belum Magang',
             ],
             [
@@ -30,6 +33,9 @@ class MahasiswaSeeder extends Seeder
                 'alamat'         => 'Jl. Kembang Kertas',
                 'telp'           => '08123456789',
                 'prodi_id'       => 1, // disesuaikan dengan migration
+                'angkatan'       => '2023',
+                'jenis_kelamin'  => 'L',
+                'ipk'            => 3.2,
                 'status_magang'  => 'Belum Magang',
             ],
             [
@@ -39,6 +45,9 @@ class MahasiswaSeeder extends Seeder
                 'alamat'         => 'Jl. Kembang Kertas',
                 'telp'           => '08123456789',
                 'prodi_id'       => 1, // disesuaikan dengan migration
+                'angkatan'       => '2023',
+                'jenis_kelamin'  => 'L',
+                'ipk'            => 3.8,
                 'status_magang'  => 'Belum Magang',
             ],  
         ];

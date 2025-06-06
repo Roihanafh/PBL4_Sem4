@@ -38,6 +38,11 @@ class DatabaseSeeder extends Seeder
             FeedbackSeeder::class,
 
             BidangPenelitianSeeder::class,
+            BidangKeahlianSeeder::class,
+
+            WilayahSeeder::class,
+            PrefrensiLokasiMahasiswaSeeder::class,
+            KeahlianMahasiswaSeeder::class,
         ]);
             
     }
