@@ -44,11 +44,6 @@
                   <ul class="nav nav-collapse">
                     <li>
                       <a>
-                        <span class="sub-item">Profil akun?</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a>
                         <span class="sub-item">Profil akademik</span>
                       </a>
                     </li>
