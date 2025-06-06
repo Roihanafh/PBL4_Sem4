@@ -5,6 +5,7 @@
   <title>MagangIn - JTI Polinema</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
   <link rel="icon" href="{{ asset('img/MagangIn.png') }}" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
 
   <!-- CSRF Token -->
   <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -79,6 +80,8 @@
     <script src="assets/js/kaiadmin.min.js"></script>
     <script src="assets/js/setting-demo.js"></script>
     <script src="assets/js/demo.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     
   <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
   <!-- Plugin Validasi Tambahan -->
