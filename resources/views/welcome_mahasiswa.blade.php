@@ -189,6 +189,15 @@
     transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
 
+    /* Make Upcoming Deadline rows clickable */
+  #upcoming-list .detail-link {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  #upcoming-list .detail-link:hover {
+    background-color: #f1f5f9;
+  }
+
 </style>
 @endpush
 
@@ -396,38 +405,41 @@
   </div>
 
   <!-- ========= 3. Deadlines & Recent ========= -->
-  <div class="row g-4 fade-slide">
-    <!-- Upcoming Deadlines -->
-    <div class="col-12 col-lg-5">
-      <div class="card border-0 shadow-sm h-100">
-        <div class="card-header bg-white border-0 fw-semibold">
-          <i class="fas fa-calendar-alt text-danger me-2"></i>
-          Upcoming Deadlines (<span class="text-danger">≤ 7 hari</span>)
-        </div>
-        <div class="card-body p-0">
-          @if($upcomingDeadlines->isEmpty())
-            <div class="text-center text-secondary py-5">
-              <i class="fas fa-check-circle fa-2x mb-2"></i>
-              <p class="mb-0">Tidak ada deadline dalam 7 hari ke depan.</p>
-            </div>
-          @else
-            <ul class="list-group list-group-flush">
-              @foreach($upcomingDeadlines as $low)
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                  <div class="pe-2">
-                    <div class="fw-semibold">{{ $low->judul }}</div>
-                    <small class="text-secondary">{{ $low->perusahaan->nama }}</small>
-                  </div>
-                  <span class="badge deadline-badge">
-                    {{ \Carbon\Carbon::parse($low->deadline_lowongan)->format('d M') }}
-                  </span>
-                </li>
-              @endforeach
-            </ul>
-          @endif
-        </div>
+<div class="row g-4 fade-slide">
+  <!-- Upcoming Deadlines -->
+  <div class="col-12 col-lg-5">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-header bg-white border-0 fw-semibold">
+        <i class="fas fa-calendar-alt text-danger me-2"></i>
+        Upcoming Deadlines (<span class="text-danger">≤ 7 hari</span>)
+      </div>
+      <div class="card-body p-0">
+        @if($upcomingDeadlines->isEmpty())
+          <div class="text-center text-secondary py-5">
+            <i class="fas fa-check-circle fa-2x mb-2"></i>
+            <p class="mb-0">Tidak ada deadline dalam 7 hari ke depan.</p>
+          </div>
+        @else
+          <ul id="upcoming-list" class="list-group list-group-flush">
+            @foreach($upcomingDeadlines as $low)
+              <li
+                class="list-group-item d-flex justify-content-between align-items-center detail-link"
+                data-url="{{ route('rekomendasi.show', ['lowongan_id' => $low->lowongan_id]) }}"
+              >
+                <div class="pe-2">
+                  <div class="fw-semibold">{{ $low->judul }}</div>
+                  <small class="text-secondary">{{ $low->perusahaan->nama }}</small>
+                </div>
+                <span class="badge deadline-badge">
+                  {{ \Carbon\Carbon::parse($low->deadline_lowongan)->format('d M') }}
+                </span>
+              </li>
+            @endforeach
+          </ul>
+        @endif
       </div>
     </div>
+  </div>
 
     <!-- Recent Applications -->
     <div class="col-12 col-lg-7">
@@ -581,6 +593,15 @@
       bsToast.show();
       sessionStorage.setItem('welcomeToastShown', 'true');
     }
+  });
+
+    $(document).ready(function() {
+    $('#upcoming-list').on('click', '.detail-link', function() {
+      const targetUrl = $(this).data('url');
+      if (targetUrl) {
+        window.location.href = targetUrl;
+      }
+    });
   });
 </script>
 @endpush
