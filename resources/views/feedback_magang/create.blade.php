@@ -111,6 +111,7 @@ $(document).ready(function () {
                             title: 'Berhasil',
                             text: response.message
                         });
+                        $("#lamaran-selesai-container").load("{{ route('lamaran.selesai.partial') }}");
                     } else {
                         $('.text-danger').text('');
                         if (response.msgField) {

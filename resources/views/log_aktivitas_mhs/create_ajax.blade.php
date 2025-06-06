@@ -68,12 +68,27 @@ $(document).ready(function() {
                         });
                     }
                 },
-                error: function() {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Terjadi kesalahan pada server.'
-                    });
+                error: function(xhr) {
+                    if (xhr.status === 422 && xhr.responseJSON) {
+                        const response = xhr.responseJSON;
+                        $('.text-danger').text('');
+                        if(response.msgField){
+                            $.each(response.msgField, function(prefix, val) {
+                                $('#error-' + prefix).text(val[0]);
+                            });
+                        }
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Validasi Gagal',
+                            text: response.message || 'Mohon cek kembali inputan anda.'
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Terjadi kesalahan pada server.'
+                        });
+                    }
                 }
             });
             return false; // prevent default submit

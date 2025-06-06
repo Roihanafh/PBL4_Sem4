@@ -20,6 +20,7 @@ class FeedbackModel extends Model
         'rating',
         'komentar',
         'created_at',
+        'lamaran_id'
     ];
 
     public function mahasiswa()
@@ -31,4 +32,10 @@ class FeedbackModel extends Model
     {
         return $this->belongsTo(LowonganModel::class, 'lowongan_id', 'lowongan_id');
     }
+
+    public function lamaran()
+    {
+        return $this->belongsTo(LamaranMagangModel::class, 'lamaran_id', 'lamaran_id');
+    }
+
 }

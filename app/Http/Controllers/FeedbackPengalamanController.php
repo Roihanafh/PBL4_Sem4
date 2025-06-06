@@ -31,6 +31,8 @@ class FeedbackPengalamanController extends Controller
         return view('feedback_magang.index', compact('lamaranSelesai', 'breadcrumb', 'page', 'activeMenu'));
     }
 
+    
+
     public function create($lamaranId)
     {
         return view('feedback_magang.create', compact('lamaranId'));
@@ -64,6 +66,7 @@ class FeedbackPengalamanController extends Controller
                     'target_type' => 'lowongan'
                 ],
                 [
+                    'lamaran_id' => $lamaran->lamaran_id,
                     'rating' => $request->rating,
                     'komentar' => $request->keterangan,
                     'created_at' => now()
@@ -81,5 +84,14 @@ class FeedbackPengalamanController extends Controller
             ], 500);
         }
     }
+    public function partialView()
+    {
+        $lamaranSelesai = LamaranMagangModel::with(['mahasiswa', 'lowongan.perusahaan'])
+                ->where('status', 'selesai')
+                ->get();
+
+        return view('feedback_magang.lamaran_selesai', compact('lamaranSelesai'));
+    }
+
 
 }

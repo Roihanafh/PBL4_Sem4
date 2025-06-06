@@ -56,4 +56,10 @@ class LamaranMagangModel extends Model
         );
     }
 
+    public function feedback()
+    {
+        return $this->hasOne(FeedbackModel::class, 'lamaran_id', 'lamaran_id');
+    }
+
+
 }

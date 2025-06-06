@@ -224,6 +224,7 @@ Route::middleware(['auth', 'authorize:mahasiswa'])->group(function () {
         Route::get('/', [FeedbackPengalamanController::class, 'index']);
         Route::get('/feedback/{lamaran}/create', [FeedbackPengalamanController::class, 'create'])->name('feedback.create');
         Route::post('/feedback', [FeedbackPengalamanController::class, 'store'])->name('feedback.store');
+        Route::get('/feedback/partial', [FeedbackPengalamanController::class, 'partialView'])->name('lamaran.selesai.partial');
     });
 
     Route::group(['prefix' => 'message'], function () {
