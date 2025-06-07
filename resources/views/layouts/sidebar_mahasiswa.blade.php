@@ -49,7 +49,7 @@
               <li class="nav-item">
                 <a href="{{ url('pengajuan-magang-mhs') }}">
                   <i class="fas fa-file-signature"></i>
-                  <p>Pengajuan Magang</p>
+                  <p>Status Pengajuan Magang</p>
                 </a>
               </li>
               <li class="nav-item">
