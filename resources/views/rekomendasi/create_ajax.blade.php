@@ -87,7 +87,14 @@
                             location.reload();
                         }
                     } else {
-                        toastr.error(response.message);
+                        // Ini akan menangani jika status=false tapi bukan error 409
+                        toastr.error(response.message, '', {
+                            "closeButton": true,
+                            "progressBar": true,
+                            "positionClass": "toast-top-right",
+                            "timeOut": "5000",
+                            "extendedTimeOut": "1000"
+                        });
                     }
                 },
                 error: function (xhr) {
@@ -97,9 +104,23 @@
                             $('#' + key + '_error').text(value[0]);
                         });
                     } else if (xhr.status === 409) {
-                        toastr.error(xhr.responseJSON.message);
+                        // Ini khusus untuk konflik (sudah ada lamaran)
+                        toastr.error(xhr.responseJSON.message, '', {
+                            "closeButton": true,
+                            "progressBar": true,
+                            "positionClass": "toast-top-right",
+                            "timeOut": "10000", // Lebih lama untuk error penting
+                            "extendedTimeOut": "2000",
+                            "backgroundColor": "#ff4444", // Warna background merah
+                            "textColor": "#ffffff" // Warna teks putih
+                        });
                     } else {
-                        toastr.error('Terjadi kesalahan server.');
+                        toastr.error('Terjadi kesalahan server.', '', {
+                            "closeButton": true,
+                            "progressBar": true,
+                            "positionClass": "toast-top-right",
+                            "timeOut": "5000"
+                        });
                     }
                 }
             });
