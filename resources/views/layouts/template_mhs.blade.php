@@ -29,6 +29,7 @@
       }
     });
   </script>
+  
 
   <!-- Core CSS Files -->
   <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}" />
@@ -42,7 +43,7 @@
   @stack('css')
 </head>
 <body>
-  <div class="wrapper sidebar_minimize">
+  <div class="wrapper">
     @include('layouts.sidebar_mahasiswa')
 
     <div class="main-panel">
@@ -99,6 +100,18 @@
     If you need them on other pages, load them only via @push('js') in those specific pages.
   -->
 
+  @push('js')
+  <script>
+    // waits for jQuery to be ready, then wires up the buttons
+    $(function(){
+      $('.toggle-sidebar, .sidenav-toggler').on('click', function(e){
+        e.preventDefault();
+        $('.wrapper').toggleClass('sidebar_minimize');
+      });
+    });
+  </script>
+@endpush
+
   @stack('js')
 
   <!-- Modal Global (you probably have some modal that gets injected via AJAX onto main layout) -->
@@ -111,3 +124,6 @@
   </div>
 </body>
 </html>
+
+
+

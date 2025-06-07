@@ -1,5 +1,27 @@
 @extends('layouts.template')
 
+@push('css')
+<style>
+  /* Responsive table wrapper */
+  .table-responsive { overflow-x: auto; }
+
+  /* Truncate long text with ellipses */
+  .text-truncate {
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Tighter padding and smaller font */
+  #lowongan-table td,
+  #lowongan-table th {
+    padding: .3rem .5rem;
+    font-size: .875rem;
+  }
+</style>
+@endpush
+
 @section('content')
 <div class="card">
   <div class="card-header d-flex">
@@ -9,42 +31,44 @@
     </button>
   </div>
   <div class="card-body">
-    <table id="lowongan-table" class="table table-striped">
-      <thead>
-        <tr>
-      <th>No.</th>
-      <th>Judul</th>
-      <th>Deskripsi</th>
-      <th>Perusahaan</th>
-      <th>Lokasi</th>
-      <th>Mulai</th>
-      <th>Deadline</th>
-      <th>Periode</th>
-      <th>Status</th>
-      <th>Kuota</th>
-      <th>Durasi</th>
-      <th>Tipe Bekerja</th>
-      <th>Aksi</th>
-        </tr>
-      </thead>
-    </table>
+    <div class="table-responsive">
+      <table id="lowongan-table" class="table table-striped nowrap" style="width:100%">
+        <thead class="thead-dark">
+          <tr>
+            <th>No.</th>
+            <th>Judul</th>
+            <th>Deskripsi</th>
+            <th>Perusahaan</th>
+            <th>Lokasi</th>
+            <th>Mulai</th>
+            <th>Deadline</th>
+            <th>Periode</th>
+            <th>Status</th>
+            <th>Kuota</th>
+            <th>Durasi</th>
+            <th>Tipe Bekerja</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
   </div>
 </div>
 
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
-  <div class="modal-dialog modal-lg"><div class="modal-content"></div></div>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content"></div>
+  </div>
 </div>
 @endsection
 
 @push('js')
 <script>
 $(function(){
-  // **Tambah CSRF token header agar POST ke /lowongan/list tidak 419**
+  // CSRF token for AJAX
   $.ajaxSetup({
-    headers: {
-      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }
+    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
   });
 
   $('#lowongan-table').DataTable({
@@ -54,58 +78,59 @@ $(function(){
       url: "{{ url('/lowongan/list') }}",
       type: "POST"
     },
+    scrollX: true,
+    responsive: true,
+    autoWidth: false,
     columns: [
-      { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-      { data: 'judul', name: 'judul' },
-      { data: 'deskripsi', name: 'deskripsi' },
-      { data: 'perusahaan', name: 'perusahaan', orderable: false, searchable: false },
-      { data: 'lokasi', name: 'lokasi' },
+      { data: 'DT_RowIndex',      name: 'DT_RowIndex',   orderable: false, searchable: false },
+      { data: 'judul',            name: 'judul' },
+      { data: 'deskripsi',        name: 'deskripsi',     className: 'text-truncate', width: '150px' },
+      { data: 'perusahaan',       name: 'perusahaan',    orderable: false, searchable: false, className: 'text-truncate', width: '120px' },
+      { data: 'lokasi',           name: 'lokasi' },
       {
         data: 'tanggal_mulai_magang',
         name: 'tanggal_mulai_magang',
-        render: function(data, type, row) {
+        render: function(data, type) {
           if (!data) return '';
-          const datePart = data.split('T')[0];
-          const parts = datePart.split('-'); // [YYYY,MM,DD]
-          const formatted = parts[2] + '-' + parts[1] + '-' + parts[0];
-          return (type === 'display') ? formatted : datePart;
+          const [y, m, d] = data.split('T')[0].split('-');
+          return type === 'display' ? `${d}-${m}-${y}` : `${y}-${m}-${d}`;
         }
       },
       {
         data: 'deadline_lowongan',
         name: 'deadline_lowongan',
-        render: function(data, type, row) {
+        render: function(data, type) {
           if (!data) return '';
-          const datePart = data.split('T')[0];
-          const parts = datePart.split('-');
-          const formatted = parts[2] + '-' + parts[1] + '-' + parts[0];
-          return (type === 'display') ? formatted : datePart;
+          const [y, m, d] = data.split('T')[0].split('-');
+          return type === 'display' ? `${d}-${m}-${y}` : `${y}-${m}-${d}`;
         }
       },
-      { data: 'periode', name: 'periode', orderable: false, searchable: false },
-      { data: 'status', name: 'status' },
-      { data: 'kuota', name: 'kuota' },
-      { data: 'durasi', name: 'durasi' },
-      { data: 'tipe_bekerja', name: 'tipe_bekerja' },
-      { data: 'aksi', orderable: false, searchable: false }
-    ]
+      { data: 'periode',          name: 'periode',       orderable: false, searchable: false },
+      { data: 'status',           name: 'status' },
+      { data: 'kuota',            name: 'kuota' },
+      { data: 'durasi',           name: 'durasi' },
+      { data: 'tipe_bekerja',     name: 'tipe_bekerja' },
+      { data: 'aksi',   orderable: false, searchable: false }
+    ],
+    columnDefs: [
+      { targets: '_all', defaultContent: '' }
+    ],
+    language: {
+      searchPlaceholder: "Search…"
+    }
   });
 });
 
 function modalAction(url = '') {
-  $('#myModal .modal-content').load(url, function(){
-    $('#myModal').modal('show');
-  });
+  $('#myModal .modal-content')
+    .load(url, function(){ $('#myModal').modal('show'); });
 }
 
-// base URL Lowongan
 const lowonganBase = "{{ url('lowongan') }}";
-
 function deleteLowongan(id) {
   if (!id) return;
-
   $.ajax({
-    url: `${lowonganBase}/${id}/delete_ajax`,  // => correct full path
+    url: `${lowonganBase}/${id}/delete_ajax`,
     type: 'DELETE',
     success(res) {
       if (res.status) {
