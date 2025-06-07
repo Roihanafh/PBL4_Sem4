@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BidangPenelitianModel;
+use App\Models\DosenModel;
+use App\Models\FeedbackModel;
+use App\Models\ProdiModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -16,13 +20,71 @@ class WelcomeController extends Controller
     public function index_admin()
     {
         $breadcrumb = (object) [
-            'title' => 'Selamat Datang',
-            'list'  => ['Home', 'Welcome']
+            'title' => 'Dashboard Admin',
+            'list'  => ['Home', 'Dashboard']
         ];
 
         $activeMenu = 'dashboard';
 
-        return view('welcome_admin', compact('breadcrumb', 'activeMenu'));
+        // 1. Total Mahasiswa
+        $totalMahasiswa = MahasiswaModel::count();
+
+        // 2. Mahasiswa yang sudah magang (diterima)
+        $mahasiswaMagang = LamaranMagangModel::where('status', 'diterima')
+            ->distinct('mhs_nim')
+            ->count('mhs_nim');
+
+        // 3. Total Dosen Pembimbing
+        $totalDosenPembimbing = DosenModel::has('mahasiswa')->count();
+
+        // 4. Rasio Dosen:Mhs (format: 1:X)
+        $rasioDosenMhs = $totalDosenPembimbing > 0 ? 
+                         round($mahasiswaMagang / $totalDosenPembimbing, 1) : 0;
+
+        // 5. Statistik Bidang Peminatan
+        $bidangPeminatan = BidangPenelitianModel::withCount(['dosen' => function($query) {
+            $query->has('mahasiswa');
+        }])->orderBy('dosen_count', 'desc')
+        ->limit(5)
+        ->get();
+
+        // 6. Statistik Prodi
+        $statistikProdi = ProdiModel::withCount(['mahasiswa' => function($query) {
+            $query->whereHas('lamaran', function($q) {
+                $q->where('status', 'diterima');
+            });
+        }])->orderBy('mahasiswa_count', 'desc')
+        ->get();
+
+        // 7. Evaluasi Rekomendasi (rating feedback)
+        $ratingRekomendasi = FeedbackModel::avg('rating');
+        $totalFeedback = FeedbackModel::count();
+
+        // 8. Tren Pendaftaran Bulanan
+        $trenPendaftaran = LamaranMagangModel::selectRaw('
+            YEAR(tanggal_lamaran) as year,
+            MONTH(tanggal_lamaran) as month,
+            COUNT(*) as total
+        ')
+        ->where('tanggal_lamaran', '>=', now()->subMonths(6))
+        ->groupBy('year', 'month')
+        ->orderBy('year', 'desc')
+        ->orderBy('month', 'desc')
+        ->get();
+
+        return view('admin.welcome_admin', compact(
+            'breadcrumb',
+            'activeMenu',
+            'totalMahasiswa',
+            'mahasiswaMagang',
+            'totalDosenPembimbing',
+            'rasioDosenMhs',
+            'bidangPeminatan',
+            'statistikProdi',
+            'ratingRekomendasi',
+            'totalFeedback',
+            'trenPendaftaran'
+        ));
     }
 
     public function index_dosen()

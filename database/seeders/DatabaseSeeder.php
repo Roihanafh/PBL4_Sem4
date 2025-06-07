@@ -35,14 +35,15 @@ class DatabaseSeeder extends Seeder
             LamaranMagangSeeder::class,
 
             LogAktivitasMhsSeeder::class,
-            FeedbackSeeder::class,
+            // FeedbackSeeder::class,
 
             BidangPenelitianSeeder::class,
             BidangKeahlianSeeder::class,
 
             WilayahSeeder::class,
-            PrefrensiLokasiMahasiswaSeeder::class,
-            KeahlianMahasiswaSeeder::class,
+            // PrefrensiLokasiMahasiswaSeeder::class,
+            // KeahlianMahasiswaSeeder::class,
+            JenisDokumenSeeder::class,
         ]);
             
     }

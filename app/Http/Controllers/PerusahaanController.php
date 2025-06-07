@@ -101,25 +101,25 @@ class PerusahaanController extends Controller
     public function update_ajax(Request $request, $id)
     {
         $perusahaan = PerusahaanModel::find($id);
-    
+
         if (!$perusahaan) {
             return response()->json(['status' => false, 'message' => 'Data tidak ditemukan']);
         }
-    
+
         $validator = Validator::make($request->all(), [
             'nama'    => 'required|max:100',
             'email'   => 'required|email|unique:m_perusahaan_mitra,email,' . $id . ',perusahaan_id',
             'telp' => 'nullable|max:20',
             'alamat'  => 'required|max:255',
         ]);
-    
+
         if ($validator->fails()) {
             return response()->json(['status' => false, 'msgField' => $validator->errors(), 'message' => 'Validasi gagal']);
         }
-    
+
         try {
             $perusahaan->update($request->only('nama', 'email', 'telp', 'alamat'));
-    
+
             return response()->json(['status' => true, 'message' => 'Data perusahaan diperbarui']);
         } catch (\Exception $e) {
             return response()->json(['status' => false, 'message' => 'Kesalahan: ' . $e->getMessage()]);
@@ -147,11 +147,11 @@ class PerusahaanController extends Controller
     }
 
     public function exportPdf()
-{
-    $perusahaan = PerusahaanModel::all();
-    $pdf = Pdf::loadView('perusahaan_mitra.export_pdf', compact('perusahaan'));
-    return $pdf->download('laporan_perusahaan.pdf');
-}
+    {
+        $perusahaan = PerusahaanModel::all();
+        $pdf = Pdf::loadView('perusahaan_mitra.export_pdf', compact('perusahaan'));
+        return $pdf->download('laporan_perusahaan.pdf');
+    }
 
     public function export_excel()
     {
@@ -164,20 +164,22 @@ class PerusahaanController extends Controller
         $sheet->setCellValue('A1', 'No');
         $sheet->setCellValue('B1', 'Nama');
         $sheet->setCellValue('C1', 'Email');
-        $sheet->setCellValue('D1', 'Telepon');
+        $sheet->setCellValue('D1', 'Telp');
+        $sheet->setCellValue('E1', 'Alamat');
 
-        $sheet->getStyle('A1:D1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:E1')->getFont()->setBold(true);
 
         $row = 2;
         foreach ($perusahaan as $index => $item) {
             $sheet->setCellValue("A{$row}", $index + 1);
             $sheet->setCellValue("B{$row}", $item->nama);
             $sheet->setCellValue("C{$row}", $item->email);
-            $sheet->setCellValue("D{$row}", $item->telepon);
+            $sheet->setCellValue("D{$row}", $item->telp);
+            $sheet->setCellValue("E{$row}", $item->alamat);
             $row++;
         }
 
-        foreach (range('A', 'D') as $col) {
+        foreach (range('A', 'E') as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
 
@@ -190,6 +192,7 @@ class PerusahaanController extends Controller
         $writer->save('php://output');
         exit;
     }
+
 
     public function import()
     {
@@ -216,21 +219,23 @@ class PerusahaanController extends Controller
             $data = $spreadsheet->getActiveSheet()->toArray(null, false, true, true);
 
             $inserted = 0;
-            $existingEmails = PerusahaanModel::pluck('email')->toArray();
+            $existingEmails = PerusahaanModel::pluck('email')->map(fn($e) => strtolower($e))->toArray();
 
             foreach ($data as $index => $row) {
-                if ($index <= 1) continue;
+                if ($index <= 1) continue; // Lewati baris header
 
-                $nama = trim($row['A']);
-                $email = trim($row['B']);
-                $telepon = trim($row['C'] ?? '');
+                $nama    = trim($row['B']);
+                $email   = strtolower(trim($row['C']));
+                $telp = trim($row['D'] ?? '');
+                $alamat  = trim($row['E'] ?? '');
 
                 if (!$nama || !$email || in_array($email, $existingEmails)) continue;
 
                 PerusahaanModel::create([
                     'nama' => $nama,
                     'email' => $email,
-                    'telepon' => $telepon ?: null,
+                    'telp' => $telp,
+                    'alamat' => $alamat,
                 ]);
 
                 $inserted++;

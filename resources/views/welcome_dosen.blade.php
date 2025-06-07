@@ -10,6 +10,23 @@
     </div>
   </div>
 </div>
+<div class="card">
+          <!-- ========= 1. Hero Banner ========== -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="bg-white rounded-4 shadow-sm p-4 position-relative overflow-hidden">
+                    <div class="hero-bg position-absolute" style="inset:0;
+                        background: radial-gradient(circle at 0% 50%, rgba(99,102,241,.25) 0%, rgba(99,102,241,0) 60%),
+                                    linear-gradient(90deg, rgba(99,102,241,.15) 0%, rgba(255,255,255,0) 70%);">
+                    </div>
+                    <h3 class="fw-bold mb-1 position-relative">
+                        Senang Bertemu Anda Kembali <span class="text-primary">{{ Auth::user()->name }}</span> 👋
+                    </h3>
+                    <p class="mb-0 text-secondary position-relative">
+                    </p>
+                </div>
+            </div>
+        </div>
 
 <!-- Dashboard Content -->
 <div class="row">

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>MagangIn - JTI Polinema</title>
@@ -7,6 +8,12 @@
   <link rel="icon" href="{{ asset('img/MagangIn.png') }}" type="image/x-icon">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
 
+  <style>
+    .toast-error {
+    background-color: #ff4444 !important;
+    color: #ffffff !important;
+}
+  </style>
   <!-- CSRF Token -->
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -42,6 +49,7 @@
 
   @stack('css')
 </head>
+
 <body>
   <div class="wrapper">
     @include('layouts.sidebar_mahasiswa')
@@ -68,22 +76,23 @@
   <script src="{{ asset('assets/js/core/popper.min.js') }}"></script>
   <script src="{{ asset('assets/js/core/bootstrap.min.js') }}"></script>
 
-    <!-- Plugins -->
-    <script src="assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
-    <script src="assets/js/plugin/chart.js/chart.min.js"></script>
-    <script src="assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js"></script>
-    <script src="assets/js/plugin/chart-circle/circles.min.js"></script>
-    <script src="assets/js/plugin/datatables/datatables.min.js"></script>
-    <script src="assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js"></script>
-    <script src="assets/js/plugin/jsvectormap/jsvectormap.min.js"></script>
-    <script src="assets/js/plugin/jsvectormap/world.js"></script>
-    <script src="assets/js/plugin/sweetalert/sweetalert.min.js"></script>
-    <script src="assets/js/kaiadmin.min.js"></script>
-    <script src="assets/js/setting-demo.js"></script>
-    <script src="assets/js/demo.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
-    
+  <!-- Plugins -->
+  <script src="{{ asset('assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js') }}"></script>
+  <script src="{{ asset('assets/js/plugin/chart.js/chart.min.js') }}"></script>
+  <script src="{{ asset('assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js') }}"></script>
+  <script src="{{ asset('assets/js/plugin/chart-circle/circles.min.js') }}"></script>
+  <script src="{{ asset('assets/js/plugin/datatables/datatables.min.js') }}"></script>
+  <script src="{{ asset('assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
+  <script src="{{ asset('assets/js/plugin/jsvectormap/jsvectormap.min.js') }}"></script>
+  <script src="{{ asset('assets/js/plugin/jsvectormap/world.js') }}"></script>
+  <script src="{{ asset('assets/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
+  <script src="{{ asset('assets/js/kaiadmin.min.js') }}"></script>
+  <script src="{{ asset('assets/js/setting-demo.js') }}"></script>
+  <script src="{{ asset('assets/js/demo.js') }}"></script>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
   <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
   <!-- Plugin Validasi Tambahan -->
   <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/additional-methods.min.js"></script>
@@ -123,6 +132,7 @@
     </div>
   </div>
 </body>
+
 </html>
 
 

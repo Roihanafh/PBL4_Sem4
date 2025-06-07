@@ -56,14 +56,6 @@
             <th style="width: 10%">Action</th>
           </tr>
         </thead>
-        <tfoot>
-          <tr>
-            <th>No. </th>
-            <th>Nama Program Studi</th>
-            <th>Jurusan</th>
-            <th>Action</th>
-          </tr>
-        </tfoot>
       </table>
       <div class="table-responsive">
       </div>

@@ -66,6 +66,8 @@
             <th>NIM</th>
             <th>Nama Lengkap</th>
             <th>Prodi</th>
+            <th>Angkatan</th>
+            <th>Jenis Kelamin</th>
             <th style="width: 10%">Action</th>
           </tr>
         </thead>
@@ -101,6 +103,10 @@
             { data: 'nim', name: 'mhs_nim' },
             { data: 'nama', name: 'full_name' },
             { data: 'prodi', name: 'prodi.nama_prodi' }, // tergantung struktur relasi
+            { data: 'angkatan', name: 'angkatan' },
+            { data: 'jenis_kelamin', name: 'jenis_kelamin', render: function(data) {
+                return data === 'L' ? 'Laki-laki' : 'Perempuan';
+            }},
             { data: 'aksi', className: "text-center", orderable: false, searchable: false, width: "10%" }
         ]
     });

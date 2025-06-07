@@ -44,6 +44,18 @@
                 <td class="col-9">{{ $mahasiswa->prodi->nama_prodi ?? '-' }}</td>
             </tr>
             <tr>
+                <th class="text-right">Angkatan:</th>
+                <td>{{ $mahasiswa->angkatan }}</td>
+            </tr>
+            <tr>
+                <th class="text-right">Jenis Kelamin:</th>
+                <td>{{ $mahasiswa->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</td>
+            </tr>
+            <tr>
+                <th class="text-right">IPK:</th>
+                <td>{{ $mahasiswa->ipk ?? '-' }}</td>
+            </tr>
+            <tr>
                 <th class="text-right">Status Magang:</th>
                 <td>{{ ucfirst($mahasiswa->status_magang) }}</td>
             </tr>

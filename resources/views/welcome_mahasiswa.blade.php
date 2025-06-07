@@ -202,6 +202,26 @@
 @endpush
 
 @section('content')
+<div class="card">
+  <div class="card-header">
+    <div class="d-flex gap-2 align-items-center flex-wrap">
+    
+    </div>
+  </div>
+
+  <div class="card-body">
+    @if (session('success'))
+      <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+    @if (session('error'))
+      <div class="alert alert-danger">{{ session('error') }}</div>
+    @endif
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content"></div>
+      </div>
+    </div>
 <div class="container-fluid mt-5 fade-slide">
   <!-- ========= 1. Hero ========== -->
   <div class="row mb-5">

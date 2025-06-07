@@ -47,7 +47,7 @@ class MahasiswaController extends Controller
     {
         if ($request->ajax()) {
             $mahasiswa = MahasiswaModel::with('prodi')
-                ->select('mhs_nim as nim', 'full_name as nama', 'prodi_id', 'user_id')
+                ->select('mhs_nim as nim', 'full_name as nama', 'prodi_id', 'user_id', 'angkatan', 'jenis_kelamin')
                 ->orderBy('user_id', 'asc');
 
             // Filter berdasarkan prodi jika ada input filter
@@ -106,6 +106,9 @@ class MahasiswaController extends Controller
             'alamat' => 'nullable',
             'telp' => 'nullable',
             'prodi_id' => 'required',
+            'angkatan' => 'nullable|integer',
+            'jenis_kelamin' => 'nullable|in:L,P', // L = Laki-laki, P = Perempuan
+            'ipk' => 'nullable|numeric|min:0|max:4.0',
             'status_magang' => 'required',
         ]);
 
@@ -116,6 +119,9 @@ class MahasiswaController extends Controller
             'alamat' => $validatedMhs['alamat'] ?? null,
             'telp' => $validatedMhs['telp'] ?? null,
             'prodi_id' => $validatedMhs['prodi_id'],
+            'angkatan' => $validatedMhs['angkatan'] ?? null,
+            'jenis_kelamin' => $validatedMhs['jenis_kelamin'] ?? null,
+            'ipk' => $validatedMhs['ipk'] ?? null,
             'status_magang' => $validatedMhs['status_magang'],
         ]);
 
@@ -197,7 +203,7 @@ class MahasiswaController extends Controller
             'username'  => 'required|max:20|unique:m_users,username,' . $mahasiswa->user->user_id . ',user_id',
             'password'  => 'nullable|min:5|max:20',
             'full_name' => 'required|max:100',
-            'alamat'    => 'nullable|max:255',
+            'alamat'    => 'nullable|max:255',    
             'telp'      => 'nullable|max:20',
         ]);
 
@@ -248,6 +254,9 @@ class MahasiswaController extends Controller
                 'm_mahasiswa.full_name',
                 'm_mahasiswa.telp',
                 'm_program_studi.nama_prodi as program_studi',
+                'm_mahasiswa.angkatan',
+                'm_mahasiswa.jenis_kelamin',
+                'm_mahasiswa.ipk',
                 'm_mahasiswa.alamat',
                 'm_mahasiswa.status_magang',
                 'r_auth_level.level_name'
@@ -278,11 +287,14 @@ class MahasiswaController extends Controller
         $sheet->setCellValue('C1', 'Nama');
         $sheet->setCellValue('D1', 'No. Telepon');
         $sheet->setCellValue('E1', 'Program Studi');
-        $sheet->setCellValue('F1', 'Alamat');
-        $sheet->setCellValue('G1', 'Status Magang');
-        $sheet->setCellValue('H1', 'Level');
+        $sheet->setCellValue('F1', 'Angkatan');
+        $sheet->setCellValue('G1', 'Jenis Kelamin');
+        $sheet->setCellValue('H1', 'IPK');
+        $sheet->setCellValue('I1', 'Alamat');
+        $sheet->setCellValue('J1', 'Status Magang');
+        $sheet->setCellValue('K1', 'Level');
 
-        $sheet->getStyle('A1:H1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:K1')->getFont()->setBold(true);
 
         $no = 1;
         $baris = 2;
@@ -293,9 +305,12 @@ class MahasiswaController extends Controller
             $sheet->setCellValue('C' . $baris, $data->full_name);
             $sheet->setCellValue('D' . $baris, $data->telp ?? '-');
             $sheet->setCellValue('E' . $baris, $data->prodi->nama_prodi ?? '-');
-            $sheet->setCellValue('F' . $baris, $data->alamat ?? '-');
-            $sheet->setCellValue('G' . $baris, $data->status_magang ?? '-');
-            $sheet->setCellValue('H' . $baris, $data->user->level->level_name ?? '-');
+            $sheet->setCellValue('F' . $baris, $data->angkatan ?? '-');
+            $sheet->setCellValue('G' . $baris, $data->jenis_kelamin == 'L' ? 'Laki-laki' : ($data->jenis_kelamin == 'P' ? 'Perempuan' : '-'));
+            $sheet->setCellValue('H' . $baris, $data->ipk ?? '-');
+            $sheet->setCellValue('I' . $baris, $data->alamat ?? '-');
+            $sheet->setCellValue('J' . $baris, $data->status_magang ?? '-');
+            $sheet->setCellValue('K' . $baris, $data->user->level->level_name ?? '-');
             $no++;
             $baris++;
         }
@@ -366,6 +381,9 @@ class MahasiswaController extends Controller
                     $alamat   = trim($row['E'] ?? '');
                     $telp     = trim($row['F'] ?? '');
                     $prodi_id = trim($row['G']);
+                    $angkatan = trim($row['H'] ?? '');
+                    $jenis_kelamin = trim($row['I'] ?? '');
+                    $ipk = trim($row['J'] ?? '');
 
                     if (!$username || !$password || !$mhs_nim || !$nama || !$prodi_id) continue;
                     if (in_array($username, $existingUsernames) || in_array($mhs_nim, $existingNIMs)) continue;
@@ -384,6 +402,9 @@ class MahasiswaController extends Controller
                         'alamat' => $alamat ?: null,
                         'telp' => $telp ?: null,
                         'prodi_id' => $prodi_id,
+                        'angkatan' => null, // Angkatan bisa diisi nanti
+                        'jenis_kelamin' => null, // Jenis kelamin bisa diisi nanti
+                        'ipk' => null, // IPK bisa diisi nanti
                         'status_magang' => 'belum magang',
                         'created_at' => now()
                     ]);

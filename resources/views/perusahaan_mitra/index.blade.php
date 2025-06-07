@@ -4,7 +4,7 @@
 <div class="card">
   <div class="card-header">
     <div class="d-flex gap-2 align-items-center flex-wrap">
-      <button onclick="modalAction('{{ url('/perusahaan/import') }}')" class="btn btn-info">
+      <button onclick="modalAction('{{ url('/perusahaan-mitra/import') }}')" class="btn btn-info">
         Import Perusahaan
       </button>
       <a href="{{ url('/perusahaan-mitra/export_excel') }}" class="btn btn-primary">
