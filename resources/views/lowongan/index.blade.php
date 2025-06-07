@@ -10,7 +10,7 @@
   </div>
   <div class="card-body">
     <table id="lowongan-table" class="table table-striped">
-      <thead>
+      <thead class="thead-dark">
         <tr>
       <th>No.</th>
       <th>Judul</th>
