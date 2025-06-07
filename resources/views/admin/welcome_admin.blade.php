@@ -33,8 +33,8 @@
                                 </div>
                                 <div class="col-7">
                                     <div class="numbers">
-                                        <p class="card-category">Total Mahasiswa</p>
-                                        <h4 class="card-title">{{ $totalMahasiswa }}</h4>
+                                        <p class="card-category text-white">Total Mahasiswa</p>
+                                        <h4 class="card-title text-white">{{ $totalMahasiswa }}</h4>
                                     </div>
                                 </div>
                             </div>
@@ -52,8 +52,8 @@
                                 </div>
                                 <div class="col-7">
                                     <div class="numbers">
-                                        <p class="card-category">Mahasiswa Magang</p>
-                                        <h4 class="card-title">{{ $mahasiswaMagang }}</h4>
+                                        <p class="card-category text-white">Mahasiswa Magang</p>
+                                        <h4 class="card-title text-white">{{ $mahasiswaMagang }}</h4>
                                     </div>
                                 </div>
                             </div>
@@ -71,8 +71,8 @@
                                 </div>
                                 <div class="col-7">
                                     <div class="numbers">
-                                        <p class="card-category">Dosen Pembimbing</p>
-                                        <h4 class="card-title">{{ $totalDosenPembimbing }}</h4>
+                                        <p class="card-category text-white">Dosen Pembimbing</p>
+                                        <h4 class="card-title text-white">{{ $totalDosenPembimbing }}</h4>
                                     </div>
                                 </div>
                             </div>
@@ -90,8 +90,8 @@
                                 </div>
                                 <div class="col-7">
                                     <div class="numbers">
-                                        <p class="card-category">Rasio Dosen:Mhs</p>
-                                        <h4 class="card-title">1:{{ $rasioDosenMhs }}</h4>
+                                        <p class="card-category text-white">Rasio Dosen:Mhs</p>
+                                        <h4 class="card-title text-white">1:{{ $rasioDosenMhs }}</h4>
                                     </div>
                                 </div>
                             </div>

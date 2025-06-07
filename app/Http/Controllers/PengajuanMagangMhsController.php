@@ -186,7 +186,7 @@ class PengajuanMagangMhsController extends Controller
             if ($existingLamaran) {
                 return response()->json([
                     'status' => false,
-                    'message' => 'Mahasiswa dengan NIM ' . $mhs_nim_from_form . ' sudah memiliki pengajuan magang yang sedang pending atau telah diterima.'
+                    'message' => 'Mahasiswa dengan NIM ' . $mhs_nim_from_form . ' sudah memiliki pengajuan di lowongan ' . $existingLamaran->lowongan->judul . '.'
                 ], 409); // Conflict
             }
 
