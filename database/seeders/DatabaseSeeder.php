@@ -35,7 +35,7 @@ class DatabaseSeeder extends Seeder
             LamaranMagangSeeder::class,
 
             LogAktivitasMhsSeeder::class,
-            FeedbackSeeder::class,
+            // FeedbackSeeder::class,
 
             BidangPenelitianSeeder::class,
             BidangKeahlianSeeder::class,
@@ -43,6 +43,7 @@ class DatabaseSeeder extends Seeder
             WilayahSeeder::class,
             PrefrensiLokasiMahasiswaSeeder::class,
             KeahlianMahasiswaSeeder::class,
+            JenisDokumenSeeder::class,
         ]);
             
     }

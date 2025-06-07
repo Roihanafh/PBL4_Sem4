@@ -22,6 +22,9 @@ class MahasiswaModel extends Model
         'alamat',
         'telp',
         'prodi_id',
+        'angkatan',
+        'jenis_kelamin',
+        'ipk',
         'status_magang',
         'profile_picture',
 
@@ -40,6 +43,7 @@ class MahasiswaModel extends Model
         'durasi'        => 'integer',
         'status_magang' => 'string',
         'tipe_bekerja'  => 'string',
+        'ipk'          => 'float',
     ];
 
     public function user()
@@ -75,5 +79,50 @@ class MahasiswaModel extends Model
     public function dosen()
     {
         return $this->belongsTo(DosenModel::class, 'dosen_id', 'dosen_id');
+    }
+
+    public function minat()
+    {
+        return $this->belongsToMany(BidangKeahlianModel::class, 't_minat_mahasiswa', 'mhs_nim', 'bidang_keahlian_id');
+    }
+
+public function prefrensiLokasi()
+{
+    return $this->hasMany(PrefrensiLokasiMahasiswaModel::class, 'mhs_nim', 'mhs_nim');
+}
+
+
+    public function getGenderNameAttribute()
+    {
+        return $this->jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan';
+    }
+
+    public function getAllCorPrefrensiLokasi()
+    {
+        return $this->prefrensiLokasi->map(function ($item) {
+            return [
+                'nama' => $item->nama_tampilan,
+                'latitude' => $item->latitude,
+                'longitude' => $item->longitude,
+            ];
+        })->toArray();
+    }
+
+    public function getDokumenWajibAttribute()
+    {
+        return JenisDokumenModel::where('default', 1)->get();
+
+    }
+
+    public function getDokumenTambahanAttribute()
+    {
+        return JenisDokumenModel::where('default', 0)->get();
+    }
+
+    public function getDokumenTambahan()
+    {
+        return DokumenMahasiswaModel::where('mhs_nim', $this->mhs_nim)
+            ->whereIn('jenis_dokumen_id', $this->getDokumenTambahanAttribute()->pluck('id'))
+            ->get();
     }
 }

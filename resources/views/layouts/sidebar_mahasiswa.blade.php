@@ -43,13 +43,8 @@
                 <div class="collapse" id="charts1">
                   <ul class="nav nav-collapse">
                     <li>
-                      <a>
+                      <a href="{{ route('profil.index') }}">
                         <span class="sub-item">Profil akademik</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a>
-                        <span class="sub-item">Dokumen (CV, sertifikat)</span>
                       </a>
                     </li>
                   </ul>
