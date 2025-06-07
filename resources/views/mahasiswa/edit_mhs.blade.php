@@ -93,6 +93,29 @@
             </div>
 
             <div class="form-group">
+                <label>Angkatan</label>
+                <input type="text" name="angkatan" id="angkatan" class="form-control" 
+                       value="{{ $mahasiswa->angkatan }}" required>
+                <small id="error-angkatan" class="error-text form-text text-danger"></small>
+            </div>
+
+            <div class="form-group">
+                <label>Jenis Kelamin</label>
+                <select name="jenis_kelamin" id="jenis_kelamin" class="form-control" required>
+                    <option value="L" {{ $mahasiswa->jenis_kelamin == 'L' ? 'selected' : '' }}>Laki-laki</option>
+                    <option value="P" {{ $mahasiswa->jenis_kelamin == 'P' ? 'selected' : '' }}>Perempuan</option>
+                </select>
+                <small id="error-jenis_kelamin" class="error-text form-text text-danger"></small>
+            </div>
+
+            <div class="form-group">
+                <label>IPK</label>
+                <input type="text" name="ipk" id="ipk" class="form-control" 
+                       value="{{ $mahasiswa->ipk }}" required>
+                <small id="error-ipk" class="error-text form-text text-danger"></small>
+            </div>
+
+            <div class="form-group">
                 <label>Username</label>
                 <input value="{{ $mahasiswa->user->username }}" type="text" name="username" id="username" class="form-control" required>
                 <small id="error-username" class="error-text form-text text-danger"></small>

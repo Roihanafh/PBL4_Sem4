@@ -83,7 +83,7 @@ class MahasiswaModel extends Model
 
     public function minat()
     {
-        return $this->belongsToMany(BidangKeahlianModel::class, 't_minat_mahasiswa', 'mhs_nim', 'bidang_keahlian_id');
+        return $this->belongsToMany(BidangKeahlianModel::class, 't_minat_mahasiswa', 'mhs_nim', 'bidang_keahlian_id','mhs_nim', 'id');
     }
 
 public function prefrensiLokasi()

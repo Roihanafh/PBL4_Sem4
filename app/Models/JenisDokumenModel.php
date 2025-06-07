@@ -53,5 +53,10 @@ class JenisDokumenModel extends Model
         }
         return null;
     }
+
+    public function mahasiswa()
+    {
+        return $this->belongsToMany(MahasiswaModel::class, 't_dokumen_mahasiswa', 'jenis_dokumen_id', 'mhs_nim');
+    }
     }
 

@@ -42,6 +42,19 @@
                     <th class="text-right col-3">Program Studi :</th>
                     <td class="col-9">{{ $mahasiswa->prodi->nama_prodi ?? '-' }}</td>
                 </tr>
+
+                <tr>
+                    <th class="text-right col-3">Angkatan :</th>
+                    <td class="col-9">{{ $mahasiswa->angkatan }}</td>
+                </tr>
+                <tr>
+                    <th class="text-right col-3">Jenis Kelamin :</th>
+                    <td class="col-9">{{ $mahasiswa->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</td>
+                </tr>
+                <tr>
+                    <th class="text-right col-3">IPK :</th>
+                    <td class="col-9">{{ $mahasiswa->ipk ?? '-' }}</td>
+                </tr>
             </table>
         </div>
         <div class="modal-footer">

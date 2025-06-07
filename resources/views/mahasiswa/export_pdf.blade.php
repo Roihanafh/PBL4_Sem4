@@ -109,6 +109,9 @@
                 <th>Nama</th>
                 <th>Nomor Telepon</th>
                 <th>Program Studi</th>
+                <th>Angkatan</th>
+                <th>Jenis Kelamin</th>
+                <th>IPK</th>
                 <th>Alamat</th>
                 <th>Status Magang</th>
                 <th>Level Pengguna</th>
@@ -122,6 +125,9 @@
                 <td>{{ $m->full_name  }}</td>
                 <td>{{ $m->telp ?? '-' }}</td>
                 <td>{{ $m->program_studi ?? '-' }}</td>
+                <td>{{ $m->angkatan ?? '-' }}</td>
+                <td>{{ $m->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</td>
+                <td>{{ $m->ipk ?? '-' }}</td>
                 <td>{{ $m->alamat ?? '-' }}</td>
                 <td>{{ $m->status_magang ?? '-' }}</td>
                 <td>{{ $m->level_nama ?? 'Mahasiswa' }}</td>
