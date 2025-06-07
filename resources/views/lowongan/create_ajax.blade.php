@@ -75,6 +75,18 @@
       </div>
     </div>
 
+    {{-- Durasi --}}
+    <div class="form-group">
+      <label for="durasi">Durasi (bulan)</label>
+      <select class="form-control" id="durasi" name="durasi" required>
+        <option value="">-- Pilih Durasi --</option>
+        <option value="3">3 Bulan</option>
+        <option value="6">6 Bulan</option>
+      </select>
+      <span class="text-danger" id="error-durasi"></span>
+    </div>
+
+
     {{-- Sylabus PDF --}}
     <div class="form-group">
       <label for="sylabus_file">Sylabus (PDF max 2 MB, opsional)</label>
@@ -103,6 +115,7 @@ $(function(){
       lokasi:              { required: true },
       perusahaan_id:       { required: true },
       periode_id:          { required: true },
+      durasi:              { required: true, number: true, min: 1 },
       sylabus_file:        { extension: "pdf" }
     },
     errorElement: 'span',

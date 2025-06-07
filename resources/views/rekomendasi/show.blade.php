@@ -1,3 +1,7 @@
+@php
+  use Illuminate\Support\Str;
+@endphp
+
 {{-- resources/views/rekomendasi/show.blade.php --}}
 @extends('layouts.template_mhs')
 
@@ -99,14 +103,23 @@
           <h5><i class="fas fa-info-circle"></i> Rincian Lowongan</h5>
           <p>{!! nl2br(e($lowongan->deskripsi)) !!}</p>
 
-          <h5 class="mt-4"><i class="fas fa-file-pdf"></i> Silabus</h5>
-          @if($lowongan->sylabus_path)
-        <a href="{{ asset($lowongan->sylabus_path) }}" target="_blank" class="btn btn-outline-primary mb-4">
-        <i class="fas fa-download"></i> Unduh Silabus
-        </a>
-      @else
-        <p class="text-muted">Tidak ada silabus tersedia.</p>
-      @endif
+        <h5 class="mt-4"><i class="fas fa-file-pdf"></i> Silabus</h5>
+        @if($lowongan->sylabus_path)
+          @php
+            // Determine if we have a full URL or a storage path
+            $sylabusUrl = Str::startsWith($lowongan->sylabus_path, ['http://','https://'])
+              ? $lowongan->sylabus_path
+              : asset('storage/' . $lowongan->sylabus_path);
+          @endphp
+
+          <a href="{{ $sylabusUrl }}"
+            target="_blank"
+            class="btn btn-outline-primary mb-4">
+            <i class="fas fa-download"></i> Unduh Silabus
+          </a>
+        @else
+          <p class="text-muted">Tidak ada silabus tersedia.</p>
+        @endif
 
           <h5 class="mt-4"><i class="fas fa-calendar-alt"></i> Tanggal Penting</h5>
           <ul>
