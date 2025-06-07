@@ -152,6 +152,8 @@ Route::middleware(['auth', 'authorize:admin'])->group(function () {
         Route::get('/{lamaran_id}/delete_ajax', [PengajuanMagangController::class, 'confirm_ajax']);
         Route::delete('/{lamaran_id}/delete_ajax', [PengajuanMagangController::class, 'delete_ajax']);
         Route::post('{lamaran_id}/restore', [PengajuanMagangController::class, 'restore'])->name('pengajuan-magang.restore');
+        Route::get('/export_pdf', [PengajuanMagangController::class, 'export_pdf']);
+        Route::get('/export_excel', [PengajuanMagangController::class, 'export_excel']);
     });
 
     Route::group(['prefix' => 'perusahaan-mitra'], function () {
@@ -239,7 +241,6 @@ Route::middleware(['auth', 'authorize:mahasiswa'])->group(function () {
     Route::group(['prefix' => 'pengajuan-magang-mhs'], function () {
         Route::get('/', [PengajuanMagangMhsController::class, 'index']);
         Route::post('/list', [PengajuanMagangMhsController::class, 'list']);
-
         Route::get('/{lamaran_id}/show_ajax', [PengajuanMagangMhsController::class, 'show_ajax']);
         Route::post('/{lamaran_id}/update_status', [PengajuanMagangMhsController::class, 'update_status']);
         Route::get('/{lamaran_id}/edit_ajax', [PengajuanMagangMhsController::class, 'edit_ajax']);
