@@ -55,6 +55,28 @@
         <div class="text-danger" id="error-prodi_id"></div>
     </div>
 
+    <div class="form-group">
+        <label for="angkatan" class="form-label">Angkatan</label>
+        <input type="text" class="form-control" id="angkatan" name="angkatan" required>
+        <div class="text-danger" id="error-angkatan"></div>
+    </div>
+
+    <div class="form-group">
+        <label for="jenis_kelamin" class="form-label">Jenis Kelamin</label>
+        <select name="jenis_kelamin" id="jenis_kelamin" class="form-select" required>
+            <option value="">-- Pilih Jenis Kelamin --</option>
+            <option value="L">Laki-laki</option>
+            <option value="P">Perempuan</option>
+        </select>
+        <div class="text-danger" id="error-jenis_kelamin"></div>
+    </div>
+
+    <div class="form-group">
+        <label for="ipk" class="form-label">IPK</label>
+        <input type="text" class="form-control" id="ipk" name="ipk">
+        <div class="text-danger" id="error-ipk"></div>
+    </div>
+
     {{-- STATUS MAGANG DISET AUTOMATIS --}}
     <input type="hidden" name="status_magang" value="belum magang">
     </div>
