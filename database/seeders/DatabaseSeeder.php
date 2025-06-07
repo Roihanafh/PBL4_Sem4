@@ -41,8 +41,8 @@ class DatabaseSeeder extends Seeder
             BidangKeahlianSeeder::class,
 
             WilayahSeeder::class,
-            PrefrensiLokasiMahasiswaSeeder::class,
-            KeahlianMahasiswaSeeder::class,
+            // PrefrensiLokasiMahasiswaSeeder::class,
+            // KeahlianMahasiswaSeeder::class,
             JenisDokumenSeeder::class,
         ]);
             
