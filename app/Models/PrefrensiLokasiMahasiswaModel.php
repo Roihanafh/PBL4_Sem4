@@ -15,4 +15,9 @@ class PrefrensiLokasiMahasiswaModel extends Model
         'longitude' => 'float',
         'latitude' => 'float',
     ];
+
+    public function mahasiswa()
+    {
+        return $this->belongsTo(MahasiswaModel::class, 'mhs_nim', 'mhs_nim');
+    }
 }

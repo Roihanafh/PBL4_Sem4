@@ -48,4 +48,9 @@ class DokumenMahasiswaModel extends Model
 
         return null;
     }
+
+    public function mahasiswa()
+    {
+        return $this->belongsTo(MahasiswaModel::class, 'mhs_nim', 'mhs_nim');
+    }
 }

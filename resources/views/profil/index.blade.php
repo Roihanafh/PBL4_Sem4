@@ -1,6 +1,27 @@
 @extends('layouts.template_mhs')
 
 @section('content')
+
+<div class="card">
+  <div class="card-header">
+    <div class="d-flex gap-2 align-items-center flex-wrap">
+    
+    </div>
+  </div>
+
+  <div class="card-body">
+    @if (session('success'))
+      <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+    @if (session('error'))
+      <div class="alert alert-danger">{{ session('error') }}</div>
+    @endif
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content"></div>
+      </div>
+    </div>
     {{-- MINAT --}}
     @if($data)
         <div class="mb-3">
@@ -181,3 +202,26 @@
         </div>
 
 @endsection
+@push('js')
+<script>
+  $(document).ready(function () {
+    // Pastikan meta tag CSRF token ada di layouts.template
+    // Contoh: <meta name="csrf-token" content="{{ csrf_token() }}">
+    $.ajaxSetup({
+      headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
+    });
+});
+    function modalAction(url = '') {
+    $('#myModal .modal-content').load(url, function() {
+        $('#myModal').modal('show');
+        
+        // Re-bind the close button event after content loads
+        $(document).off('click', '[data-dismiss="modal"]').on('click', '[data-dismiss="modal"]', function() {
+            $('#myModal').modal('hide');
+        });
+    });
+}
+</script>
+@endpush
+
+

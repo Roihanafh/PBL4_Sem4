@@ -12,12 +12,17 @@ class MinatMahasiswaModel extends Model
     protected $table = 't_minat_mahasiswa';
 
     protected $fillable = [
-        'mahasiswa_id',
+        'mhs_nim',
         'bidang_keahlian_id',
     ];
 
     public function bidangKeahlian()
     {
         return $this->belongsTo(BidangKeahlianModel::class, 'bidang_keahlian_id');
+    }
+
+    public function mahasiswa()
+    {
+        return $this->belongsTo(MahasiswaModel::class, 'mhs_nim', 'mhs_nim');
     }
 }
