@@ -8,7 +8,7 @@
     </div>
   </div>
 @else
-<form action="{{ url('/lowongan/'.$lowongan->lowongan_id.'/update_ajax') }}" method="POST" id="form-edit-lowongan" autocomplete="off">
+<form action="{{ url('/lowongan/'.$lowongan->lowongan_id.'/update_ajax') }}" method="POST" id="form-edit-lowongan" autocomplete="off" ectype="multipart/form-data">
   @csrf
   @method('PUT')
   <div class="modal-header">
@@ -82,12 +82,24 @@
     </div>
 
     {{-- Sylabus Path --}}
-    <div class="form-group">
-      <label for="sylabus_path">Link Sylabus (opsional)</label>
-      <input type="url" class="form-control" id="sylabus_path" name="sylabus_path"
-             value="{{ $lowongan->sylabus_path }}">
-      <div class="text-danger" id="error-sylabus_path"></div>
-    </div>
+  <div class="form-group">
+    <label for="sylabus_file">Sylabus (PDF max 2 MB)</label>
+    @if(!empty($lowongan->sylabus_path))
+      <p>Current: 
+        <a href="{{ asset('storage/'.$lowongan->sylabus_path) }}" target="_blank">
+          {{ basename($lowongan->sylabus_path) }}
+        </a>
+      </p>
+    @endif
+    <input
+      type="file"
+      class="form-control"
+      id="sylabus_file"
+      name="sylabus_file"
+      accept="application/pdf"
+    >
+    <span class="text-danger" id="error-sylabus_file"></span>
+  </div>
 
     {{-- Status --}}
     <div class="form-group">
@@ -158,29 +170,34 @@ $(document).ready(function() {
     unhighlight: function(element) {
       $(element).removeClass('is-invalid');
     },
-    submitHandler: function(form) {
-      $.ajax({
-        url: form.action,
-        type: form.method,
-        data: $(form).serialize(),
-        success: function(response) {
-          if (response.status) {
-            $('#myModal').modal('hide');
-            Swal.fire({ icon: 'success', title: 'Berhasil', text: response.message });
-            $('#lowongan-table').DataTable().ajax.reload(null, false);
-          } else {
-            $.each(response.msgField, function(field, msgs) {
-              $('#error-' + field).text(msgs[0]);
-            });
-            Swal.fire({ icon: 'error', title: 'Gagal', text: response.message });
-          }
-        },
-        error: function() {
-          Swal.fire({ icon: 'error', title: 'Error', text: 'Kesalahan server.' });
-        }
-      });
-      return false;
+submitHandler: function(form) {
+  let fd = new FormData(form);
+
+  $.ajax({
+    url: form.action,
+    type: form.method,
+    data: fd,
+    contentType: false,    // tell jQuery not to set Content-Type
+    processData: false,    // tell jQuery not to serialize
+    success(response) {
+      if (response.status) {
+        $('#myModal').modal('hide');
+        Swal.fire({ icon: 'success', title: 'Berhasil', text: response.message });
+        $('#lowongan-table').DataTable().ajax.reload(null, false);
+      } else {
+        $.each(response.msgField, (field, msgs) => {
+          $('#error-' + field).text(msgs[0]);
+        });
+        Swal.fire({ icon: 'error', title: 'Gagal', text: response.message });
+      }
+    },
+    error() {
+      Swal.fire({ icon: 'error', title: 'Error', text: 'Kesalahan server.' });
     }
+  });
+
+  return false;
+}
   });
 });
 </script>
