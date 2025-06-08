@@ -14,6 +14,7 @@ use App\Models\LowonganModel;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Log;
 use Exception; // Import Exception class
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class PengajuanMagangMhsController extends Controller
@@ -45,7 +46,7 @@ class PengajuanMagangMhsController extends Controller
                 ->get();
 
             $lamaran = $lamaran->where('mhs_nim', auth()->user()->mahasiswa->mhs_nim);
-            
+
             return DataTables::of($lamaran)
                 ->addIndexColumn()
                 ->addColumn('mhs_nim', function ($lamaran) {
@@ -66,7 +67,7 @@ class PengajuanMagangMhsController extends Controller
                 })
                 ->addColumn('aksi', function ($lmr) {
                     $btn  = '<div class="btn-group" role="group">';
-                    $btn .= '<button onclick="modalAction(\''.url('/pengajuan-magang-mhs/' . $lmr->lamaran_id . '/show_ajax').'\')" class="btn btn-primary btn-sm" style="margin-right: 5px;" title="Detail Data">';
+                    $btn .= '<button onclick="modalAction(\'' . url('/pengajuan-magang-mhs/' . $lmr->lamaran_id . '/show_ajax') . '\')" class="btn btn-primary btn-sm" style="margin-right: 5px;" title="Detail Data">';
                     $btn .= '<i class="fas fa-info-circle"></i></button>';
                     // Uncomment baris di bawah jika Anda ingin mengaktifkan tombol edit dan hapus
                     // $btn .= '<button onclick="modalAction(\''.url('/pengajuan-magang-mhs/' . $lmr->lamaran_id . '/edit_ajax').'\')" class="btn btn-warning btn-sm" style="margin-right: 5px;" title="Edit Data">';
@@ -93,29 +94,29 @@ class PengajuanMagangMhsController extends Controller
     }
 
     public function show_ajax($id)
-{
-    // Get the internship application with related data using model relationships
-    $pengajuan = LamaranMagangModel::with([
+    {
+        // Get the internship application with related data using model relationships
+        $pengajuan = LamaranMagangModel::with([
             'mahasiswa',
             'dosen',
             'lowongan'
         ])
-        ->findOrFail($id);
+            ->findOrFail($id);
 
-    // Format the data for the view
-    $data = [
-        'lamaran_id' => $pengajuan->lamaran_id,
-        'mhs_nim' => $pengajuan->mhs_nim,
-        'mhs_nama' => $pengajuan->mahasiswa->nama ?? '-',
-        'dosen_nama' => $pengajuan->dosen->nama ?? 'Belum ditentukan',
-        'lowongan_nama' => $pengajuan->lowongan->judul ?? '-',
-        'tanggal_lamaran' => $pengajuan->tanggal_lamaran,
-        'status' => $pengajuan->status,
-        'dosen_id' => $pengajuan->dosen_id
-    ];
+        // Format the data for the view
+        $data = [
+            'lamaran_id' => $pengajuan->lamaran_id,
+            'mhs_nim' => $pengajuan->mhs_nim,
+            'mhs_nama' => $pengajuan->mahasiswa->nama ?? '-',
+            'dosen_nama' => $pengajuan->dosen->nama ?? 'Belum ditentukan',
+            'lowongan_nama' => $pengajuan->lowongan->judul ?? '-',
+            'tanggal_lamaran' => $pengajuan->tanggal_lamaran,
+            'status' => $pengajuan->status,
+            'dosen_id' => $pengajuan->dosen_id
+        ];
 
-    return view('pengajuan_magang_mhs.show_ajax', ['pengajuan' => (object)$data]);
-}
+        return view('pengajuan_magang_mhs.show_ajax', ['pengajuan' => (object)$data]);
+    }
 
 
     public function update_status(Request $request, $id)
@@ -130,7 +131,7 @@ class PengajuanMagangMhsController extends Controller
         $lamaran = LamaranMagangModel::findOrFail($id);
         $lamaran->status = $request->status;
         $lamaran->dosen_id = $request->status === 'diterima' ? $request->dosen_id : null;
-        
+
         // Pastikan lowongan ada sebelum mengakses properti perusahaan_id
         $nama_perusahaan = '-';
         if ($lamaran->lowongan) {
@@ -139,7 +140,7 @@ class PengajuanMagangMhsController extends Controller
                 $nama_perusahaan = $perusahaan->nama;
             }
         }
-        
+
         if ($request->status === 'diterima') {
             MahasiswaModel::where('mhs_nim', $lamaran->mhs_nim)->update(['status_magang' => "Sedang Magang"]);
             NotifikasiModel::create([
@@ -149,7 +150,7 @@ class PengajuanMagangMhsController extends Controller
                 'pesan' => 'Selamat, lamaran magang Anda pada ' . $nama_perusahaan . ' telah diterima.',
                 'waktu_dibuat' => now()
             ]);
-        } else if($request->status === 'ditolak'){
+        } else if ($request->status === 'ditolak') {
             NotifikasiModel::create([
                 'mhs_nim' => $lamaran->mhs_nim,
                 'lamaran_id' => $lamaran->lamaran_id,
@@ -180,20 +181,31 @@ class PengajuanMagangMhsController extends Controller
 
             // Cek apakah mahasiswa sudah memiliki lamaran yang sedang pending atau diterima
             $existingLamaran = LamaranMagangModel::where('mhs_nim', $mhs_nim_from_form)
-                                ->whereIn('status', ['pending', 'diterima', 'selesai'])
-                                ->first();
+                ->whereIn('status', ['pending', 'diterima', 'selesai'])
+                ->first();
 
             if ($existingLamaran) {
+                $errorMessage = match ($existingLamaran->status) {
+                    'pending' => 'Anda masih memiliki pengajuan magang di lowongan ' . $existingLamaran->lowongan->judul . 'yang sedang diproses.',
+                    'diterima' => 'Anda sudah diterima di lowongan ' . $existingLamaran->lowongan->judul . 'ini.',
+                    'selesai' => 'Anda sudah menyelesaikan magang.',
+                    default => 'Anda tidak dapat mengajukan magang lagi.',
+                };
+
                 return response()->json([
                     'status' => false,
-                    'message' => 'Mahasiswa dengan NIM ' . $mhs_nim_from_form . ' sudah memiliki pengajuan di lowongan ' . $existingLamaran->lowongan->judul . '.'
-                ], 409); // Conflict
+                    'message' => $errorMessage,
+                    'details' => [
+                        'lowongan' => $existingLamaran->lowongan->judul,
+                        'status' => $existingLamaran->status,
+                    ]
+                ], 409); // HTTP 409 Conflict
             }
 
             LamaranMagangModel::create([
                 'mhs_nim' => $mhs_nim_from_form,
                 'lowongan_id' => $request->lowongan_id,
-                'tanggal_lamaran' => $request->tanggal_lamaran,
+                'tanggal_lamaran' => Carbon::parse($request->tanggal_lamaran),
                 'status' => 'pending', // Set default status
                 'dosen_id' => null, // Dosen pembimbing belum ada saat pengajuan awal
             ]);
@@ -211,7 +223,6 @@ class PengajuanMagangMhsController extends Controller
                 'status' => true,
                 'message' => 'Pengajuan magang berhasil diajukan. Menunggu persetujuan.'
             ]);
-
         } catch (Exception $e) {
             Log::error('Error creating new internship application: ' . $e->getMessage());
             return response()->json([
@@ -226,7 +237,7 @@ class PengajuanMagangMhsController extends Controller
         $lamaran = LamaranMagangModel::with('lowongan', 'dosen', 'mahasiswa')
             ->where('lamaran_id', $lamaran_id)
             ->first();
-        
+
         // Pastikan relasi mahasiswa dan lowongan ada sebelum mengakses propertinya
         if (!$lamaran || !$lamaran->mahasiswa || !$lamaran->lowongan) {
             return response()->json([
@@ -244,19 +255,19 @@ class PengajuanMagangMhsController extends Controller
                 'status' => false,
                 'message' => 'Data prodi tersebut tidak ditemukan.'
             ], 404);
-        }   
+        }
         if (!$perusahaan) {
             return response()->json([
                 'status' => false,
                 'message' => 'Data perusahaan tersebut tidak ditemukan.'
             ], 404);
-        } 
+        }
         return view('pengajuan_magang_mhs.edit_ajax', [ // Pastikan path view sesuai
             'lamaran' => $lamaran,
             'prodi' => $prodi,
-            'perusahaan'=> $perusahaan,
+            'perusahaan' => $perusahaan,
             'dosens' => $dosens
-            
+
         ]);
     }
 
@@ -273,7 +284,7 @@ class PengajuanMagangMhsController extends Controller
         $lamaran = LamaranMagangModel::findOrFail($id);
         $lamaran->status = $request->status;
         $lamaran->dosen_id = ($request->status === 'diterima' || $request->status === 'selesai') ? $request->dosen_id : null;
-        
+
         // Pastikan lowongan ada sebelum mengakses properti perusahaan_id
         $nama_perusahaan = '-';
         if ($lamaran->lowongan) {
@@ -327,7 +338,7 @@ class PengajuanMagangMhsController extends Controller
         $lowongan = LowonganModel::find($id);
         // Fetch dosen data (if needed)
         $dosen = DosenModel::all();
-        
+
         return view('rekomendasi.create_ajax')
             ->with([
                 'lowongan' => $lowongan,
@@ -342,7 +353,7 @@ class PengajuanMagangMhsController extends Controller
         $lamaran = LamaranMagangModel::with('lowongan', 'dosen', 'mahasiswa')
             ->where('lamaran_id', $lamaran_id)
             ->first();
-        
+
         // Pastikan relasi mahasiswa dan lowongan ada sebelum mengakses propertinya
         if (!$lamaran || !$lamaran->mahasiswa || !$lamaran->lowongan) {
             return response()->json([
@@ -360,19 +371,19 @@ class PengajuanMagangMhsController extends Controller
                 'status' => false,
                 'message' => 'Data prodi tersebut tidak ditemukan.'
             ], 404);
-        }   
+        }
         if (!$perusahaan) {
             return response()->json([
                 'status' => false,
                 'message' => 'Data perusahaan tersebut tidak ditemukan.'
             ], 404);
-        } 
+        }
         return view('pengajuan_magang_mhs.confirm_ajax', [ // Pastikan path view sesuai
             'lamaran' => $lamaran,
             'prodi' => $prodi,
-            'perusahaan'=> $perusahaan,
+            'perusahaan' => $perusahaan,
             'dosens' => $dosens
-            
+
         ]);
     }
 

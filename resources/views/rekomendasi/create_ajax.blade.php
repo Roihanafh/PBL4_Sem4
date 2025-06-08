@@ -24,8 +24,8 @@
 
         <div class="form-group">
             <label for="tanggal_lamaran">Tanggal Lamaran</label>
-            <input type="date" class="form-control" id="tanggal_lamaran" name="tanggal_lamaran"
-                value="{{ date('Y-m-d') }}" required>
+            <input type="datetime-local" class="form-control" id="tanggal_lamaran" name="tanggal_lamaran"
+                value="{{ date('Y-m-d\TH:i') }}" required>
             <small class="text-danger" id="tanggal_lamaran_error"></small>
         </div>
 
