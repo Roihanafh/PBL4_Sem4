@@ -18,15 +18,18 @@
     </div>
 
     {{-- Filter Mahasiswa --}}
-    <div class="col-md-4 mb-3">
-      <label for="mhs_nim" class="form-label">Nama Mahasiswa</label>
-      <select name="mhs_nim" id="mhs_nim" class="form-control">
-        <option value="">-- Semua Mahasiswa --</option>
-        @foreach($mahasiswa as $mhs)
-          <option value="{{ $mhs->mhs_nim }}">{{ $mhs->full_name }}</option>
-        @endforeach
-      </select>
-    </div>
+    <div class="card-body">
+       <div class="row mb-3">
+          <div class="col-md-3">
+              <label for="prodi_id" class="form-label">Filter:</label>
+                <select id="filter_prodi_id" name="filter_prodi_id" class="form-control">
+                  <option value="">- Semua Prodi -</option>
+                  @foreach($prodis as $prodi)
+                      <option value="{{ $prodi->prodi_id }}">{{ $prodi->nama_prodi }}</option>
+                  @endforeach
+              </select>
+          </div>
+      </div>
 
     {{-- Tabel Mahasiswa Bimbingan --}}
     <table id="bimbingan-table" class="display table table-striped" style="width:100%">
@@ -63,7 +66,7 @@
         url: "{{ url('/mahasiswa-bimbingan/list') }}",
         type: "POST",
         data: function(d) {
-          d.mhs_nim = $('#mhs_nim').val();
+          d.prodi_id = $('#prodi_id').val();
         }
       },
       columns: [
@@ -77,9 +80,9 @@
     });
 
     // Reload DataTables saat filter berubah
-    $('#mhs_nim').on('change', function () {
-      table.ajax.reload();
-    });
+    $('#prodi_id').change(function () {
+    table.ajax.reload();
+  });
   });
 
   // Fungsi buka modal

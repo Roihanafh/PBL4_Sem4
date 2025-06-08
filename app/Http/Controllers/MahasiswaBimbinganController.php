@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\LamaranMagangModel;
 use Illuminate\Support\Facades\Auth;
+use App\Models\ProdiModel;
 
 class MahasiswaBimbinganController extends Controller
 {
@@ -23,6 +24,8 @@ class MahasiswaBimbinganController extends Controller
     // Ambil mahasiswa yang dibimbing oleh dosen ini
     $dosenId = Auth::user()->dosen->dosen_id;
 
+    $prodis = ProdiModel::all();
+
     $mahasiswa = LamaranMagangModel::with('mahasiswa')
         ->where('dosen_id', $dosenId)
         ->where('status', 'diterima')
@@ -30,7 +33,7 @@ class MahasiswaBimbinganController extends Controller
         ->pluck('mahasiswa') // ambil relasi mahasiswa-nya saja
         ->unique('mhs_nim'); // buang duplikat berdasarkan NIM
 
-    return view('mahasiswa-bimbingan.index', compact('breadcrumb', 'page', 'activeMenu', 'mahasiswa'));
+    return view('mahasiswa-bimbingan.index', compact('breadcrumb', 'page', 'activeMenu', 'mahasiswa', 'prodis'));
 }
 
 
@@ -42,12 +45,16 @@ class MahasiswaBimbinganController extends Controller
         ->where('dosen_id', $dosenId)
         ->where('status', 'diterima');
 
-    // Filter berdasarkan nim jika ada
-    if ($request->has('mhs_nim') && !empty($request->mhs_nim)) {
-        $query->whereHas('mahasiswa', function($q) use ($request) {
-            $q->where('mhs_nim', $request->mhs_nim);
-        });
-    }
+    
+   if ($request->has('prodi_id') && !empty($request->prodi_id)) {
+    $query->whereHas('mahasiswa', function($q) use ($request) {
+        $q->where('prodi_id', $request->prodi_id);
+    });
+
+
+}
+
+
 
     $data = $query->get();
 
