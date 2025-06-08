@@ -186,9 +186,9 @@ class PengajuanMagangMhsController extends Controller
 
             if ($existingLamaran) {
                 $errorMessage = match ($existingLamaran->status) {
-                    'pending' => 'Anda masih memiliki pengajuan magang di lowongan ' . $existingLamaran->lowongan->judul . 'yang sedang diproses.',
-                    'diterima' => 'Anda sudah diterima di lowongan ' . $existingLamaran->lowongan->judul . 'ini.',
-                    'selesai' => 'Anda sudah menyelesaikan magang.',
+                    'pending' => 'Anda masih memiliki pengajuan magang di lowongan ' . $existingLamaran->lowongan->judul . ' yang sedang diproses.',
+                    'diterima' => 'Anda sudah diterima di lowongan ' . $existingLamaran->lowongan->judul . ' ini.',
+                    'selesai' => 'Anda sudah menyelesaikan magang dan tidak dapat mengajukan magang lagi.',
                     default => 'Anda tidak dapat mengajukan magang lagi.',
                 };
 
