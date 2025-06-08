@@ -5,13 +5,6 @@
 
 {{-- Profile header card --}}
 <div class="card mb-4">
-  <div class="card-header">
-    <div class="d-flex gap-2 align-items-center flex-wrap">
-      <!-- Profile button -->
-      <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#myModal">
-        <i class="fas fa-user-circle"></i> Profile
-      </button>
-    </div>
   </div>
   <div class="card-body">
     @if (session('success'))

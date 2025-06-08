@@ -525,17 +525,13 @@
       <div class="card border-0 shadow-sm p-4">
         <h5 class="mb-3">Quick Links</h5>
         <div class="d-flex flex-wrap gap-3">
-          <a href="{{ url('/profile') }}" class="btn btn-sm btn-secondary">
-            <i class="fas fa-user me-1"></i> My Profile
-          </a>
-          <a href="{{ url('/lamaran') }}" class="btn btn-sm btn-secondary">
-            <i class="fas fa-clipboard-check me-1"></i> Lihat Lamaran Saya
-          </a>
-          <a href="{{ url('/panduan') }}" class="btn btn-sm btn-secondary">
+          <a
+            href="https://docs.google.com/document/d/1mfUl2jg4i6oLN1PEhcNnv5sijADaRgJO4EYLJhqsz24/edit?usp=sharing"
+            class="btn btn-sm btn-secondary"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <i class="fas fa-book me-1"></i> Panduan Penggunaan
-          </a>
-          <a href="{{ url('/logout') }}" class="btn btn-sm btn-danger">
-            <i class="fas fa-sign-out-alt me-1"></i> Logout
           </a>
         </div>
       </div>
