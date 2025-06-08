@@ -402,9 +402,9 @@ class MahasiswaController extends Controller
                         'alamat' => $alamat ?: null,
                         'telp' => $telp ?: null,
                         'prodi_id' => $prodi_id,
-                        'angkatan' => null, // Angkatan bisa diisi nanti
-                        'jenis_kelamin' => null, // Jenis kelamin bisa diisi nanti
-                        'ipk' => null, // IPK bisa diisi nanti
+                       'angkatan' => $angkatan, // pastikan ini ada
+                        'jenis_kelamin' => $jenis_kelamin,
+                        'ipk' => $ipk,
                         'status_magang' => 'belum magang',
                         'created_at' => now()
                     ]);

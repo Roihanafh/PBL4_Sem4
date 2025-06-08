@@ -96,6 +96,9 @@ class AuthController extends Controller
             'alamat' => 'nullable',
             'telp' => 'nullable',
             'prodi_id' => 'required',
+            'angkatan' => 'nullable|integer',
+            'jenis_kelamin' => 'nullable|in:L,P', // L = Laki-laki, P = Perempuan
+            'ipk' => 'nullable|numeric|min:0|max:4.0',
             'status_magang' => 'required',
         ]);
 
@@ -106,6 +109,9 @@ class AuthController extends Controller
             'alamat' => $validatedMhs['alamat'] ?? null,
             'telp' => $validatedMhs['telp'] ?? null,
             'prodi_id' => $validatedMhs['prodi_id'],
+            'angkatan' => $validatedMhs['angkatan'] ?? null,
+            'jenis_kelamin' => $validatedMhs['jenis_kelamin'] ?? null,
+            'ipk' => $validatedMhs['ipk'] ?? null,
             'status_magang' => $validatedMhs['status_magang'],
         ]);
 
