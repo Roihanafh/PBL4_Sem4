@@ -14,7 +14,8 @@ use Carbon\Carbon;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use App\Services\SmartRecommendationService;
-
+use Illuminate\Support\Facades\Storage;    
+use Illuminate\Support\Facades\Log; 
 
 class LowonganController extends Controller
 {
@@ -82,34 +83,57 @@ class LowonganController extends Controller
         return view('lowongan.create_ajax', compact('perusahaan', 'periode'));
     }
 
-    public function store_ajax(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'judul'                => 'required|max:255',
-            'deskripsi'            => 'required',
-            'tanggal_mulai_magang' => 'required|date',
-            'deadline_lowongan'    => 'required|date|after_or_equal:tanggal_mulai_magang',
-            'lokasi'               => 'required',
-            'perusahaan_id'        => 'required|exists:tbl_perusahaan,perusahaan_id',
-            'periode_id'           => 'required|exists:tbl_periode,periode_id',
-            'sylabus_path'         => 'nullable|url',
-        ]);
+public function store_ajax(Request $request)
+{
+    // 1. Validation
+    $validator = Validator::make($request->all(), [
+        'judul'                => 'required|string|max:255',
+        'deskripsi'            => 'required|string',
+        'tanggal_mulai_magang' => 'required|date',
+        'deadline_lowongan'    => 'required|date|after_or_equal:tanggal_mulai_magang',
+        'lokasi'               => 'required|string',
+        'perusahaan_id'        => 'required|exists:m_perusahaan_mitra,perusahaan_id',
+        'periode_id'           => 'required|exists:m_periode_magang,periode_id',
+        'sylabus_file'         => 'nullable|file|mimes:pdf|max:2048',
+        'status'               => 'nullable|in:aktif,nonaktif',
+        'tipe_bekerja'         => 'nullable|string',
+        'kuota'                => 'nullable|integer|min:0',
+        'durasi'               => 'nullable|string',
+    ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'msgField' => $validator->errors(),
-                'message' => 'Validasi gagal'
-            ]);
-        }
-
-        LowonganModel::create($request->all());
-
+    if ($validator->fails()) {
         return response()->json([
-            'status' => true,
-            'message' => 'Lowongan berhasil ditambahkan'
+            'status'   => false,
+            'msgField' => $validator->errors(),
+            'message'  => 'Validasi gagal'
         ]);
     }
+
+    // 2. Gather data
+    $data = $request->only([
+        'judul','deskripsi','tanggal_mulai_magang','deadline_lowongan',
+        'lokasi','perusahaan_id','periode_id','status',
+        'tipe_bekerja','kuota','durasi',
+    ]);
+
+    // 3. Handle optional PDF upload
+    if ($request->hasFile('sylabus_file') && $request->file('sylabus_file')->isValid()) {
+        // Delete old if any (for update you already handle this separately)
+        $data['sylabus_path'] = $request
+            ->file('sylabus_file')
+            ->store('sylabus', 'public');
+    }
+
+    // 4. Create record
+    LowonganModel::create($data);
+
+    // 5. Return success
+    return response()->json([
+        'status'  => true,
+        'message' => 'Lowongan berhasil ditambahkan'
+    ]);
+}
+
 
     public function confirm_ajax($lowongan_id)
     {
@@ -153,26 +177,73 @@ class LowonganController extends Controller
         return view('lowongan.edit_ajax', compact('lowongan', 'perusahaan', 'periode'));
     }
 
-    public function update_ajax(Request $request, $lowongan_id)
-    {
-        $l = LowonganModel::find($lowongan_id);
-        if (!$l) return response()->json(['status' => false, 'message' => 'Data tidak ditemukan']);
+public function update_ajax(Request $request, $lowongan_id)
+{
+    $lowongan = LowonganModel::find($lowongan_id);
 
-        $validator = Validator::make($request->all(), [
-            // sama seperti store_ajax
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'msgField' => $validator->errors(),
-                'message' => 'Validasi gagal'
-            ]);
-        }
-
-        $l->update($request->all());
-        return response()->json(['status' => true, 'message' => 'Lowongan diperbarui']);
+    if (! $lowongan) {
+        return response()->json([
+            'status'  => false,
+            'message' => 'Data tidak ditemukan'
+        ], 404);
     }
+
+    $validator = Validator::make($request->all(), [
+        'judul'                => 'required|string|max:255',
+        'deskripsi'            => 'required|string',
+        'tanggal_mulai_magang' => 'required|date',
+        'deadline_lowongan'    => 'required|date|after_or_equal:tanggal_mulai_magang',
+        'lokasi'               => 'required|string',
+        'perusahaan_id'        => 'required|exists:m_perusahaan_mitra,perusahaan_id',
+        'periode_id'           => 'required|exists:m_periode_magang,periode_id',
+        'sylabus_file'         => 'nullable|file|mimes:pdf|max:2048',
+        'status'               => 'nullable|in:aktif,nonaktif',
+        'tipe_bekerja'         => 'nullable|string',
+        'kuota'                => 'nullable|integer|min:0',
+        'durasi'               => 'nullable|string',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'status'   => false,
+            'msgField' => $validator->errors(),
+            'message'  => 'Validasi gagal'
+        ]);
+    }
+
+    // Prepare data for update
+    $updateData = $request->only([
+        'judul',
+        'deskripsi',
+        'tanggal_mulai_magang',
+        'deadline_lowongan',
+        'lokasi',
+        'perusahaan_id',
+        'periode_id',
+        'status',
+        'tipe_bekerja',
+        'kuota',
+        'durasi',
+    ]);
+
+    // If a new PDF is uploaded, delete old one and store the new file
+    if ($request->hasFile('sylabus_file')) {
+        if ($lowongan->sylabus_path && Storage::disk('public')->exists($lowongan->sylabus_path)) {
+            Storage::disk('public')->delete($lowongan->sylabus_path);
+        }
+        $updateData['sylabus_path'] = $request
+            ->file('sylabus_file')
+            ->store('sylabus', 'public');
+    }
+
+    // Apply the update
+    $lowongan->update($updateData);
+
+    return response()->json([
+        'status'  => true,
+        'message' => 'Lowongan berhasil diperbarui'
+    ]);
+}
 
 public function rekomendasi(Request $request, SmartRecommendationService $smart)
 {

@@ -7,15 +7,15 @@
       {{-- <button onclick="modalAction('{{ url('/pengajuanMagang/import') }}')" class="btn btn-info">
           Import Pengajuan Magang
       </button> --}}
-      <a href="{{ url('/pengajuanMagang/export_excel') }}" class="btn btn-primary">
-          <i class="fa fa-file-excel"></i> Export Pengajuan Magang
+      <a href="{{ url('/pengajuan-magang/export_excel') }}" class="btn btn-primary">
+          <i class="fa fa-file-excel"></i> Export Magang Excel
       </a>
-      <a href="{{ url('/pengajuanMagang/export_pdf') }}" class="btn btn-warning">
-          <i class="fa fa-file-pdf"></i> Export Pengajuan Magang
+      <a href="{{ url('/pengajuan-magang/export_pdf') }}" class="btn btn-warning">
+          <i class="fa fa-file-pdf"></i> Export Magang Pdf
       </a>
-      <button class="btn btn-primary btn-round ms-auto" onclick="modalAction('{{ url('/pengajuanMagang/create_ajax') }}')">
+      {{-- <button class="btn btn-primary btn-round ms-auto" onclick="modalAction('{{ url('/pengajuanMagang/create_ajax') }}')">
           <i class="fa fa-plus"></i> Tambah Data
-      </button>
+      </button> --}}
     </div>
 
   </div>

@@ -2,6 +2,31 @@
 @extends('layouts.template_mhs')
 
 @section('content')
+
+{{-- Profile header card --}}
+<div class="card mb-4">
+  </div>
+  <div class="card-body">
+    @if (session('success'))
+      <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+    @if (session('error'))
+      <div class="alert alert-danger">{{ session('error') }}</div>
+    @endif
+
+    <!-- Profile Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+         aria-hidden="true" data-backdrop="static" data-keyboard="false">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 <div class="container mt-4">
 
   {{-- ============================= --}}

@@ -8,7 +8,9 @@ use App\Models\MahasiswaModel;
 use App\Models\NotifikasiModel;
 use App\Models\PerusahaanModel;
 use App\Models\ProdiModel;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class PengajuanMagangController extends Controller
@@ -333,6 +335,121 @@ class PengajuanMagangController extends Controller
             ], 500);
         }
     }
+
+    public function export_pdf()
+    {
+        $lamaran = LamaranMagangModel::with([
+                'lowongan.perusahaan',
+                'dosen',
+                'mahasiswa.prodi'
+            ])
+            ->whereIn('status', ['diterima', 'selesai'])
+            ->get();
+
+        if ($lamaran->isEmpty()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data lamaran tidak ditemukan.'
+            ], 404);
+        }
+
+        $pdf = Pdf::loadView('pengajuan_magang.export_pdf', ['lamaran' => $lamaran]);
+        $pdf->setPaper('a4', 'landscape');
+        $pdf->setOption("isRemoteEnabled", true);
+        $pdf->render();
+
+        return $pdf->stream('Data Magang ' . now()->format('Y-m-d H:i:s') . '.pdf');
+    }
+
+
+
+    public function export_excel()
+    {
+        $lamaran = LamaranMagangModel::with(['mahasiswa.prodi', 'lowongan.perusahaan', 'dosen'])
+            ->whereIn('status', ['diterima', 'selesai'])    
+            ->get();
+
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Style header
+        $headerStyle = [
+            'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
+            'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['rgb' => '4A90E2']],
+            'alignment' => ['horizontal' => 'center', 'vertical' => 'center'],
+            'borders' => ['allBorders' => ['borderStyle' => 'thin']],
+        ];
+
+        $columns = [
+            'A' => 'No',
+            'B' => 'NIM',
+            'C' => 'Nama Mahasiswa',
+            'D' => 'Prodi',
+            'E' => 'No. Telepon',
+            'F' => 'Judul Lowongan',
+            'G' => 'Perusahaan',
+            'H' => 'Alamat Perusahaan',
+            'I' => 'Tanggal Lamaran',
+            'J' => 'Status',
+            'K' => 'Dosen Pembimbing',
+            'L' => 'Email Dosen',
+        ];
+
+        $colIndex = 1;
+        foreach ($columns as $col => $label) {
+            $sheet->setCellValue($col . '1', $label);
+            $sheet->getStyle($col . '1')->applyFromArray($headerStyle);
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        // Freeze header row
+        $sheet->freezePane('A2');
+
+        // Isi data
+        $row = 2;
+        $no = 1;
+        foreach ($lamaran as $item) {
+            $sheet->setCellValue('A' . $row, $no++);
+            $sheet->setCellValue('B' . $row, $item->mahasiswa->mhs_nim);
+            $sheet->setCellValue('C' . $row, $item->mahasiswa->full_name);
+            $sheet->setCellValue('D' . $row, $item->mahasiswa->prodi->nama_prodi ?? '-');
+            $sheet->setCellValue('E' . $row, $item->mahasiswa->telp);
+            $sheet->setCellValue('F' . $row, $item->lowongan->judul ?? '-');
+            $sheet->setCellValue('G' . $row, $item->lowongan->perusahaan->nama ?? '-');
+            $sheet->setCellValue('H' . $row, $item->lowongan->perusahaan->alamat ?? '-');
+            $sheet->setCellValue('I' . $row, \Carbon\Carbon::parse($item->tanggal_lamaran)->format('d-m-Y'));
+            $sheet->setCellValue('J' . $row, ucfirst($item->status));
+            $sheet->setCellValue('K' . $row, $item->dosen->nama ?? '-');
+            $sheet->setCellValue('L' . $row, $item->dosen->email ?? '-');
+
+            // Wrap text & border
+            foreach (array_keys($columns) as $col) {
+                $sheet->getStyle($col . $row)->getAlignment()->setWrapText(true);
+                $sheet->getStyle($col . $row)->getBorders()->getAllBorders()->setBorderStyle('thin');
+            }
+
+            // Alternating row color
+            if ($row % 2 == 0) {
+                $sheet->getStyle("A$row:L$row")->getFill()->setFillType('solid')->getStartColor()->setRGB('F3F3F3');
+            }
+
+            $row++;
+        }
+
+        $sheet->setTitle('Data Pengajuan Magang');
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $filename = 'Data_Pengajuan_Magang_' . date('Y-m-d_H-i-s') . '.xlsx';
+
+        // Output to browser
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header("Content-Disposition: attachment; filename=\"$filename\"");
+        header('Cache-Control: max-age=0');
+
+        $writer->save('php://output');
+        exit;
+    }
+
+
     // public function edit_ajax($mhs_nim)
     // {
     //     $mahasiswa = MahasiswaModel::with(['prodi', 'user'])->find($mhs_nim);
