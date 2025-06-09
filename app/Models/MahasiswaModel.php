@@ -114,6 +114,13 @@ public function prefrensiLokasi()
 
     }
 
+    public function getDokumenWajib()
+    {
+        return DokumenMahasiswaModel::where('mhs_nim', $this->mhs_nim)
+            ->whereIn('jenis_dokumen_id', $this->getDokumenWajibAttribute()->pluck('id'))
+            ->get();
+    }
+
     public function getDokumenTambahanAttribute()
     {
         return JenisDokumenModel::where('default', 0)->get();
@@ -125,4 +132,6 @@ public function prefrensiLokasi()
             ->whereIn('jenis_dokumen_id', $this->getDokumenTambahanAttribute()->pluck('id'))
             ->get();
     }
+
+
 }

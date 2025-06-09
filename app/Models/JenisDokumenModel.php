@@ -58,5 +58,14 @@ class JenisDokumenModel extends Model
     {
         return $this->belongsToMany(MahasiswaModel::class, 't_dokumen_mahasiswa', 'jenis_dokumen_id', 'mhs_nim');
     }
+    // app/Models/JenisDokumenModel.php
+
+public function getDokumenMahasiswa($nim)
+{
+    return $this->dokumen()
+                ->where('mhs_nim', $nim)
+                ->get();
+}
+
     }
 

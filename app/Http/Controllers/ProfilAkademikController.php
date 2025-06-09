@@ -9,6 +9,8 @@ use App\Models\KecamatanModel;
 use App\Models\PrefrensiLokasiMahasiswaModel;
 use App\Models\ProvinsiModel;
 use App\Models\MahasiswaModel;
+use App\Models\JenisDokumenModel;
+use App\Models\DokumenMahasiswaModel;   
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -21,13 +23,17 @@ class ProfilAkademikController extends Controller
             'title' => 'Profil Akademik',
             'list' => 'Home, Profil Akademik'
         ];
-
-        $data = MahasiswaModel::with(['minat', 'prefrensiLokasi'])
+        
+        $data = MahasiswaModel::with(['minat', 'prefrensiLokasi',])
             ->where('mhs_nim', auth()->user()->mahasiswa->mhs_nim)
             ->first();
+        
+
+        $dokumenMahasiswa = $data->getDokumenWajib()->merge($data->getDokumenTambahan());
 
 
-        return view('profil.index', compact('title', 'breadcrumb', 'data'));
+
+        return view('profil.index', compact('title', 'breadcrumb', 'data', 'dokumenMahasiswa'));
     }
 
     public function minat()
@@ -263,4 +269,51 @@ class ProfilAkademikController extends Controller
             'html' => view('partials._tag_cross_delete', compact('tag'))->render()
         ]);
     }
+
+    public function tambahDokumen()
+    {
+        $title = "Tambah Dokumen";
+        $dokumenTambahan = JenisDokumenModel::where('default', 0)->get();
+
+        return view('profil.form-dokumen', compact('title', 'dokumenTambahan'));
+    }
+
+    public function storeDokumen(Request $request)
+    {
+        $request->validate([
+            'label' => 'required|string|max:255',
+            'file' => 'required|mimes:pdf,jpg,jpeg,png,doc,docx|max:5000',
+            'jenis_dokumen_id' => 'required|exists:m_jenis_dokumen,id',
+        ]);
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $extension = $file->getClientOriginalExtension();
+            $fileName = uniqid() . '_' . time() . '.' . $extension;
+            $file->storeAs('public/users/dokumen', $fileName);
+        }
+
+        DokumenMahasiswaModel::create([
+            'mhs_nim' => auth()->user()->mahasiswa->mhs_nim,
+            'jenis_dokumen_id' => $request->input('jenis_dokumen_id'),
+            'label' => $request->input('label'),
+            'nama' => $fileName,
+            'path' => 'users/dokumen/'
+        ]);
+
+        return redirect()->route('profil.index')->with('success', 'Dokumen berhasil diunggah');    
+    }
+
+    public function partialTagReload($items, $route)
+    {
+        $tag = ['items' => $items, 'route' => $route];
+
+        return response()->json([
+            'success' => true,
+            'html' => view('partials._tag_cross_delete', compact('tag'))->render()
+        ]);
+    }
 }
+
+
+

@@ -33,9 +33,9 @@ class DokumenMahasiswaModel extends Model
     public function getDokumenPath()
     {
         if (!$this->nama) {
-            return null;
+            return 'storage/' . $this->path . $this->nama;
+            
         }
-
         $extension = pathinfo($this->nama, PATHINFO_EXTENSION);
 
         if (in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif', 'bmp'])) {
@@ -46,11 +46,18 @@ class DokumenMahasiswaModel extends Model
             return asset('images/doc_file_icon.svg');
         }
 
-        return null;
+        return 'storage/' . $this->path . $this->nama;
     }
 
     public function mahasiswa()
     {
         return $this->belongsTo(MahasiswaModel::class, 'mhs_nim', 'mhs_nim');
     }
+
+    // Di DokumenMahasiswaModel.php
+public function getFullPathAttribute()
+{
+    return storage_path('app/public/' . $this->path . $this->nama);
+}
+
 }

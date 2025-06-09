@@ -6,9 +6,15 @@
                     aria-hidden="true">&times;</span></button>
         </div>
         <div class="modal-body">
-            <form id="form-tambah" enctype="multipart/form-data" action="{{ isset($dokumen) ? route('profil.dokumen.update', $dokumen->id) : route('profil.dokumen.store') }}"
-                  method="POST">
-                @csrf
+<form id="form-tambah"
+      enctype="multipart/form-data"
+      action="{{ isset($dokumen) ? route('dokumen.update-dokumen-mhs', $dokumen->id) : route('dokumen.upload-dokumen-mhs') }}"
+      method="POST">
+    @csrf
+    @if(isset($dokumen))
+        @method('PUT')
+    @endif
+
                 <div class="form-group">
                     <label for="label">Label Dokumen</label>
                     <input type="text" name="label" id="label" class="form-control"
@@ -41,6 +47,13 @@
                         <img id="preview_dokumen" src="{{ isset($dokumen) ? asset($dokumen->getDokumenPath()) : asset('images/placeholder.png') }}"
                              width="150" height="150">
                     </div>
+
+                    @if(isset($dokumen))
+    <a href="{{ route('dokumen.download-dokumen-mhs', $dokumen->id) }}" class="btn btn-sm btn-info" target="_blank">
+        Lihat / Unduh Dokumen
+    </a>
+@endif
+
                     <input type="file" class="form-control" id="file" name="file"
                            onchange="previewDokumen(this);"
                            accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -64,32 +77,75 @@
 
 <script>
     function previewDokumen(input) {
-        if (input.files && input.files[0]) {
-            var reader = new FileReader();
-            var previewId = 'preview_dokumen';
-            var errorId = 'error_dokumen';
-            var extension = input.files[0].name.split('.').pop().toLowerCase();
-            var allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'pdf', 'doc', 'docx'];
-
-            document.getElementById(errorId).classList.add('d-none');
-
-            if (allowedExtensions.includes(extension)) {
-                reader.onload = function (e) {
-                    var previewElement = document.getElementById(previewId);
-
-                    if (['jpg', 'jpeg', 'png', 'gif', 'bmp'].includes(extension)) {
-                        previewElement.src = e.target.result;
-                    } else if (extension === 'pdf') {
-                        previewElement.src = "{{ asset('images/pdf_file_icon.svg') }}";
-                    } else if (['doc', 'docx'].includes(extension)) {
-                        previewElement.src = "{{ asset('images/doc_file_icon.svg') }}";
-                    }
-                };
-                reader.readAsDataURL(input.files[0]);
-            } else {
-                document.getElementById(errorId).classList.remove('d-none');
-                input.value = '';
-            }
+        if (!input.files || input.files.length === 0) {
+            document.getElementById('preview_dokumen').src = "{{ asset('images/placeholder.png') }}";
+            return;
         }
+
+        var reader = new FileReader();
+        var preview = document.getElementById('preview_dokumen');
+        var errorBox = document.getElementById('error_dokumen');
+        var extension = input.files[0].name.split('.').pop().toLowerCase();
+        var allowed = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'pdf', 'doc', 'docx'];
+
+        errorBox.classList.add('d-none');
+
+        if (!allowed.includes(extension)) {
+            errorBox.classList.remove('d-none');
+            input.value = '';
+            preview.src = "{{ asset('images/placeholder.png') }}";
+            return;
+        }
+
+        reader.onload = function (e) {
+            if (['jpg', 'jpeg', 'png', 'gif', 'bmp'].includes(extension)) {
+                preview.src = e.target.result;
+            } else if (extension === 'pdf') {
+                preview.src = "{{ asset('images/pdf_file_icon.svg') }}";
+            } else {
+                preview.src = "{{ asset('images/doc_file_icon.svg') }}";
+            }
+        };
+
+        reader.readAsDataURL(input.files[0]);
     }
 </script>
+
+<div class="card mb-3 shadow-sm">
+    <div class="card-body d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center">
+            @php
+                $ext = pathinfo($dokumen->nama, PATHINFO_EXTENSION);
+                $isImage = in_array($ext, ['jpg', 'jpeg', 'png']);
+                $iconPath = match($ext) {
+                    'pdf' => asset('images/pdf_file_icon.svg'),
+                    'doc', 'docx' => asset('images/doc_file_icon.svg'),
+                    default => asset('images/file_icon.svg'),
+                };
+            @endphp
+
+            <div class="me-3">
+                @if($isImage)
+                    <img src="{{ asset('storage/' . $dokumen->path . $dokumen->nama) }}" width="70" height="70" style="object-fit: cover;" alt="Preview">
+                @else
+                    <img src="{{ $iconPath }}" width="70" alt="File">
+                @endif
+            </div>
+            <div>
+                <strong>{{ $dokumen->label ?? '-' }}</strong><br>
+                <small>{{ $dokumen->jenisDokumen->nama ?? '-' }}</small>
+            </div>
+        </div>
+
+        <div>
+            <a href="{{ route('dokumen.download-dokumen-mhs', $dokumen->id) }}" class="btn btn-sm btn-success me-2">Download</a>
+            <form action="{{ route('dokumen.delete-dokumen-mhs', $dokumen->id) }}" method="POST" style="display: inline-block;" onsubmit="return confirm('Hapus dokumen ini?')">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
