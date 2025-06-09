@@ -181,12 +181,11 @@ class PengajuanMagangMhsController extends Controller
 
             // Cek apakah mahasiswa sudah memiliki lamaran yang sedang pending atau diterima
             $existingLamaran = LamaranMagangModel::where('mhs_nim', $mhs_nim_from_form)
-                ->whereIn('status', ['pending', 'diterima', 'selesai'])
+                ->whereIn('status', ['diterima', 'selesai'])
                 ->first();
 
             if ($existingLamaran) {
                 $errorMessage = match ($existingLamaran->status) {
-                    'pending' => 'Anda masih memiliki pengajuan magang di lowongan ' . $existingLamaran->lowongan->judul . ' yang sedang diproses.',
                     'diterima' => 'Anda sudah diterima di lowongan ' . $existingLamaran->lowongan->judul . ' ini.',
                     'selesai' => 'Anda sudah menyelesaikan magang dan tidak dapat mengajukan magang lagi.',
                     default => 'Anda tidak dapat mengajukan magang lagi.',
