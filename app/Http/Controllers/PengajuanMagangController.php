@@ -130,6 +130,11 @@ class PengajuanMagangController extends Controller
                 'pesan' => 'Selamat, lamaran magang Anda pada ' . $nama_perusahaan . ' telah diterima.',
                 'waktu_dibuat' => now()
             ]);
+            LamaranMagangModel::where('mhs_nim', $lamaran->mhs_nim)
+                ->where('lamaran_id', '!=', $lamaran->lamaran_id)
+                ->where('status', '!=', 'ditolak')
+                ->update(['status' => 'ditolak',
+                    'dosen_id' => null]);
         }else if($request->status === 'ditolak'){
             NotifikasiModel::create([
                 'mhs_nim' => $lamaran->mhs_nim,
@@ -207,6 +212,11 @@ class PengajuanMagangController extends Controller
                 'pesan' => 'Selamat, lamaran magang Anda pada ' . $nama_perusahaan . ' telah dirubah menjadi diterima.',
                 'waktu_dibuat' => now()
             ]);
+            LamaranMagangModel::where('mhs_nim', $lamaran->mhs_nim)
+                ->where('lamaran_id', '!=', $lamaran->lamaran_id)
+                ->where('status', '!=', 'ditolak')
+                ->update(['status' => 'ditolak',
+                    'dosen_id' => null]);
         }else if($request->status === 'pending' || $request->status === 'ditolak'){
             MahasiswaModel::where('mhs_nim', $lamaran->mhs_nim)->update(['status_magang' => "Belum Magang"]);
             NotifikasiModel::create([
@@ -225,6 +235,11 @@ class PengajuanMagangController extends Controller
                 'pesan' => 'Selamat, magang Anda pada ' . $nama_perusahaan . ' telah selesai.',
                 'waktu_dibuat' => now()
             ]);
+            LamaranMagangModel::where('mhs_nim', $lamaran->mhs_nim)
+                ->where('lamaran_id', '!=', $lamaran->lamaran_id)
+                ->where('status', '!=', 'ditolak')
+                ->update(['status' => 'ditolak',
+                    'dosen_id' => null]);
         }else if($request->status === 'ditolak'){
             MahasiswaModel::where('mhs_nim', $lamaran->mhs_nim)->update(['status_magang' => "Belum Magang"]);
             NotifikasiModel::create([
