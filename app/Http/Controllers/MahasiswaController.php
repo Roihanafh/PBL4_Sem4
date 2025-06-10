@@ -205,6 +205,9 @@ class MahasiswaController extends Controller
             'full_name' => 'required|max:100',
             'alamat'    => 'nullable|max:255',    
             'telp'      => 'nullable|max:20',
+            'angkatan'  => 'nullable|integer',
+            'jenis_kelamin' => 'nullable|in:L,P', // L = Laki-laki, P = Perempuan
+            'ipk'       => 'nullable|numeric|min:0|max:4.0',
         ]);
 
         if ($validator->fails()) {
@@ -220,6 +223,9 @@ class MahasiswaController extends Controller
             $mahasiswa->full_name = $request->full_name;
             $mahasiswa->alamat = $request->alamat;
             $mahasiswa->telp = $request->telp;
+            $mahasiswa->angkatan = $request->angkatan;
+            $mahasiswa->jenis_kelamin = $request->jenis_kelamin;
+            $mahasiswa->ipk = $request->ipk;
             $mahasiswa->save();
 
             // Update user (username dan password)
@@ -468,6 +474,9 @@ class MahasiswaController extends Controller
             'alamat'    => 'nullable|max:255',
             'telp'      => 'nullable|max:20',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'angkatan'  => 'nullable|integer',
+            'jenis_kelamin' => 'nullable|in:L,P', // L = Laki-laki, P = Perempuan
+            'ipk'       => 'nullable|numeric|min:0|max:4.0',
         ]);
 
         if ($validator->fails()) {
@@ -482,6 +491,9 @@ class MahasiswaController extends Controller
             $mahasiswa->full_name = $request->full_name;
             $mahasiswa->alamat = $request->alamat;
             $mahasiswa->telp = $request->telp;
+            $mahasiswa->angkatan = $request->angkatan;
+            $mahasiswa->jenis_kelamin = $request->jenis_kelamin;
+            $mahasiswa->ipk = $request->ipk;
 
             if ($request->hasFile('profile_picture')) {
                 if ($mahasiswa->profile_picture && Storage::disk('public')->exists($mahasiswa->profile_picture)) {

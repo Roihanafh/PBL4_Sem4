@@ -16,12 +16,12 @@ class JenisDokumenSeeder extends Seeder
         $data = [
             [
                 'jenis_dokumen_id' => 1,
-                'nama' => 'Surat Pengantar',
+                'nama' => 'Surat Kesehatan',
                 'default' => 1,
             ],
             [
                 'jenis_dokumen_id' => 2,
-                'nama_jenis_dokumen' => 'Surat Keterangan Magang',
+                'nama_jenis_dokumen' => 'CV',
                 'default' => 1,
             ],
             [

@@ -1,27 +1,29 @@
+{{-- Modal Form Upload/Update Dokumen --}}
 <div class="modal-dialog modal-dialog-centered" style="max-width: 50%;">
     <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">{{$title}}</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                    aria-hidden="true">&times;</span></button>
+            <h5 class="modal-title">{{ $title }}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span>&times;</span>
+            </button>
         </div>
-        <div class="modal-body">
-<form id="form-tambah"
-      enctype="multipart/form-data"
-      action="{{ isset($dokumen) ? route('dokumen.update-dokumen-mhs', $dokumen->id) : route('dokumen.upload-dokumen-mhs') }}"
-      method="POST">
-    @csrf
-    @if(isset($dokumen))
-        @method('PUT')
-    @endif
 
+        <div class="modal-body">
+            <form id="form-tambah"
+                  enctype="multipart/form-data"
+                  method="POST"
+                  action="{{ isset($dokumen) ? route('dokumen.update-dokumen-mhs', $dokumen->id) : route('dokumen.upload-dokumen-mhs') }}">
+                @csrf
+                @if(isset($dokumen)) @method('PUT') @endif
+
+                {{-- Label Dokumen --}}
                 <div class="form-group">
                     <label for="label">Label Dokumen</label>
                     <input type="text" name="label" id="label" class="form-control"
-                            value="{{ old('label', $dokumen->label ?? '') }}" required>
-
+                           value="{{ old('label', $dokumen->label ?? '') }}" required>
                 </div>
 
+                {{-- Jenis Dokumen --}}
                 <div class="form-group">
                     <label for="jenis_dokumen_id">Jenis Dokumen</label>
                     <select name="jenis_dokumen_id" id="jenis_dokumen_id" class="form-control" required>
@@ -37,35 +39,38 @@
                     <small class="text-danger">{{ $message }}</small>
                     @enderror
                 </div>
-                <div class="alert alert-danger d-none" id="error_dokumen">
-                    Format file tidak didukung! Gunakan format (.jpg, .jpeg, .png, .doc, .docx, .pdf)
-                </div>
 
+                {{-- Preview Dokumen --}}
                 <div class="form-group">
                     <label for="file">File Dokumen</label>
+
                     <div class="mb-2" style="cursor: pointer;">
-                        <img id="preview_dokumen" src="{{ isset($dokumen) ? asset($dokumen->getDokumenPath()) : asset('images/placeholder.png') }}"
+                        <img id="preview_dokumen"
+                             src="{{ isset($dokumen) ? asset($dokumen->getDokumenPath()) : asset('images/placeholder.png') }}"
                              width="150" height="150">
                     </div>
 
                     @if(isset($dokumen))
-    <a href="{{ route('dokumen.download-dokumen-mhs', $dokumen->id) }}" class="btn btn-sm btn-info" target="_blank">
-        Lihat / Unduh Dokumen
-    </a>
-@endif
+                        <a href="{{ route('dokumen.download-dokumen-mhs', $dokumen->id) }}"
+                           class="btn btn-sm btn-info" target="_blank">Lihat / Unduh Dokumen</a>
+                    @endif
 
-                    <input type="file" class="form-control" id="file" name="file"
+                    <input type="file" name="file" id="file" class="form-control mt-2"
                            onchange="previewDokumen(this);"
-                           accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                           required>
-                    <small>
-                        Ukuran (Max: 5000Kb) Ekstensi (.jpg,.jpeg,.png,.doc,.docx,.pdf)
-                    </small>
+                           accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx"
+                           {{ isset($dokumen) ? '' : 'required' }}>
+
+                    <div class="alert alert-danger d-none mt-2" id="error_dokumen">
+                        Format file tidak didukung!
+                    </div>
+
+                    <small class="form-text text-muted">Ukuran maks: 5MB. Format: jpg, png, doc, pdf</small>
                     @error('file')
                     <small class="text-danger">{{ $message }}</small>
                     @enderror
                 </div>
 
+                {{-- Tombol --}}
                 <div class="modal-footer">
                     <button type="button" data-dismiss="modal" class="btn btn-secondary">Batal</button>
                     <button type="submit" class="btn btn-primary">Simpan</button>
@@ -75,41 +80,44 @@
     </div>
 </div>
 
+
 <script>
-    function previewDokumen(input) {
-        if (!input.files || input.files.length === 0) {
-            document.getElementById('preview_dokumen').src = "{{ asset('images/placeholder.png') }}";
-            return;
-        }
+function previewDokumen(input) {
+    const preview = document.getElementById('preview_dokumen');
+    const errorBox = document.getElementById('error_dokumen');
+    const allowed = ['jpg', 'jpeg', 'png', 'gif', 'pdf', 'doc', 'docx'];
 
-        var reader = new FileReader();
-        var preview = document.getElementById('preview_dokumen');
-        var errorBox = document.getElementById('error_dokumen');
-        var extension = input.files[0].name.split('.').pop().toLowerCase();
-        var allowed = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'pdf', 'doc', 'docx'];
-
-        errorBox.classList.add('d-none');
-
-        if (!allowed.includes(extension)) {
-            errorBox.classList.remove('d-none');
-            input.value = '';
-            preview.src = "{{ asset('images/placeholder.png') }}";
-            return;
-        }
-
-        reader.onload = function (e) {
-            if (['jpg', 'jpeg', 'png', 'gif', 'bmp'].includes(extension)) {
-                preview.src = e.target.result;
-            } else if (extension === 'pdf') {
-                preview.src = "{{ asset('images/pdf_file_icon.svg') }}";
-            } else {
-                preview.src = "{{ asset('images/doc_file_icon.svg') }}";
-            }
-        };
-
-        reader.readAsDataURL(input.files[0]);
+    if (!input.files.length) {
+        preview.src = "{{ asset('images/placeholder.png') }}";
+        return;
     }
+
+    const file = input.files[0];
+    const ext = file.name.split('.').pop().toLowerCase();
+
+    errorBox.classList.add('d-none');
+
+    if (!allowed.includes(ext)) {
+        errorBox.classList.remove('d-none');
+        input.value = '';
+        preview.src = "{{ asset('images/placeholder.png') }}";
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) {
+            preview.src = e.target.result;
+        } else if (ext === 'pdf') {
+            preview.src = "{{ asset('images/pdf_file_icon.svg') }}";
+        } else {
+            preview.src = "{{ asset('images/doc_file_icon.svg') }}";
+        }
+    };
+    reader.readAsDataURL(file);
+}
 </script>
+
 
 <div class="card mb-3 shadow-sm">
     <div class="card-body d-flex justify-content-between align-items-center">

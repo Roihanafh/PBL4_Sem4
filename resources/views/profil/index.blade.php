@@ -84,64 +84,45 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
-                            <p class="card-title mb-0">DOKUMEN WAJIB</p>
+                            <p class="card-title mb-0">DOKUMEN</p>
                         </div>
                         <hr>
                         <div class="template-demo col-md-6">
-                            @foreach($data->getDokumenWajibAttribute() as $dokumen)
-                                <div class="alert alert-fill-primary mb-2 mr-2">
-                                    {{ $dokumen->nama }}
-                                </div>
+                            @foreach($data->getDokumenWajibAttribute() as $jenis)
+    @php
+        $dokumenMhs = $dokumenMahasiswa->firstWhere('jenis_dokumen_id', $jenis->id);
+    @endphp
 
-                                <div class="alert alert-danger d-none" id="error_dokumen_{{$dokumen->id}}">
-                                    Format file tidak didukung! Gunakan format (.jpg, .jpeg, .png, .doc, .docx, .pdf)
-                                </div>
+    <div class="alert alert-fill-primary mb-2">{{ $jenis->nama }}</div>
 
-                                <div class="mb-2 " style="cursor: pointer;">
-                                    <a href="{{ $dokumen->getDokumenIdMhs($data->mhs_nim) ? route('dokumen.download-dokumen-mhs', $dokumen->getDokumenIdMhs($data->mhs_nim)) : '#' }}">
-                                    <img id="preview_dokumen_{{$dokumen->id}}"
-                                         src="{{$dokumen->getDokumenPathFromMhs($data->mhs_nim) ?? "#"}}"
-                                         alt="Upload File"
-                                         width="150" height="150">
-                                    </a>
-                                </div>
-                                <h5 class="mt-4">Dokumen yang Telah Diupload</h5>
+    @if($dokumenMhs)
+        <div class="mb-2">
+            <a href="{{ route('dokumen.download-dokumen-mhs', $dokumenMhs->id) }}">
+                <img src="{{ asset('storage/' . $dokumenMhs->path . $dokumenMhs->nama) }}"
+                     alt="{{ $jenis->nama }}" width="150" height="150">
+            </a>
+        </div>
+    @else
+        <p class="text-muted">Belum ada dokumen diunggah.</p>
+    @endif
 
-@forelse($dokumenMahasiswa as $dokumen) 
-    @include('components.dokumen-item', ['dokumen' => $dokumen])
-@empty
-    <p class="text-muted">Belum ada dokumen.</p>
-@endforelse
-@if(isset($dokumen))
-    <a href="{{ asset('storage/' . $dokumen->path . $dokumen->nama) }}" target="_blank" class="btn btn-sm btn-info mt-2">
-        Lihat / Unduh Dokumen
-    </a>
-@endif
+    <form action="{{ $dokumenMhs ? route('dokumen.update-dokumen-mhs', $dokumenMhs->id) : route('dokumen.upload-dokumen-mhs') }}"
+          method="POST" enctype="multipart/form-data">
+        @csrf
+        @if($dokumenMhs) @method('PUT') @endif
+        <input type="hidden" name="jenis_dokumen_id" value="{{ $jenis->id }}">
+        <div class="input-group mb-3">
+            <input type="file" name="file" class="form-control"
+                   onchange="previewImage(this, {{ $jenis->id }})">
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-outline-secondary">Simpan</button>
+            </div>
+        </div>
+        <small class="form-text text-muted">Maks 5MB. Format: pdf, doc, jpg, png</small>
+    </form>
+    <hr>
+@endforeach
 
-                                <form
-                                    action="{{ $dokumen->getDokumenIdMhs($data->mhs_nim) !== null ? route('dokumen.update-dokumen-mhs', $dokumen->getDokumenIdMhs($data->mhs_nim)) : route('dokumen.upload-dokumen-mhs') }}"
-                                    enctype="multipart/form-data"
-                                    method="POST">
-                                    @csrf
-                                    @if($dokumen->getDokumenIdMhs($data->mhs_nim) !== null)
-                                        @method('PUT')
-                                    @endif
-                                    <div class="input-group">
-                                            <input type="file" class="form-control" id="file"
-                                                   onchange="previewImage(this, {{$dokumen->id}});"
-                                                   name="file">
-                                            <input type="hidden" name="default" value="1">
-                                            <input type="hidden" name="jenis_dokumen_id" value="{{$dokumen->id}}">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-outline-secondary" type="submit">Simpan</button>
-                                        </div>
-                                    </div>
-                                </form>
-                                <small>
-                                    Ukuran (Max: 5000Kb) Ekstensi (.jpg,.jpeg,.png,.doc,.docx,.pdf)
-                                </small>
-                                <hr>
-                            @endforeach
                             <script>
                                 function previewImage(input, id) {
                                     if (input.files && input.files[0]) {

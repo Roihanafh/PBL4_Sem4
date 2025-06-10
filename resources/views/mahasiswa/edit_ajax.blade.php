@@ -128,6 +128,21 @@ $(document).ready(function () {
             },
             prodi_id: {
                 digits: true
+            },
+            angkatan: {
+                required: true,
+                digits: true,
+                minlength: 4,
+                maxlength: 4
+            },
+            jenis_kelamin: {
+                required: true,
+                pattern: /^(L|P)$/
+            },
+            ipk: {
+                number: true,
+                min: 0,
+                max: 4
             }
         },
         submitHandler: function(form) {

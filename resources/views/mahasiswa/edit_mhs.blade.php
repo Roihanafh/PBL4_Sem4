@@ -210,6 +210,9 @@ $(document).ready(function () {
             alamat: { maxlength: 255 },
             telp: { maxlength: 20 },
             prodi_id: { digits: true },
+            angkatan: { required: true, digits: true, minlength: 4, maxlength: 4 },
+            jenis_kelamin: { required: true, pattern: /^(L|P)$/ },
+            ipk: { number: true, min: 0, max: 4 },
             username: { required: true, maxlength: 20 },
             password: { minlength: 5, maxlength: 20 },
             profile_picture: { extension: "jpg|jpeg|png|webp", filesize: 2048000 } // max 2 MB

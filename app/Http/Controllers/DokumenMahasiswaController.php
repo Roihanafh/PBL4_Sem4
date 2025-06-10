@@ -18,7 +18,6 @@ class DokumenMahasiswaController extends Controller
 
 
     $fileName = DokumenMahasiswaService::upload($request->file('file'));
-    $fileName = DokumenMahasiswaService::delete($request->file('file'));
 
     if ($request->hasFile('file')) {
         $file = $request->file('file');

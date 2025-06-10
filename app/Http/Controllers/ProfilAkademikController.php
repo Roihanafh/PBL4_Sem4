@@ -285,40 +285,54 @@ $tag = [
     }
 
     public function storeDokumen(Request $request)
-    {
-        $request->validate([
-            'label' => 'required|string|max:255',
-            'file' => 'required|mimes:pdf,jpg,jpeg,png,doc,docx|max:5000',
-            'jenis_dokumen_id' => 'required|exists:m_jenis_dokumen,id',
-        ]);
+{
+    $request->validate([
+        'label' => 'required|string|max:255',
+        'file' => 'required|mimes:pdf,jpg,jpeg,png,doc,docx|max:5000',
+        'jenis_dokumen_id' => 'required|exists:m_jenis_dokumen,id',
+    ]);
 
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            $extension = $file->getClientOriginalExtension();
-            $fileName = uniqid() . '_' . time() . '.' . $extension;
-            $file->storeAs('public/users/dokumen', $fileName);
-        }
+    $fileName = $this->handleUploadedFile($request->file('file'));
 
-        DokumenMahasiswaModel::create([
-            'mhs_nim' => auth()->user()->mahasiswa->mhs_nim,
-            'jenis_dokumen_id' => $request->input('jenis_dokumen_id'),
-            'label' => $request->input('label'),
-            'nama' => $fileName,
-            'path' => 'users/dokumen/'
-        ]);
+    DokumenMahasiswaModel::create([
+        'mhs_nim' => auth()->user()->mahasiswa->mhs_nim,
+        'jenis_dokumen_id' => $request->jenis_dokumen_id,
+        'label' => $request->label,
+        'nama' => $fileName,
+        'path' => 'users/dokumen/',
+    ]);
 
-        return redirect()->route('profil.index')->with('success', 'Dokumen berhasil diunggah');    
+    return redirect()->route('profil.index')->with('success', 'Dokumen berhasil diunggah');
+}
+
+private function handleUploadedFile($file)
+{
+    $extension = $file->getClientOriginalExtension();
+    $fileName = uniqid() . '_' . time() . '.' . $extension;
+    $file->storeAs('public/users/dokumen', $fileName);
+    return $fileName;
+}
+
+public function partialTagReload($items, $route)
+{
+    if (!is_array($items) || !is_string($route)) {
+        return response()->json(['success' => false, 'message' => 'Parameter tidak valid.'], 422);
     }
 
-    public function partialTagReload($items, $route)
-    {
-        $tag = ['items' => $items, 'route' => $route];
+    $tag = [
+        'items' => $items,
+        'route' => $route
+    ];
 
-        return response()->json([
-            'success' => true,
-            'html' => view('partials._tag_cross_delete', compact('tag'))->render()
-        ]);
-    }
+    $html = view('partials._tag_cross_delete', compact('tag'))->render();
+
+    return response()->json([
+        'success' => true,
+        'html' => $html
+    ]);
+}
+
+
 }
 
 
