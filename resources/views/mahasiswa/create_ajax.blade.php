@@ -95,6 +95,9 @@ $(document).ready(function() {
             password: { required: true, minlength: 5, maxlength: 20 },
             mhs_nim: { required: true, minlength: 3, maxlength: 20 },
             full_name: { required: true, minlength: 3, maxlength: 100 },
+            angkatan: { required: true, digits: true, minlength: 4, maxlength: 4 },
+            jenis_kelamin: { required: true, pattern: /^(L|P)$/ },
+            ipk: { number: true, min: 0, max: 4 },
             prodi_id: { required: true }
         },
         submitHandler: function(form) {
@@ -130,12 +133,25 @@ $(document).ready(function() {
                         });
                     }
                 },
-                error: function() {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Terjadi kesalahan pada server.'
-                    });
+                error: function(xhr) {
+                    if (xhr.status === 422) {
+                        $('.text-danger').text('');
+                        let errors = xhr.responseJSON.errors;
+                        $.each(errors, function(key, value) {
+                            $('#error-' + key).text(value[0]);
+                        });
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Validasi Gagal',
+                            text: xhr.responseJSON.message || 'Mohon periksa kembali input Anda.'
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Terjadi kesalahan pada server.'
+                        });
+                    }
                 }
             });
             return false; // prevent default submit

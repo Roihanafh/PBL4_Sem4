@@ -179,8 +179,8 @@ $(document).ready(function () {
         rules: {
             nama: { required: true, maxlength: 100 },
             email: { required: true, email: true },
-            telp: { maxlength: 20 },
-            username: { required: true, maxlength: 20 },
+            email: { required: true, email: true },
+            telp: { required: true, maxlength: 20 },
             password: { minlength: 5, maxlength: 20 },
             profile_picture: { extension: "jpg|jpeg|png|webp", filesize: 2048000 } // max 2 MB
         },

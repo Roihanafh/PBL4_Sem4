@@ -89,47 +89,47 @@ class MahasiswaController extends Controller
 
     public function store_ajax(Request $request)
     {
-        $validatedUser = $request->validate([
+       $validated = $request->validate([
             'username' => 'required|unique:m_users,username',
             'password' => 'required',
-        ]);
-
-        $user = UserModel::create([
-            'username' => $validatedUser['username'],
-            'password' => bcrypt($validatedUser['password']),
-            'level_id' => 3,
-        ]);
-
-        $validatedMhs = $request->validate([
             'mhs_nim' => 'required|unique:m_mahasiswa,mhs_nim',
             'full_name' => 'required',
             'alamat' => 'nullable',
             'telp' => 'nullable',
             'prodi_id' => 'required',
             'angkatan' => 'nullable|integer',
-            'jenis_kelamin' => 'nullable|in:L,P', // L = Laki-laki, P = Perempuan
+            'jenis_kelamin' => 'nullable|in:L,P',
             'ipk' => 'nullable|numeric|min:0|max:4.0',
             'status_magang' => 'required',
         ]);
 
-        MahasiswaModel::create([
-            'user_id' => $user->user_id,
-            'mhs_nim' => $validatedMhs['mhs_nim'],
-            'full_name' => $validatedMhs['full_name'],
-            'alamat' => $validatedMhs['alamat'] ?? null,
-            'telp' => $validatedMhs['telp'] ?? null,
-            'prodi_id' => $validatedMhs['prodi_id'],
-            'angkatan' => $validatedMhs['angkatan'] ?? null,
-            'jenis_kelamin' => $validatedMhs['jenis_kelamin'] ?? null,
-            'ipk' => $validatedMhs['ipk'] ?? null,
-            'status_magang' => $validatedMhs['status_magang'],
+        // Setelah semua validasi berhasil, baru simpan ke database
+
+        $user = UserModel::create([
+            'username' => $validated['username'],
+            'password' => bcrypt($validated['password']),
+            'level_id' => 3,
         ]);
 
-       return response()->json([
-        'status' => true,
-        'message' => 'Data mahasiswa berhasil disimpan'
+        MahasiswaModel::create([
+            'user_id' => $user->user_id,
+            'mhs_nim' => $validated['mhs_nim'],
+            'full_name' => $validated['full_name'],
+            'alamat' => $validated['alamat'] ?? null,
+            'telp' => $validated['telp'] ?? null,
+            'prodi_id' => $validated['prodi_id'],
+            'angkatan' => $validated['angkatan'] ?? null,
+            'jenis_kelamin' => $validated['jenis_kelamin'] ?? null,
+            'ipk' => $validated['ipk'] ?? null,
+            'status_magang' => $validated['status_magang'],
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Registrasi Anda Berhasil'
         ]);
     }
+
 
     public function confirm_ajax($nim)
     {
@@ -223,10 +223,11 @@ class MahasiswaController extends Controller
             $mahasiswa->full_name = $request->full_name;
             $mahasiswa->alamat = $request->alamat;
             $mahasiswa->telp = $request->telp;
+            $mahasiswa->ipk = $request->ipk;
             $mahasiswa->angkatan = $request->angkatan;
             $mahasiswa->jenis_kelamin = $request->jenis_kelamin;
-            $mahasiswa->ipk = $request->ipk;
             $mahasiswa->save();
+
 
             // Update user (username dan password)
             $user = $mahasiswa->user;

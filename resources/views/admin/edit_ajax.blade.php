@@ -71,7 +71,7 @@
             rules: {
                 nama: { required: true, maxlength: 100 },
                 email: { required: true, email: true },
-                telp: { maxlength: 20 },
+                telp: { required: true, maxlength: 20 },
                 username: { required: true, maxlength: 20 },
                 password: { minlength: 5, maxlength: 20 }
             },
