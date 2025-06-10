@@ -48,21 +48,22 @@ class ProfilAkademikController extends Controller
             ];
         })->toArray();
 
-        $tag = [];
+        $tagItems = [];
 
-        if ($user->level === 'mahasiswa') {
-            $tag = $user->mahasiswa->minat->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'value' => $item->nama
-                ];
-            })->toArray();
-        }
-
-        $tag = [
-            'items' => $tag,
-            'route' => 'profil.minat.delete'
+if ($user->level === 'mahasiswa' && $user->mahasiswa) {
+    $tagItems = $user->mahasiswa->minat->map(function ($item) {
+        return [
+            'id' => $item->id,
+            'value' => $item->nama
         ];
+    })->toArray();
+}
+
+$tag = [
+    'items' => $tagItems,
+    'route' => 'profil.minat.delete'
+];
+
 
         if (request()->ajax() && request()->has('partial')) {
             return response()->json([
@@ -75,21 +76,29 @@ class ProfilAkademikController extends Controller
     }
 
     public function storeMinat(Request $request)
-    {
-        $validated = $request->validate([
-            'minat_id' => 'required|exists:m_bidang_keahlian,id',
-        ]);
+{
+    $request->validate([
+        'minat_id' => 'required|exists:m_bidang_keahlian,id',
+    ]);
 
-        $user = Auth::user();
+    $user = Auth::user();
 
-        if ($user->level !== 'mahasiswa') {
-            abort(403);
-        }
+    // Ambil data mahasiswa
+    $mahasiswa = $user->mahasiswa;
 
-        $user->mahasiswa->minat()->syncWithoutDetaching([$validated['minat_id']]);
-
-        return $this->partialMinatReload($user);
+    if (!$mahasiswa) {
+        abort(404, 'Data mahasiswa tidak ditemukan.');
     }
+
+    // Tambahkan minat tanpa duplikasi
+    $mahasiswa->minat()->syncWithoutDetaching($request->minat_id);
+
+    // Return response JSON atau partial reload (Ajax-friendly)
+    return $this->partialMinatReload($user);
+}
+
+
+
 
     public function destroyMinat($id)
     {
@@ -163,9 +172,6 @@ class ProfilAkademikController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->level !== 'mahasiswa') {
-            abort(403);
-        }
 
         $validated = $request->validate([
             'prefrensi_lokasi_id_type' => 'required|in:provinsi,kabupaten,kecamatan,desa',

@@ -1,11 +1,14 @@
-@foreach($tag as $t)
+@foreach($tag['items'] ?? [] as $t)
     <div class="d-inline-flex align-items-center bg-primary text-white rounded-pill px-3 py-1 mb-1">
-        <span>{{ $t['value'] }}</span>
-        <form action="{{ route($tag->route, $t['id']) }}" method="POST" class="ms-2">
+        <span>{{ $t['value'] ?? '-' }}</span>
+        <form action="{{ route($tag['route'], $t['id']) }}" method="POST" class="ms-2">
+            @csrf
+            @method('DELETE')
             <button type="button" class="btn btn-close btn-close-white btn-sm text-white" id="btn-tag-cross-delete">X</button>
         </form>
     </div>
 @endforeach
+
 <script>
     $(document).on('click', '#btn-tag-cross-delete', function (e) {
         e.preventDefault();

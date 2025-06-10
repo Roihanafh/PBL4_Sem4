@@ -271,7 +271,7 @@ Route::middleware(['auth', 'authorize:mahasiswa'])->prefix('profil')->name('prof
     // Route untuk Preferensi Lokasi
     Route::prefix('prefrensi-lokasi')->name('prefrensi-lokasi.')->group(function () {
         Route::get('/', [ProfilAkademikController::class, 'prefrensiLokasi'])->name('index');
-        Route::post('/store', [ProfilAkademikController::class, 'storePrferensiLokasi'])->name('store'); // Sesuai dengan nama method di controller
+        Route::post('/store', [ProfilAkademikController::class, 'storePrefrensiLokasi'])->name('store'); // Sesuai dengan nama method di controller
         Route::delete('/{id}/delete', [ProfilAkademikController::class, 'destroyPrefrensiLokasi'])->name('delete');
     });
 
