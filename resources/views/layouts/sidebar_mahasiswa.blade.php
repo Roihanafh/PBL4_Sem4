@@ -35,12 +35,6 @@
                 </a>
               </li>
               <li class="nav-item">
-               <a href="{{ route('profil.index') }}">
-                  <i class="fas fa-user-cog"></i>
-                  <p>Manajemen Profil Akademik</p>
-                </a>
-              </li>
-              <li class="nav-item">
                 <a href="{{ route('lowongan.rekomendasi') }}">
                   <i class="fas fa-briefcase"></i>
                   <p>Rekomendasi Magang</p>

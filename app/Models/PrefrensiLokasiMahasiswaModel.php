@@ -20,4 +20,24 @@ class PrefrensiLokasiMahasiswaModel extends Model
     {
         return $this->belongsTo(MahasiswaModel::class, 'mhs_nim', 'mhs_nim');
     }
+
+    public function desa()
+    {
+        return $this->belongsTo(DesaModel::class, 'desa_id', 'desa_id');
+    }
+
+    public function kecamatan()
+    {
+        return $this->belongsTo(KecamatanModel::class, 'kecamatan_id', 'kecamatan_id');
+    }
+    
+    public function kabupaten()
+    {
+        return $this->belongsTo(KabupatenModel::class, 'kabupaten_id', 'kabupaten_id');
+    }
+
+    public function provinsi()
+    {
+        return $this->belongsTo(ProvinsiModel::class, 'provinsi_id', 'provinsi_id');
+    }
 }

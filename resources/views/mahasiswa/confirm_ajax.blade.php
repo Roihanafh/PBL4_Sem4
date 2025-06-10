@@ -55,6 +55,27 @@
                     <th class="text-right col-3">IPK :</th>
                     <td class="col-9">{{ $mahasiswa->ipk ?? '-' }}</td>
                 </tr>
+                <tr>
+                    <th class="text-right col-3">Bidang Keahlian :</th>
+                    <td class="col-9">{{ $mahasiswa->bidang_keahlian_id ?? '-' }}</td>
+                </tr>
+                <tr>
+                    <th class="text-right col-3">File CV :</th>
+                    <td class="col-9">
+                        @if ($mahasiswa->file_cv)
+                            <a href="{{ asset('storage/' . $mahasiswa->file_cv) }}" target="_blank">Lihat CV</a>
+                        @else
+                            Tidak ada file CV.
+                        @endif
+                </tr>
+                <tr>
+                    <th class="text-right col-3">Provinsi:</th>
+                    <td class="col-9">{{ $mahasiswa->provinsi->nama ?? '-' }}</td>
+                </tr>
+                <tr>
+                    <th class="text-right col-3">Kabupaten:</th>
+                    <td class="col-9">{{ $mahasiswa->kabupaten->nama ?? '-' }}</td>
+                </tr>
             </table>
         </div>
         <div class="modal-footer">

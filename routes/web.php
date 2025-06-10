@@ -254,44 +254,4 @@ Route::middleware(['auth', 'authorize:mahasiswa'])->group(function () {
         Route::get('/{id}/create_ajax', [PengajuanMagangMhsController::class, 'create_ajax']);
         Route::post('/store', [PengajuanMagangMhsController::class, 'store']);
     });
-
-// Middleware dipisah dengan benar ('auth' dan 'authorize:mahasiswa' jadi dua)
-Route::middleware(['auth', 'authorize:mahasiswa'])->prefix('profil')->name('profil.')->group(function () {
-
-    // Halaman utama profil akademik
-    Route::get('/', [ProfilAkademikController::class, 'index'])->name('index');
-
-    // Route untuk Minat
-    Route::prefix('minat')->name('minat.')->group(function () {
-        Route::get('/', [ProfilAkademikController::class, 'minat'])->name('index');
-        Route::post('/store', [ProfilAkademikController::class, 'storeMinat'])->name('store');
-        Route::delete('/{id}/delete', [ProfilAkademikController::class, 'destroyMinat'])->name('delete');
-    });
-
-    // Route untuk Preferensi Lokasi
-    Route::prefix('prefrensi-lokasi')->name('prefrensi-lokasi.')->group(function () {
-        Route::get('/', [ProfilAkademikController::class, 'prefrensiLokasi'])->name('index');
-        Route::post('/store', [ProfilAkademikController::class, 'storePrefrensiLokasi'])->name('store'); // Sesuai dengan nama method di controller
-        Route::delete('/{id}/delete', [ProfilAkademikController::class, 'destroyPrefrensiLokasi'])->name('delete');
-    });
-
 });
-
-
-
-            Route::prefix('profil')->name('profil.')->group(function () {
-                Route::get('/dokumen', [ProfilAkademikController::class, 'tambahDokumen'])->name('dokumen.index');
-
-                Route::post('/store', [ProfilAkademikController::class, 'storeDokumen'])->name('store');
-                Route::get('/{nim}/edit', [ProfilAkademikController::class, 'editDokumen'])->name('edit');
-                Route::put('/{nim}/update', [ProfilAkademikController::class, 'updateDokumen'])->name('update');
-            });
-        });
-
-
-    Route::prefix('dokumen')->name('dokumen.')->group(function () {
-        Route::post('upload-dokumen-mhs', [DokumenMahasiswaController::class, 'storeDokumenMhs'])->name('upload-dokumen-mhs');
-        Route::put('update-dokumen-mhs/{nim}', [DokumenMahasiswaController::class, 'updateDokumenMhs'])->name('update-dokumen-mhs');
-        Route::delete('delete-dokumen-mhs/{nim}', [DokumenMahasiswaController::class, 'destroyDokumenMhs'])->name('delete-dokumen-mhs');
-        Route::get('download-dokumen-mhs/{nim}', [DokumenMahasiswaController::class, 'downloadDokumenMhs'])->name('download-dokumen-mhs');
-    });
