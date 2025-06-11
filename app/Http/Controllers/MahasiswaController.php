@@ -578,6 +578,9 @@ class MahasiswaController extends Controller
 
         ]);
 
+        $mahasiswa->lokasi = $request->provinsi_id;
+        $mahasiswa->save();
+
         if ($validator->fails()) {
             return response()->json([
                 'status' => false,

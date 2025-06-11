@@ -274,7 +274,7 @@ public function rekomendasi(Request $request, SmartRecommendationService $smart)
     // ---------------------------
     // 2. Query lowongan aktif
     // ---------------------------
-    $q = LowonganModel::with(['perusahaan', 'periode'])
+    $q = LowonganModel::with(['perusahaan', 'periode', 'provinsi'])
         ->where('status', 'aktif');
 
     // 3. Filter tambahan (posisi, skill, lokasi, tipe_bekerja, durasi)
@@ -290,9 +290,11 @@ public function rekomendasi(Request $request, SmartRecommendationService $smart)
             }
         });
     }
-    if ($request->filled('lokasi')) {
-        $q->whereHas('provinsi', function($q2) use($request){
-            $q2->where('nama','like','%'.$request->lokasi.'%');
+    if ($request->filled('lokasi')) {                // lokasinya bisa id ATAU teks
+        $lok = $request->lokasi;
+        $q->whereHas('provinsi', function ($q2) use ($lok) {
+            $q2->where('alt_name', 'like', "%$lok%")
+                ->orWhere('id', $lok);
         });
     }
     if ($request->filled('tipe_bekerja')) {
@@ -304,6 +306,8 @@ public function rekomendasi(Request $request, SmartRecommendationService $smart)
 
     // 4. Eksekusi query
     $lowongan = $q->get();
+
+    $mhs->load('provinsipref'); 
 
     // 5. Peta ke array untuk SMART
     if (!$lowongan->isEmpty()) {
@@ -337,16 +341,23 @@ public function rekomendasi(Request $request, SmartRecommendationService $smart)
             }
             $skillValue = $skillMatches / $totalSkill;
 
-            // LOKASI
-            $lokasiValue = 0.0;
-            if (strtolower($l->lokasi) === strtolower($mhs->lokasi)) {
-                $lokasiValue = 1.0;
-            } elseif (
-                substr(strtolower($l->lokasi), 0, 2) === substr(strtolower($mhs->lokasi), 0, 2)
-            ) {
-                $lokasiValue = 0.5;
-            }
+            $mhsProv = $mhs->provinsipref;                   // eager-loaded automatically
+            $mhsLat  = $mhsProv->latitude  ?? null;
+            $mhsLon  = $mhsProv->longitude ?? null;
 
+            $lowProv = $l->provinsi;
+            $lowLat  = $lowProv->latitude  ?? null;
+            $lowLon  = $lowProv->longitude ?? null;
+
+            $lokasiValue = 0.0;
+            if ($mhsProv && $lowProv) {
+                $dist = ProvinsiModel::haversineKm(
+                    $mhsProv->latitude, $mhsProv->longitude,
+                    $lowProv->latitude, $lowProv->longitude
+                );
+                    $lokasiValue = ProvinsiModel::lokasiScore($dist, 1000);  // adjust radius here
+                }
+            
             // TIPE_BEKERJA (binary match)
             $tipeBekerjaLowongan = strtolower($l->tipe_bekerja ?? '');
             $tipeBekerjaValue    = ($tipeBekerjaLowongan === $tipeBekerjaMhs) ? 1.0 : 0.0;
@@ -439,9 +450,11 @@ public function show(Request $request, SmartRecommendationService $smart, $lowon
     if ($request->filled('skill')) {
         $q->where('deskripsi', 'like', '%' . $request->skill . '%');
     }
-    if ($request->filled('lokasi')) {
-        $q->whereHas('provinsi', function($q2) use($request){
-            $q2->where('nama','like','%'.$request->lokasi.'%');
+    if ($request->filled('lokasi')) {                // lokasinya bisa id ATAU teks
+        $lok = $request->lokasi;
+        $q->whereHas('provinsi', function ($q2) use ($lok) {
+            $q2->where('alt_name', 'like', "%$lok%")
+                ->orWhere('id', $lok);
         });
     }
     if ($request->filled('tipe_bekerja')) {

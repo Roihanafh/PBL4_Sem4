@@ -135,6 +135,11 @@ class MahasiswaModel extends Model
         return $this->belongsTo(ProvinsiModel::class, 'provinsi_id', 'provinsi_id');
     }
 
+    public function provinsipref()
+    {
+        return $this->belongsTo(ProvinsiModel::class, 'lokasi', 'id');
+    }
+
     public function negara()
     {
         return $this->belongsTo(NegaraModel::class, 'negara_id', 'id');
