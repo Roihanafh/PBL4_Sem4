@@ -77,39 +77,7 @@
         <div class="text-danger" id="error-ipk"></div>
     </div>
 
-    <div class="form-group">
-        <label for="bidang_keahlian_id" class="form-label">Bidang Keahlian</label>
-        <input type="text" class="form-control" id="bidang_keahlian_id" name="bidang_keahlian_id" placeholder="Masukkan bidang keahlian (jika ada)">
-        <div class="text-danger" id="error-bidang_keahlian_id"></div>
-    </div>
-
-    <div class="form-group">
-        <label for="provinsi_id" class="form-label">Provinsi</label>
-        <select name="provinsi_id" id="provinsi_id" class="form-select">
-            <option value="">-- Pilih Provinsi --</option>
-            @foreach($provinsi as $prov)
-                <option value="{{ $prov->id }}">{{ $prov->nama }}</option>
-            @endforeach
-        </select>
-        <div class="text-danger" id="error-provinsi_id"></div>
-    </div>
-
-    <div class="form-group">
-        <label for="kabupaten_id" class="form-label">Kabupaten/Kota</label>
-        <select name="kabupaten_id" id="kabupaten_id" class="form-select">
-            <option value="">-- Pilih Kabupaten/Kota --</option>
-            @foreach($kabupaten as $kab)
-                <option value="{{ $kab->id }}">{{ $kab->nama }}</option>
-            @endforeach
-        </select>
-        <div class="text-danger" id="error-kabupaten_id"></div>
-    </div>
-
-    <div class="form-group">
-        <label for="file_cv" class="form-label">File CV (opsional)</label>
-        <input type="file" class="form-control" id="file_cv" name="file_cv" accept=".pdf,.doc,.docx">
-        <div class="text-danger" id="error-file_cv"></div>
-    </div>
+   
 
     {{-- STATUS MAGANG DISET AUTOMATIS --}}
     <input type="hidden" name="status_magang" value="belum magang">

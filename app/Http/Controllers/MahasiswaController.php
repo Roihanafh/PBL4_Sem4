@@ -105,10 +105,6 @@ class MahasiswaController extends Controller
             'jenis_kelamin' => 'nullable|in:L,P',
             'ipk' => 'nullable|numeric|min:0|max:4.0',
             'status_magang' => 'required',
-            'file_cv' => 'nullable|file|mimes:pdf,doc,docx|max:2048', // Validasi file CV
-            'bidang_keahlian_id' => 'required|exists:m_bidang_keahlian,id',
-            'provinsi_id' => 'required|exists:m_provinsi,id',
-            'kabupaten_id' => 'required|exists:m_kabupaten,id',
         ]);
 
         // Setelah semua validasi berhasil, baru simpan ke database
@@ -130,10 +126,6 @@ class MahasiswaController extends Controller
             'jenis_kelamin' => $validated['jenis_kelamin'] ?? null,
             'ipk' => $validated['ipk'] ?? null,
             'status_magang' => $validated['status_magang'],
-            'bidang_keahlian_id' => $validated['bidang_keahlian_id'],
-            'provinsi_id' => $validated['id'],
-            'kabupaten_id' => $validated['id'],
-            'file_cv' => $request->hasFile('file_cv') ? $request->file('file_cv')->store('public/cv') : null,
             'created_at' => now()
         ])->save();
         // Jika ada file CV, simpan di storage
@@ -228,10 +220,6 @@ class MahasiswaController extends Controller
             'jenis_kelamin' => 'nullable|in:L,P', // L = Laki-laki, P = Perempuan
             'ipk'       => 'nullable|numeric|min:0|max:4.0',
             'file_cv' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
-            'bidang_keahlian_id' => 'required|array',
-            'bidang_keahlian_id' => 'required|exists:m_bidang_keahlian,id',
-            'provinsi_id' => 'required|exists:m_provinsi,id',
-            'kabupaten_id' => 'required|exists:m_kabupaten,id',
         ]);
 
         $mahasiswa  = MahasiswaModel::with('user')->find($mhs_nim);
