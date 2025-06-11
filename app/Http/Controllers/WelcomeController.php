@@ -77,6 +77,9 @@ class WelcomeController extends Controller
             ->orderBy('month', 'desc')
             ->get();
 
+        // Add last updated timestamp
+        $lastUpdated = now()->format('Y-m-d H:i:s');
+
         return view('admin.welcome_admin', compact(
             'breadcrumb',
             'activeMenu',
@@ -89,8 +92,50 @@ class WelcomeController extends Controller
             'statistikProdi',
             'ratingRekomendasi',
             'totalFeedback',
-            'trenPendaftaran'
+            'trenPendaftaran',
+            'lastUpdated'
         ));
+    }
+
+    public function refreshDashboard()
+    {
+        // 1. Total Mahasiswa
+        $totalMahasiswa = MahasiswaModel::count();
+
+        // 2. Mahasiswa yang sudah magang (diterima)
+        $mahasiswaMagang = LamaranMagangModel::where('status', 'diterima')
+            ->distinct('mhs_nim')
+            ->count('mhs_nim');
+        
+        // 3. Mahasiswa yang telah selesai magang
+        $mahasiswaSelesaiMagang = LamaranMagangModel::where('status', 'selesai')
+            ->distinct('mhs_nim')
+            ->count('mhs_nim');
+
+        // 4. Total Dosen Pembimbing
+        $totalDosenPembimbing = DosenModel::has('mahasiswa')->count();
+
+        // 5. Rasio Dosen:Mhs (format: 1:X)
+        $rasioDosenMhs = $totalDosenPembimbing > 0 ?
+            round($mahasiswaMagang / $totalDosenPembimbing, 1) : 0;
+
+        // 8. Evaluasi Rekomendasi (rating feedback)
+        $ratingRekomendasi = FeedbackModel::avg('rating');
+        $totalFeedback = FeedbackModel::count();
+
+        // Add last updated timestamp
+        $lastUpdated = now()->format('Y-m-d H:i:s');
+
+        return response()->json([
+            'totalMahasiswa' => $totalMahasiswa,
+            'mahasiswaMagang' => $mahasiswaMagang,
+            'mahasiswaSelesaiMagang' => $mahasiswaSelesaiMagang,
+            'totalDosenPembimbing' => $totalDosenPembimbing,
+            'rasioDosenMhs' => $rasioDosenMhs,
+            'ratingRekomendasi' => number_format($ratingRekomendasi, 1),
+            'totalFeedback' => $totalFeedback,
+            'lastUpdated' => $lastUpdated
+        ]);
     }
 
     public function index_dosen()
