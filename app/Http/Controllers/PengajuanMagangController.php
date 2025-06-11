@@ -47,6 +47,12 @@ class PengajuanMagangController extends Controller
             ->addColumn('mhs_nim', function ($lmr) {
                 return $lmr->mahasiswa ? $lmr->mahasiswa->mhs_nim : '-';
             })
+            ->addColumn('perusahaan_nama', function ($lmr) {
+                return $lmr->lowongan ? $lmr->lowongan->perusahaan->nama : '-';
+            })
+            ->addColumn('lowongan_judul', function ($lmr) {
+                return $lmr->lowongan ? $lmr->lowongan->judul : '-';
+            })
             ->addColumn('dosen_nama', function ($lmr) {
                 return $lmr->dosen ? $lmr->dosen->nama : '-';
             })

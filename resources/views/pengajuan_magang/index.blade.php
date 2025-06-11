@@ -41,8 +41,8 @@
       </div>
     </div>
   </div>
-  <div class="table-responsive">
-    <div class="card-body">
+  <div class="card-body">
+    <div class="table-responsive">
       <table
         id="pengajuan-magang-table"
         class="display table table-striped table-hover"
@@ -53,7 +53,8 @@
             <th>No. </th>
             <th>Nama Mahasiswa</th>
             <th>NIM</th>
-            <th>Dosen Pembimbing</th>
+            <th>Nama Perusahaan</th>
+            <th>Lowongan</th>
             <th>Tanggal Lamaran</th>
             <th>Status</th>
             <th style="width: 10%">Action</th>
@@ -90,20 +91,8 @@
                 { data: 'DT_RowIndex',  className: "text-center", orderable: false, searchable: false, width: "5%" },
                 { data: 'mahasiswa_nama' },
                 { data: 'mhs_nim' },
-                {
-                    data: 'dosen_nama',
-                    className: "text-center",
-                    render: function(data, type, row) {
-                        if (data === '-') {
-                            if (row.status === 'pending') {
-                                return '<span class="badge badge-warning text-center"><i class="fa fa-clock"></i> Pending</span>';
-                            }else if(row.status === 'ditolak'){
-                                return '<span class="badge badge-danger"><i class="fa fa-times"></i> Ditolak</span>';   
-                            }
-                        }
-                        return '<span>' + data + '</span>';
-                    }
-                },
+                { data: 'perusahaan_nama' },
+                { data: 'lowongan_judul'},
                 { data: 'tanggal_lamaran' },
                 { data: 'status',
                   className: "text-center",
