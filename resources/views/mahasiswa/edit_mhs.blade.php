@@ -140,35 +140,47 @@
                     <span class="text-muted mt-2">Tidak ada CV</span>
                 @endif
             </div>
+            <div class="form-group">
+                <label>Negara (Preferensi Lokasi)</label>
+                <select name="negara_id" id="negara_id" class="form-control">
+                    <option value="">-- Pilih Negara --</option>
+                    @foreach ($negaraList as $negara)
+                        <option value="{{ $negara->id }}"
+                            {{ old('negara_id', $mahasiswa->preferensiLokasi->negara_id ?? '') == $negara->id ? 'selected' : '' }}>
+                            {{ $negara->nama }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            
+            
 
             <div class="form-group">
-                <label>Provinsi</label>
+                <label>Provinsi (Preferensi Lokasi)</label>
                 <select name="provinsi_id" id="provinsi_id" class="form-control">
                     <option value="">-- Pilih Provinsi --</option>
-                    @foreach ($provinsi as $prov)
-                        <option value="{{ $prov->id }}" 
-                            {{ $mahasiswa->provinsi_id == $prov->id ? 'selected' : '' }}>
-                            {{ $prov->nama }}
+                    @foreach ($provinsiList as $provinsi)
+                        <option value="{{ $provinsi->id }}"
+                            {{ old('provinsi_id', $mahasiswa->preferensiLokasi->provinsi_id ?? '') == $provinsi->id ? 'selected' : '' }}>
+                            {{ $provinsi->nama }}
                         </option>
                     @endforeach
                 </select>
-                <small id="error-provinsi_id" class="error-text form-text text-danger"></small>
             </div>
-
+            
             <div class="form-group">
-                <label>Kabupaten/Kota</label>
+                <label>Kabupaten (Preferensi Lokasi)</label>
                 <select name="kabupaten_id" id="kabupaten_id" class="form-control">
-                    <option value="">-- Pilih Kabupaten/Kota --</option>
-                    @foreach ($kabupaten as $kab)
-                        <option value="{{ $kab->id }}" 
-                            {{ $mahasiswa->kabupaten_id == $kab->id ? 'selected' : '' }}>
-                            {{ $kab->nama }}
+                    <option value="">-- Pilih Kabupaten --</option>
+                    @foreach ($kabupatenList as $kabupaten)
+                        <option value="{{ $kabupaten->id }}"
+                            {{ old('kabupaten_id', $mahasiswa->preferensiLokasi->kabupaten_id ?? '') == $kabupaten->id ? 'selected' : '' }}>
+                            {{ $kabupaten->nama }}
                         </option>
                     @endforeach
                 </select>
-                <small id="error-kabupaten_id" class="error-text form-text text-danger"></small>
             </div>
-
+            
             <div class="form-group">
                 <label>Username</label>
                 <input value="{{ $mahasiswa->user->username }}" type="text" name="username" id="username" class="form-control" required>

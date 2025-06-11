@@ -20,4 +20,16 @@ class BidangPenelitianModel extends Model
     {
         return $this->hasMany(DosenModel::class, 'id_minat', 'id_minat');
     }
+
+    public function mahasiswa()
+    {
+        return $this->belongsToMany(
+            MahasiswaModel::class,
+            't_minat_mahasiswa',
+            'bidang_keahlian_id',
+            'mhs_nim',
+            'id',
+            'mhs_nim'
+        );
+    }
 }

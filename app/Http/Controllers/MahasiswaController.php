@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use Illuminate\Support\Facades\Storage;
+use App\Models\NegaraModel;
+use App\Models\PrefrensiLokasiMahasiswaModel;
 use App\Models\ProvinsiModel;
 use App\Models\KabupatenModel;
 use Illuminate\Support\Facades\Log;
@@ -489,7 +491,14 @@ class MahasiswaController extends Controller
 
     public function show_mhs($mhs_nim)
     {
-        $mahasiswa = MahasiswaModel::with(['user', 'prodi'])->where('mhs_nim', $mhs_nim)->first();
+        $mahasiswa = MahasiswaModel::with([
+            'user',
+            'prodi',
+            'provinsi',
+            'kabupaten',
+            'bidangKeahlian',
+        ])->where('mhs_nim', $mhs_nim)->first();
+
 
         if (!$mahasiswa) {
             return response()->json([
@@ -503,17 +512,29 @@ class MahasiswaController extends Controller
         ]);
     }
 
+
     public function edit_mhs($mhs_nim)
     {
-        $mahasiswa = MahasiswaModel::with(['prodi', 'user'])->find($mhs_nim);
+        $mahasiswa = MahasiswaModel::with(['prodi', 'user', 'provinsi', 'kabupaten'])->find($mhs_nim);
         $bidangKeahlian = BidangKeahlianModel::all();
+        $negara = NegaraModel::all();
         $provinsi = ProvinsiModel::all();
         $kabupaten = $mahasiswa->kabupaten_id
             ? KabupatenModel::where('provinsi_id', $mahasiswa->provinsi_id)->get()
             : KabupatenModel::all();
 
-        return view('mahasiswa.edit_mhs', compact('mahasiswa', 'bidangKeahlian', 'provinsi', 'kabupaten'));
+        return view(
+            'mahasiswa.edit_mhs',
+            [
+                'mahasiswa' => $mahasiswa,
+                'bidangKeahlian' => $bidangKeahlian,
+                'provinsiList' => $provinsi,
+                'kabupatenList' => $kabupaten,
+                'negaraList' => $negara
+            ]
+        );
     }
+
 
     public function update_mhs(Request $request, $mhs_nim)
     {
@@ -539,8 +560,12 @@ class MahasiswaController extends Controller
             'file_cv' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
             'bidang_keahlian_id' => 'required|array',
             'bidang_keahlian_id.*' => 'exists:m_bidang_keahlian,id',
-            'provinsi_id' => 'required|exists:m_provinsi,id',
-            'kabupaten_id' => 'required|exists:m_kabupaten,id',
+            'negara_id' => 'nullable|exists:m_negara,id',
+            'provinsi_id' => 'nullable|exists:m_provinsi,id',
+            'kabupaten_id' => 'nullable|exists:m_kabupaten,id',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+
         ]);
 
         if ($validator->fails()) {
@@ -579,8 +604,38 @@ class MahasiswaController extends Controller
                 'ipk' => $request->ipk,
                 'provinsi_id' => $request->provinsi_id,
                 'kabupaten_id' => $request->kabupaten_id,
+
             ]);
             $mahasiswa->save();
+
+            // Ambil nama-nama wilayah
+            // Ambil nama-nama wilayah dari model
+            $negara = NegaraModel::find($request->negara_id)?->nama ?? 'Negara Tidak Diketahui';
+            $provinsi = ProvinsiModel::find($request->provinsi_id)?->nama ?? null;
+            $kabupaten = KabupatenModel::find($request->kabupaten_id)?->nama ?? null;
+
+            // Susun nama tampilan lokasi
+            $namaTampilan = $negara;
+            if ($provinsi) {
+                $namaTampilan .= ', ' . $provinsi;
+            }
+            if ($kabupaten) {
+                $namaTampilan .= ', ' . $kabupaten;
+            }
+
+            // Simpan atau update lokasi preferensi mahasiswa
+            PrefrensiLokasiMahasiswaModel::updateOrCreate(
+                ['mhs_nim' => $mahasiswa->mhs_nim],
+                [
+                    'provinsi_id' => $request->provinsi_id,
+                    'kabupaten_id' => $request->kabupaten_id,
+                    'negara_id' => $request->negara_id,
+                    'latitude' => $request->latitude,
+                    'longitude' => $request->longitude,
+                    'nama_tampilan' => $namaTampilan,
+                ]
+            );
+
 
             // Update bidang keahlian (relasi many-to-many)
             $mahasiswa->bidangKeahlian()->sync($request->bidang_keahlian_id);
@@ -605,6 +660,8 @@ class MahasiswaController extends Controller
             ]);
         }
     }
+
+
 
 
 
