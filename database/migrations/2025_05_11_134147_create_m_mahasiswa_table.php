@@ -15,7 +15,6 @@ class CreateMMahasiswaTable extends Migration
             $table->text('alamat')->nullable();
             $table->string('telp', 20)->nullable();
             $table->unsignedBigInteger('prodi_id');
-            $table->unsignedBigInteger('bidang_keahlian_id')->nullable();
             $table->enum('status_magang', ['Belum Magang','Sedang Magang','Selesai Magang'])
                   ->default('Belum Magang');
 
@@ -26,8 +25,6 @@ class CreateMMahasiswaTable extends Migration
                   ->onDelete('restrict')->onUpdate('cascade');
             $table->foreign('prodi_id')
                   ->references('prodi_id')->on('m_program_studi');
-            $table->foreign('bidang_keahlian_id')
-                  ->references('id')->on('m_bidang_keahlian');
         });
     }
 
