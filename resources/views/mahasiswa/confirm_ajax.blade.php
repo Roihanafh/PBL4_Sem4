@@ -56,26 +56,45 @@
                     <td class="col-9">{{ $mahasiswa->ipk ?? '-' }}</td>
                 </tr>
                 <tr>
-                    <th class="text-right col-3">Bidang Keahlian :</th>
-                    <td class="col-9">{{ $mahasiswa->bidang_keahlian_id ?? '-' }}</td>
-                </tr>
-                <tr>
-                    <th class="text-right col-3">File CV :</th>
-                    <td class="col-9">
-                        @if ($mahasiswa->file_cv)
-                            <a href="{{ asset('storage/' . $mahasiswa->file_cv) }}" target="_blank">Lihat CV</a>
-                        @else
-                            Tidak ada file CV.
-                        @endif
-                </tr>
-                <tr>
-                    <th class="text-right col-3">Provinsi:</th>
-                    <td class="col-9">{{ $mahasiswa->provinsi->nama ?? '-' }}</td>
-                </tr>
-                <tr>
-                    <th class="text-right col-3">Kabupaten:</th>
-                    <td class="col-9">{{ $mahasiswa->kabupaten->nama ?? '-' }}</td>
-                </tr>
+                <th class="text-right">Bidang Keahlian:</th>
+                <td>
+                    @if ($mahasiswa->bidangKeahlian->isNotEmpty())
+                        <ul class="mb-0 pl-3">
+                            @foreach ($mahasiswa->bidangKeahlian as $minat)
+                                <li>{{ $minat->nama }}</li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <span class="text-muted">Tidak ada minat terdaftar</span>
+                    @endif
+                </td>
+            </tr>
+            
+            <tr>
+                <th class="text-right">File CV:</th>
+                <td>
+                    @if ($mahasiswa->file_cv)
+                        <a href="{{ asset('storage/' . $mahasiswa->file_cv) }}" target="_blank" class="btn btn-info btn-sm">
+                            Lihat CV
+                        </a>
+                    @else
+                        <span class="text-muted">Tidak ada CV</span>
+                    @endif
+                </td>
+            </tr>
+
+            <tr>
+                <th class="text-right">Preferensi Lokasi:</th>
+                <td>
+                    @if ($mahasiswa->preferensiLokasi)
+                        {{ $mahasiswa->preferensiLokasi->kabupaten->nama ?? '-' }},
+                        {{ $mahasiswa->preferensiLokasi->provinsi->nama ?? '-' }},
+                        {{ $mahasiswa->preferensiLokasi->negara->nama ?? '-' }}<br>
+                    @else
+                        <span class="text-muted">Belum diisi</span>
+                    @endif
+                </td>
+            </tr>
             </table>
         </div>
         <div class="modal-footer">

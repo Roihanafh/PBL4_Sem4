@@ -195,115 +195,125 @@ class MahasiswaController extends Controller
 
     public function edit_ajax($mhs_nim)
     {
-        $mahasiswa = MahasiswaModel::with(['prodi', 'user'])->find($mhs_nim);
+        $mahasiswa = MahasiswaModel::with(['prodi', 'user', 'provinsi', 'kabupaten'])->find($mhs_nim);
+        $prodiList = ProdiModel::all();
+        $bidangKeahlian = BidangKeahlianModel::all(); // Tambahkan baris ini
+        $negaraList = NegaraModel::all();
+        $provinsiList = ProvinsiModel::all();
+        $kabupatenList = $mahasiswa->kabupaten_id
+            ? KabupatenModel::where('provinsi_id', $mahasiswa->provinsi_id)->get()
+            : KabupatenModel::all();
 
-        return view('mahasiswa.edit_ajax', compact('mahasiswa'));
+
+        return view('mahasiswa.edit_ajax', compact(
+            'mahasiswa',
+            'prodiList',
+            'bidangKeahlian',
+            'negaraList',
+            'provinsiList',
+            'kabupatenList'
+        ));
+
     }
 
-    public function update_ajax(Request $request, $mhs_nim)
-    {
-        $mahasiswa = MahasiswaModel::with('user')->find($mhs_nim);
 
-        if (!$mahasiswa) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Data mahasiswa tidak ditemukan.'
-            ]);
-        }
+    public function update_ajax(Request $request, $old_nim)
+{
+    $mahasiswa = MahasiswaModel::with('user')->find($old_nim);
 
-        // Validasi input
-        $validator = Validator::make($request->all(), [
-            'username'  => 'required|max:20|unique:m_users,username,' . $mahasiswa->user->user_id . ',user_id',
-            'password'  => 'nullable|min:5|max:20',
-            'full_name' => 'required|max:100',
-            'alamat'    => 'nullable|max:255',    
-            'telp'      => 'nullable|max:20',
-            'angkatan'  => 'nullable|integer',
-            'jenis_kelamin' => 'nullable|in:L,P', // L = Laki-laki, P = Perempuan
-            'ipk'       => 'nullable|numeric|min:0|max:4.0',
-            'file_cv' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+    if (!$mahasiswa) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Data mahasiswa tidak ditemukan.'
         ]);
+    }
 
-        $mahasiswa  = MahasiswaModel::with('user')->find($mhs_nim);
-        
-        $mahasiswaData = [
-            'full_name' => $request->full_name,
-            'alamat' => $request->alamat,
-            'telp' => $request->telp,
-            'angkatan' => $request->angkatan,
-            'jenis_kelamin' => $request->jenis_kelamin,
-            'ipk' => $request->ipk,
-        ];
+    // Validasi input
+    $validator = Validator::make($request->all(), [
+        'username'      => 'required|max:20|unique:m_users,username,' . $mahasiswa->user->user_id . ',user_id',
+        'password'      => 'nullable|min:5|max:20',
+        'full_name'     => 'required|max:100',
+        'alamat'        => 'nullable|max:255',
+        'telp'          => 'nullable|max:20',
+        'angkatan'      => 'nullable|integer',
+        'jenis_kelamin' => 'nullable|in:L,P',
+        'ipk'           => 'nullable|numeric|min:0|max:4.0',
+        'file_cv'       => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+    ]);
 
-        // Upload file CV jika ada
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Validasi gagal, periksa input anda.',
+            'msgField' => $validator->errors()
+        ]);
+    }
+
+    try {
+        DB::beginTransaction();
+
+        // Simpan data mahasiswa
+        $newNim = $request->mhs_nim;
+        $fileCV = $mahasiswa->file_cv;
+
         if ($request->hasFile('file_cv')) {
-            // Hapus CV lama jika ada
-            if ($mahasiswa && $mahasiswa->file_cv && Storage::exists('public/' . $mahasiswa->file_cv)) {
-                Storage::delete('public/' . $mahasiswa->file_cv);
+            if ($fileCV && Storage::exists('public/' . $fileCV)) {
+                Storage::delete('public/' . $fileCV);
             }
-
             $path = $request->file('file_cv')->store('public/cv');
-            $mahasiswaData['file_cv'] = str_replace('public/', '', $path);
+            $fileCV = str_replace('public/', '', $path);
         }
 
-        $mahasiswaUpdated = MahasiswaModel::where('mhs_nim', $mhs_nim)->update($mahasiswaData);
+        // Update data mahasiswa (ganti primary key jika NIM berubah)
+        $mahasiswa->full_name = $request->full_name;
+        $mahasiswa->alamat = $request->alamat;
+        $mahasiswa->telp = $request->telp;
+        $mahasiswa->angkatan = $request->angkatan;
+        $mahasiswa->jenis_kelamin = $request->jenis_kelamin;
+        $mahasiswa->ipk = $request->ipk;
+        $mahasiswa->file_cv = $fileCV;
+        $mahasiswa->save();
 
+        // Update data user
+        $user = $mahasiswa->user;
+        $user->username = $request->username;
+        if ($request->filled('password')) {
+            $user->password = bcrypt($request->password);
+        }
+        $user->save();
+
+        // Update minat mahasiswa
         DB::table('t_minat_mahasiswa')
-            ->where('mhs_nim', $mahasiswaUpdated->mhs_nim)
+            ->where('mhs_nim', $old_nim)
             ->delete();
 
         if ($request->has('bidang_keahlian_id')) {
-            foreach ($request->bidang_keahlian_id as $id) {
-                DB::table('t_minat_mahasiswa')->insert([
-                    'mhs_nim' => $mahasiswaUpdated->mhs_nim,
-                    'bidang_keahlian_id' => $id,
-                ]);
-            }
+            $minat = collect($request->bidang_keahlian_id)
+                ->map(function ($id) use ($newNim) {
+                    return [
+                        'mhs_nim' => $newNim,
+                        'bidang_keahlian_id' => $id,
+                    ];
+                })->toArray();
+
+            DB::table('t_minat_mahasiswa')->insert($minat);
         }
 
+        DB::commit();
 
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Validasi gagal, periksa input anda.',
-                'msgField' => $validator->errors()
-            ]);
-        }
-
-        try {
-            // Update data mahasiswa
-            $mahasiswa->full_name = $request->full_name;
-            $mahasiswa->alamat = $request->alamat;
-            $mahasiswa->telp = $request->telp;
-            $mahasiswa->ipk = $request->ipk;
-            $mahasiswa->angkatan = $request->angkatan;
-            $mahasiswa->jenis_kelamin = $request->jenis_kelamin;
-            $mahasiswa->file_cv = $request->hasFile('file_cv') ? $request->file('file_cv')->store('public/cv') : $mahasiswa->file_cv;
-            
-            $mahasiswa->save();
-
-
-            // Update user (username dan password)
-            $user = $mahasiswa->user;
-            $user->username = $request->username;
-            if (!empty($request->password)) {
-                $user->password = bcrypt($request->password);
-            }
-            $user->save();
-
-            return response()->json([
-                'status' => true,
-                'message' => 'Data mahasiswa berhasil diperbarui.'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan data.',
-                'error' => $e->getMessage()
-            ]);
-        }
+        return response()->json([
+            'status' => true,
+            'message' => 'Data mahasiswa berhasil diperbarui.'
+        ]);
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return response()->json([
+            'status' => false,
+            'message' => 'Terjadi kesalahan saat menyimpan data.',
+            'error' => $e->getMessage()
+        ]);
     }
+}
 
    public function export_pdf()
     {
