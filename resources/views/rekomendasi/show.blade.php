@@ -73,9 +73,89 @@
           {{ $lowongan->kuota }} Posisi &bull; {{ $lowongan->lamaran->count() }} Pelamar
           </small>
         </div>
-        <button onclick="loadModal('{{ url('rekomendasi/' . $lowongan->lowongan_id . '/create_ajax') }}')" class="btn btn-primary">
-          Daftar Sekarang
-        </button>
+      
+      @php
+    // Assuming $lowongan->mahasiswa is the student object and file_cv is the field
+    $hasCv = !empty($lowongan->mahasiswa->file_cv);
+@endphp
+
+@php
+    // Assuming $lowongan->mahasiswa is the student object
+    // Initialize array to store missing fields
+    $missingFields = [];
+    
+    // Check each required field
+    if (empty(Auth::user()->mahasiswa->mhs_nim)) {
+        $missingFields[] = 'NIM';
+    }
+    if (empty(Auth::user()->mahasiswa->user_id)) {
+        $missingFields[] = 'User ID';
+    }
+    if (empty(Auth::user()->mahasiswa->full_name)) {
+        $missingFields[] = 'Nama Lengkap';
+    }
+    if (empty(Auth::user()->mahasiswa->alamat)) {
+        $missingFields[] = 'Alamat';
+    }
+    if (empty(Auth::user()->mahasiswa->telp)) {
+        $missingFields[] = 'Nomor Telepon';
+    }
+    if (empty(Auth::user()->mahasiswa->prodi_id)) {
+        $missingFields[] = 'Program Studi';
+    }
+    if (empty(Auth::user()->mahasiswa->file_cv)) { // Assuming file_cv is part of the student data
+        $missingFields[] = 'CV';
+    }
+    if (empty(Auth::user()->mahasiswa->provinsi)) {
+        $missingFields[] = 'Provinsi';
+    }
+    if (empty(Auth::user()->mahasiswa->kabupaten)) {
+        $missingFields[] = 'Kabupaten';
+    }
+    if (empty(Auth::user()->mahasiswa->bidang_keahlian_id)) {
+        $missingFields[] = 'Bidang Keahlian';
+    }
+
+
+
+    // Determine if all data is filled
+    $allDataFilled = empty($missingFields);
+@endphp
+
+@if($allDataFilled)
+    <button onclick="loadModal('{{ url('rekomendasi/' . $lowongan->lowongan_id . '/create_ajax') }}')" class="btn btn-primary">
+        Daftar Sekarang
+    </button>
+@else
+    <!-- Button to trigger the modal -->
+    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#missingDataModal">
+        Harus Lengkapi Data
+    </button>
+
+    <!-- Bootstrap Modal -->
+    <div class="modal fade" id="missingDataModal" tabindex="-1" aria-labelledby="missingDataModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="missingDataModalLabel">Data Tidak Lengkap</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Tidak dapat mendaftar. Harap lengkapi data berikut:</p>
+                    <ul>
+                        @foreach($missingFields as $field)
+                            <li>{{ $field }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+@endif
         </div>
 
         {{-- Judul & perusahaan --}}
@@ -103,23 +183,21 @@
           <h5><i class="fas fa-info-circle"></i> Rincian Lowongan</h5>
           <p>{!! nl2br(e($lowongan->deskripsi)) !!}</p>
 
-        <h5 class="mt-4"><i class="fas fa-file-pdf"></i> Silabus</h5>
-        @if($lowongan->sylabus_path)
-          @php
-            // Determine if we have a full URL or a storage path
-            $sylabusUrl = Str::startsWith($lowongan->sylabus_path, ['http://','https://'])
-              ? $lowongan->sylabus_path
-              : asset('storage/' . $lowongan->sylabus_path);
-          @endphp
+          <h5 class="mt-4"><i class="fas fa-file-pdf"></i> Silabus</h5>
+          @if($lowongan->sylabus_path)
+        @php
+        // Determine if we have a full URL or a storage path
+        $sylabusUrl = Str::startsWith($lowongan->sylabus_path, ['http://', 'https://'])
+        ? $lowongan->sylabus_path
+        : asset('storage/' . $lowongan->sylabus_path);
+      @endphp
 
-          <a href="{{ $sylabusUrl }}"
-            target="_blank"
-            class="btn btn-outline-primary mb-4">
-            <i class="fas fa-download"></i> Unduh Silabus
-          </a>
-        @else
-          <p class="text-muted">Tidak ada silabus tersedia.</p>
-        @endif
+        <a href="{{ $sylabusUrl }}" target="_blank" class="btn btn-outline-primary mb-4">
+        <i class="fas fa-download"></i> Unduh Silabus
+        </a>
+      @else
+        <p class="text-muted">Tidak ada silabus tersedia.</p>
+      @endif
 
           <h5 class="mt-4"><i class="fas fa-calendar-alt"></i> Tanggal Penting</h5>
           <ul>

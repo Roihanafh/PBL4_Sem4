@@ -57,7 +57,7 @@ class LowonganModel extends Model
 
     public function mahasiswa()
     {
-        return $this->belongsToMany(MahasiswaModel::class, 'm_lamaran', 'lowongan_id', 'mhs_nim');
+        return $this->belongsToMany(MahasiswaModel::class, 't_lamaran_magang', 'lowongan_id', 'mhs_nim');
     }
 
     public function feedback()

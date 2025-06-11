@@ -351,19 +351,19 @@ class PengajuanMagangMhsController extends Controller
 
     public function create_ajax($id)
     {
-        // Fetch single LowonganModel instance by ID
+        // Ambil data mahasiswa yang login
+        $mahasiswa = auth()->user()->mahasiswa;
+        
+      
+        // Lanjutkan proses jika CV sudah ada
         $lowongan = LowonganModel::find($id);
-        // Fetch dosen data (if needed)
         $dosen = DosenModel::all();
-
-        return view('rekomendasi.create_ajax')
-            ->with([
-                'lowongan' => $lowongan,
-                'dosen' => $dosen,
-                'breadcrumb' => (object)[
-                    'title' => 'Lamaran Magang'
-                ]
-            ]);
+    
+        return view('rekomendasi.create_ajax', [
+            'lowongan' => $lowongan,
+            'dosen' => $dosen,
+            'breadcrumb' => (object)['title' => 'Lamaran Magang']
+        ]);
     }
     public function confirm_ajax(String $lamaran_id)
     {

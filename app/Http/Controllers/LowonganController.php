@@ -409,7 +409,7 @@ public function rekomendasi(Request $request, SmartRecommendationService $smart)
 public function show(Request $request, SmartRecommendationService $smart, $lowongan_id)
 {
     // 1) Ambil data lowongan utama (detail) yang akan ditampilkan
-    $lowongan = LowonganModel::with(['perusahaan', 'periode', 'lamaran'])
+    $lowongan = LowonganModel::with(['perusahaan', 'periode', 'lamaran', 'mahasiswa'])
         ->findOrFail($lowongan_id);
 
     // 2) Ambil statistik
