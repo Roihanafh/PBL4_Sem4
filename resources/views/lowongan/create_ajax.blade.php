@@ -44,11 +44,16 @@
     </div>
 
     {{-- Lokasi --}}
-    <div class="form-group">
-      <label for="lokasi">Lokasi</label>
-      <input type="text" class="form-control" id="lokasi" name="lokasi" required>
-      <span class="text-danger" id="error-lokasi"></span>
-    </div>
+  <div class="form-group">
+    <label for="lokasi">Lokasi (Provinsi)</label>
+    <select class="form-control" id="lokasi" name="lokasi" required>
+      <option value="">-- Pilih Provinsi --</option>
+      @foreach($provinsi as $prov)
+        <option value="{{ $prov->id }}">{{ $prov->alt_name }}</option>
+      @endforeach
+    </select>
+    <span class="text-danger" id="error-lokasi"></span>
+  </div>
 
     <div class="form-row">
       {{-- Perusahaan --}}
@@ -98,7 +103,7 @@
 
   {{-- Modal footer --}}
   <div class="modal-footer">
-    <button type="button" class="btn btn-warning" data-dismiss="modal">Batal</button>
+    <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Batal</button>
     <button type="submit" class="btn btn-primary">Simpan</button>
   </div>
 </form>

@@ -10,6 +10,7 @@ use App\Models\PerusahaanModel;
 use App\Models\PeriodeMagangModel;
 use Illuminate\Support\Facades\Auth;
 use App\Models\MahasiswaModel;
+use App\Models\ProvinsiModel;
 use Carbon\Carbon;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
@@ -62,6 +63,7 @@ class LowonganController extends Controller
                 ->addIndexColumn()
                 ->addColumn('perusahaan', fn($row) => $row->perusahaan->nama ?? '-')
                 ->addColumn('periode', fn($row) => $row->periode->periode ?? '-')
+                ->addColumn('lokasi', fn($row) => $row->provinsi->alt_name ?? '-')
                 ->addColumn('aksi', function ($row) {
                     $url = url("/lowongan/{$row->lowongan_id}");
                     return "
@@ -80,7 +82,8 @@ class LowonganController extends Controller
     {
         $perusahaan = PerusahaanModel::all();
         $periode    = PeriodeMagangModel::all();
-        return view('lowongan.create_ajax', compact('perusahaan', 'periode'));
+        $provinsi   = ProvinsiModel::all();
+        return view('lowongan.create_ajax', compact('perusahaan', 'periode', 'provinsi'));
     }
 
 public function store_ajax(Request $request)
@@ -91,7 +94,7 @@ public function store_ajax(Request $request)
         'deskripsi'            => 'required|string',
         'tanggal_mulai_magang' => 'required|date',
         'deadline_lowongan'    => 'required|date|after_or_equal:tanggal_mulai_magang',
-        'lokasi'               => 'required|string',
+        'lokasi'               => 'required|integer|exists:m_provinsi,id',
         'perusahaan_id'        => 'required|exists:m_perusahaan_mitra,perusahaan_id',
         'periode_id'           => 'required|exists:m_periode_magang,periode_id',
         'sylabus_file'         => 'nullable|file|mimes:pdf|max:2048',
@@ -159,7 +162,7 @@ public function store_ajax(Request $request)
 
     public function show_ajax($lowongan_id)
     {
-        $lowongan = LowonganModel::with(['perusahaan', 'periode'])
+        $lowongan = LowonganModel::with(['perusahaan', 'periode', 'provinsi'])
             ->find($lowongan_id);
         if (!$lowongan) abort(404, 'Not Found');
 
@@ -174,7 +177,8 @@ public function store_ajax(Request $request)
         $lowongan = LowonganModel::find($lowongan_id);
         $perusahaan = PerusahaanModel::all();
         $periode    = PeriodeMagangModel::all();
-        return view('lowongan.edit_ajax', compact('lowongan', 'perusahaan', 'periode'));
+        $provinsi   = ProvinsiModel::all();
+        return view('lowongan.edit_ajax', compact('lowongan', 'perusahaan', 'periode', 'provinsi'));
     }
 
 public function update_ajax(Request $request, $lowongan_id)
@@ -193,7 +197,7 @@ public function update_ajax(Request $request, $lowongan_id)
         'deskripsi'            => 'required|string',
         'tanggal_mulai_magang' => 'required|date',
         'deadline_lowongan'    => 'required|date|after_or_equal:tanggal_mulai_magang',
-        'lokasi'               => 'required|string',
+        'lokasi'               => 'required|integer|exists:m_provinsi,id',
         'perusahaan_id'        => 'required|exists:m_perusahaan_mitra,perusahaan_id',
         'periode_id'           => 'required|exists:m_periode_magang,periode_id',
         'sylabus_file'         => 'nullable|file|mimes:pdf|max:2048',
@@ -287,7 +291,9 @@ public function rekomendasi(Request $request, SmartRecommendationService $smart)
         });
     }
     if ($request->filled('lokasi')) {
-        $q->where('lokasi', 'like', '%' . $request->lokasi . '%');
+        $q->whereHas('provinsi', function($q2) use($request){
+            $q2->where('nama','like','%'.$request->lokasi.'%');
+        });
     }
     if ($request->filled('tipe_bekerja')) {
         $q->where('tipe_bekerja', $request->tipe_bekerja);
@@ -392,6 +398,7 @@ public function rekomendasi(Request $request, SmartRecommendationService $smart)
 
         return response()->json(['html' => $html]);
     }
+    $provinsi = ProvinsiModel::all(); 
 
     // 9. Bukan AJAX → kembalikan view penuh:
     return view('rekomendasi.index', [
@@ -401,6 +408,7 @@ public function rekomendasi(Request $request, SmartRecommendationService $smart)
         ],
         'page'       => (object)['title' => 'Rekomendasi Magang'],
         'activeMenu' => 'rekomendasi',
+        'provinsi'  => $provinsi,
         'lowongan'   => $ranked,
         'mhs'        => $mhs,
     ]);
@@ -409,7 +417,7 @@ public function rekomendasi(Request $request, SmartRecommendationService $smart)
 public function show(Request $request, SmartRecommendationService $smart, $lowongan_id)
 {
     // 1) Ambil data lowongan utama (detail) yang akan ditampilkan
-    $lowongan = LowonganModel::with(['perusahaan', 'periode', 'lamaran', 'mahasiswa'])
+    $lowongan = LowonganModel::with(['perusahaan', 'periode', 'lamaran', 'mahasiswa', 'provinsi'])
         ->findOrFail($lowongan_id);
 
     // 2) Ambil statistik
@@ -432,7 +440,9 @@ public function show(Request $request, SmartRecommendationService $smart, $lowon
         $q->where('deskripsi', 'like', '%' . $request->skill . '%');
     }
     if ($request->filled('lokasi')) {
-        $q->where('lokasi', 'like', '%' . $request->lokasi . '%');
+        $q->whereHas('provinsi', function($q2) use($request){
+            $q2->where('nama','like','%'.$request->lokasi.'%');
+        });
     }
     if ($request->filled('tipe_bekerja')) {
         $q->where('tipe_bekerja', $request->tipe_bekerja);

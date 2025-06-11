@@ -118,13 +118,15 @@
 
       {{-- 3) Lokasi --}}
       <div class="col-md-2">
-        <input
-          type="text"
-          name="lokasi"
-          class="form-control"
-          placeholder="Lokasi"
-          value="{{ request('lokasi') }}"
-        >
+        <select name="lokasi" id="lokasi" class="form-select">
+          <option value="">— Semua Lokasi —</option>
+          @foreach($provinsi as $prov)
+            <option value="{{ $prov->alt_name }}"
+              {{ request('lokasi') == $prov->alt_name ? 'selected' : '' }}>
+              {{ $prov->alt_name }}
+            </option>
+          @endforeach
+        </select>
       </div>
 
       {{-- 4) Tipe Bekerja --}}
@@ -218,6 +220,17 @@
         }
       });
     });
+  });
+</script>
+<script>
+  // submit filter form → reload page dengan query param
+  $('#filter-form').on('submit', function(e){
+    e.preventDefault();
+    const loc = $('#lokasi').val();
+    const url = new URL(window.location.href);
+    if (loc) url.searchParams.set('lokasi', loc);
+    else url.searchParams.delete('lokasi');
+    window.location.href = url.toString();
   });
 </script>
 @endpush
