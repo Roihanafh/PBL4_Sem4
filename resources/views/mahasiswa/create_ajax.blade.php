@@ -77,8 +77,6 @@
         <div class="text-danger" id="error-ipk"></div>
     </div>
 
-   
-
     {{-- STATUS MAGANG DISET AUTOMATIS --}}
     <input type="hidden" name="status_magang" value="belum magang">
     </div>
@@ -101,10 +99,6 @@ $(document).ready(function() {
             jenis_kelamin: { required: true, pattern: /^(L|P)$/ },
             ipk: { number: true, min: 0, max: 4 },
             prodi_id: { required: true }
-            bidangKeahlian: { maxlength: 100 },
-            provinsi_id: { required: true },
-            kabupaten_id: { required: true },
-            file_cv: { extension: "pdf|doc|docx" }
         },
         submitHandler: function(form) {
             $.ajax({
@@ -139,27 +133,12 @@ $(document).ready(function() {
                         });
                     }
                 },
-                error: function(xhr) {
-                    if (xhr.status === 422) {
-                        $('.text-danger').text('');
-                        let errors = xhr.responseJSON.errors;
-                        $.each(errors, function(key, value) {
-                            $('#error-' + key).text(value[0]);
-                        });
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Validasi Gagal',
-                            text: xhr.responseJSON.message || 'Mohon periksa kembali input Anda.'
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Terjadi kesalahan pada server.'
-                        });
-                    }
-                }
-            });
+                error: function() {Add commentMore actions
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Terjadi kesalahan pada server.'
+                    });
             return false; // prevent default submit
         },
         errorElement: 'span',

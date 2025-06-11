@@ -145,18 +145,6 @@ $(document).ready(function () {
                 number: true,
                 min: 0,
                 max: 4
-            },
-            bidang_keahlian: {
-                maxlength: 100
-            },
-            file_cv: {
-                extension: "pdf|doc|docx"
-            },
-            provinsi_id: {
-                digits: true
-            },
-            kabupaten_id: {
-                digits: true
             }
         },
         submitHandler: function(form) {
