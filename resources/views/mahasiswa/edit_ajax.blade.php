@@ -87,33 +87,7 @@
                 <small id="error-ipk" class="error-text form-text text-danger"></small>
             </div>
 
-            <div class="form-group">
-                <label>Bidang Keahlian</label>
-                <input type="text" name="bidang_keahlian_id" id="bidang_keahlian_id" class="form-control" 
-                       value="{{ $mahasiswa->bidang_keahlian_id }}" placeholder="Masukkan bidang keahlian (jika ada)">
-                <small id="error-bidang_keahlian_id" class="error-text form-text text-danger"></small>
-            </div>
-
-            <div class="form-group">
-                <label>File CV</label>
-                <input type="file" name="file_cv" id="file_cv" class="form-control-file">
-                <small class="form-text text-muted">Abaikan jika tidak ingin mengubah file CV.</small>
-                @if ($mahasiswa->file_cv)
-                    <small class="form-text text-success">File saat ini: {{ basename($mahasiswa->file_cv) }}</small>
-                @endif
-                <small id="error-file_cv" class="error-text form-text text-danger"></small>
-            </div>
-
-            <div class="form-group">
-                <label>Provinsi</label>
-                <input type="text" class="form-control" 
-                       value="{{ $mahasiswa->provinsi->nama ?? '-' }}" readonly>
-            </div>
-            <div class="form-group">
-                <label>Kabupaten/Kota</label>
-                <input type="text" class="form-control" 
-                       value="{{ $mahasiswa->kabupaten->nama ?? '-' }}" readonly>
-            </div>
+            
 
             <div class="form-group">
                 <label>Username</label>
@@ -171,18 +145,6 @@ $(document).ready(function () {
                 number: true,
                 min: 0,
                 max: 4
-            },
-            bidang_keahlian: {
-                maxlength: 100
-            },
-            file_cv: {
-                extension: "pdf|doc|docx"
-            },
-            provinsi_id: {
-                digits: true
-            },
-            kabupaten_id: {
-                digits: true
             }
         },
         submitHandler: function(form) {

@@ -112,8 +112,9 @@
     if (empty(Auth::user()->mahasiswa->kabupaten)) {
         $missingFields[] = 'Kabupaten';
     }
-
     if (empty(Auth::user()->mahasiswa->t_minat_mahasiswa->bidang_keahlian_id)) {
+        $missingFields[] = 'Bidang Keahlian';
+    }
 
 
 

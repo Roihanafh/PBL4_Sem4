@@ -7,7 +7,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
   <link rel="icon" href="{{ asset('img/MagangIn.png') }}" type="image/x-icon">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
-
+   <link
+      rel="icon"
+      href="img/M_Logo.png"
+      type="image/x-icon"
+    />
   <style>
     .toast-error {
     background-color: #ff4444 !important;

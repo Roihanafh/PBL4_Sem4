@@ -65,8 +65,8 @@ $(document).ready(function() {
             username: { required: true, minlength: 3, maxlength: 20 },
             password: { required: true, minlength: 5, maxlength: 20 },
             nama: { required: true, minlength: 3, maxlength: 100 },
-            email: { required: true, email: true },
-            telp: { required: true, maxlength: 20 },
+            email: { email: true },
+            telp: { maxlength: 20 },
             id_minat: { required: true }
         },
         submitHandler: function(form) {
@@ -101,25 +101,12 @@ $(document).ready(function() {
                         });
                     }
                 },
-                error: function(xhr) {
-                    if (xhr.status === 422) {
-                        $('.text-danger').text('');
-                        let errors = xhr.responseJSON.errors;
-                        $.each(errors, function(key, value) {
-                            $('#error-' + key).text(value[0]);
-                        });
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Validasi Gagal',
-                            text: xhr.responseJSON.message || 'Mohon periksa kembali input Anda.'
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Terjadi kesalahan pada server.'
-                        });
-                    }
+                error: function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Terjadi kesalahan pada server.'
+                    });
                 }
             });
             return false;

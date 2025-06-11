@@ -16,14 +16,15 @@
                     <p class="mb-0 text-secondary position-relative">
                         Dashboard Monitoring & Statistik Magang
                     </p>
+                    <p class="text-muted position-relative">Last Updated: {{ $lastUpdated }}</p>
                 </div>
             </div>
         </div>
         <div class="card-body">
             <!-- Statistic Cards -->
-            <div class="row" style="display: flex; justify-content: space-between; align-items: stretch;">
+            <div class="row stats-row" style="display: flex; justify-content: space-between; align-items: stretch;" data-refresh-url="{{ route('admin.dashboard.refresh') }}">
                 <div class="col-md-2" style="flex: 1; margin: 0 5px;">
-                    <div class="card card-stats card-primary" style="height: 130px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                    <div class="card card-stats card-primary" style="height: 140px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-12">
@@ -34,7 +35,7 @@
                                 <div class="col-12">
                                     <div class="numbers">
                                         <p class="card-category text-white">Total Mahasiswa</p>
-                                        <h4 class="card-title text-white">{{ $totalMahasiswa }}</h4>
+                                        <h4 class="card-title text-white" id="totalMahasiswa">{{ $totalMahasiswa }}</h4>
                                     </div>
                                 </div>
                             </div>
@@ -42,7 +43,7 @@
                     </div>
                 </div>
                 <div class="col-md-2" style="flex: 1; margin: 0 5px;">
-                    <div class="card card-stats card-success" style="height: 130px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                    <div class="card card-stats card-success" style="height: 140px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-12">
@@ -53,7 +54,7 @@
                                 <div class="col-12">
                                     <div class="numbers">
                                         <p class="card-category text-white">Mahasiswa Magang</p>
-                                        <h4 class="card-title text-white">{{ $mahasiswaMagang }}</h4>
+                                        <h4 class="card-title text-white" id="mahasiswaMagang">{{ $mahasiswaMagang }}</h4>
                                     </div>
                                 </div>
                             </div>
@@ -61,7 +62,7 @@
                     </div>
                 </div>
                 <div class="col-md-2" style="flex: 1; margin: 0 5px;">
-                    <div class="card card-stats card-info" style="height: 130px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                    <div class="card card-stats card-info" style="height: 140px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-12">
@@ -72,7 +73,7 @@
                                 <div class="col-12">
                                     <div class="numbers">
                                         <p class="card-category text-white">Mahasiswa Selesai Magang</p>
-                                        <h4 class="card-title text-white">{{ $mahasiswaSelesaiMagang }}</h4>
+                                        <h4 class="card-title text-white" id="mahasiswaSelesaiMagang">{{ $mahasiswaSelesaiMagang }}</h4>
                                     </div>
                                 </div>
                             </div>
@@ -80,7 +81,7 @@
                     </div>
                 </div>
                 <div class="col-md-2" style="flex: 1; margin: 0 5px;">
-                    <div class="card card-stats card-info" style="height: 130px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                    <div class="card card-stats card-info" style="height: 140px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-12">
@@ -91,7 +92,7 @@
                                 <div class="col-12">
                                     <div class="numbers">
                                         <p class="card-category text-white">Dosen Pembimbing</p>
-                                        <h4 class="card-title text-white">{{ $totalDosenPembimbing }}</h4>
+                                        <h4 class="card-title text-white" id="totalDosenPembimbing">{{ $totalDosenPembimbing }}</h4>
                                     </div>
                                 </div>
                             </div>
@@ -99,7 +100,7 @@
                     </div>
                 </div>
                 <div class="col-md-2" style="flex: 1; margin: 0 5px;">
-                    <div class="card card-stats card-warning" style="height: 130px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                    <div class="card card-stats card-warning" style="height: 140px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-12">
@@ -110,7 +111,7 @@
                                 <div class="col-12">
                                     <div class="numbers">
                                         <p class="card-category text-white">Rasio Dosen:Mhs</p>
-                                        <h4 class="card-title text-white">1:{{ $rasioDosenMhs }}</h4>
+                                        <h4 class="card-title text-white" id="rasioDosenMhs">1:{{ $rasioDosenMhs }}</h4>
                                     </div>
                                 </div>
                             </div>
@@ -157,11 +158,11 @@
                         <div class="card-body">
                             <div class="d-flex align-items-center">
                                 <div class="mr-4 text-center">
-                                    <h1 class="display-4">{{ number_format($ratingRekomendasi, 1) }}/5</h1>
+                                    <h1 class="display-4" id="ratingRekomendasi">{{ number_format($ratingRekomendasi, 1) }}</h1>
                                     <p class="text-muted">Rating Rata-rata</p>
                                 </div>
                                 <div>
-                                    <p>Total Feedback: {{ $totalFeedback }}</p>
+                                    <p>Total Feedback: <span id="totalFeedback">{{ $totalFeedback }}</span></p>
                                     <div class="progress" style="height: 20px;">
                                         <div class="progress-bar bg-success" role="progressbar"
                                             style="width: {{ ($ratingRekomendasi / 5) * 100 }}%"
@@ -300,19 +301,42 @@
                     }
                 }
             });
+
+            // AJAX polling to refresh stats every 30 seconds
+            function refreshStats() {
+                $.ajax({
+                    url: $('.stats-row').data('refresh-url'),
+                    method: 'GET',
+                    success: function(response) {
+                        $('#totalMahasiswa').text(response.totalMahasiswa);
+                        $('#mahasiswaMagang').text(response.mahasiswaMagang);
+                        $('#mahasiswaSelesaiMagang').text(response.mahasiswaSelesaiMagang);
+                        $('#totalDosenPembimbing').text(response.totalDosenPembimbing);
+                        $('#rasioDosenMhs').text('1:' + response.rasioDosenMhs);
+                        $('#ratingRekomendasi').text(response.ratingRekomendasi);
+                        $('#totalFeedback').text(response.totalFeedback);
+                        $('[name="lastUpdated"]').text(response.lastUpdated);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error refreshing stats:', error);
+                    }
+                });
+            }
+
+            setInterval(refreshStats, 30000); // Refresh every 30 seconds
         });
 
         $(function () {
-    // Setup CSRF token untuk semua AJAX
-        $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
+            // Setup CSRF token untuk semua AJAX
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
         });
-    });
 
-    function modalAction(url = ''){
-            $('#myModal .modal-content').load(url,function(){
+        function modalAction(url = ''){
+            $('#myModal .modal-content').load(url, function(){
                 $('#myModal').modal('show');
             });
         }
