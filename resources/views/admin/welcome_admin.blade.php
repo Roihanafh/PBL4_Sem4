@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="card">
-          <!-- ========= 1. Hero Banner ========== -->
+        <!-- ========= 1. Hero Banner ========== -->
         <div class="row mb-5">
             <div class="col-12">
                 <div class="bg-white rounded-4 shadow-sm p-4 position-relative overflow-hidden">
@@ -21,17 +21,17 @@
         </div>
         <div class="card-body">
             <!-- Statistic Cards -->
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="card card-stats card-primary">
+            <div class="row" style="display: flex; justify-content: space-between; align-items: stretch;">
+                <div class="col-md-2" style="flex: 1; margin: 0 5px;">
+                    <div class="card card-stats card-primary" style="height: 130px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-5">
+                                <div class="col-12">
                                     <div class="icon-big text-center">
                                         <i class="fas fa-users"></i>
                                     </div>
                                 </div>
-                                <div class="col-7">
+                                <div class="col-12">
                                     <div class="numbers">
                                         <p class="card-category text-white">Total Mahasiswa</p>
                                         <h4 class="card-title text-white">{{ $totalMahasiswa }}</h4>
@@ -41,16 +41,16 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card card-stats card-success">
+                <div class="col-md-2" style="flex: 1; margin: 0 5px;">
+                    <div class="card card-stats card-success" style="height: 130px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-5">
+                                <div class="col-12">
                                     <div class="icon-big text-center">
                                         <i class="fas fa-user-graduate"></i>
                                     </div>
                                 </div>
-                                <div class="col-7">
+                                <div class="col-12">
                                     <div class="numbers">
                                         <p class="card-category text-white">Mahasiswa Magang</p>
                                         <h4 class="card-title text-white">{{ $mahasiswaMagang }}</h4>
@@ -60,16 +60,35 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card card-stats card-info">
+                <div class="col-md-2" style="flex: 1; margin: 0 5px;">
+                    <div class="card card-stats card-info" style="height: 130px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-5">
+                                <div class="col-12">
+                                    <div class="icon-big text-center">
+                                        <i class="fas fa-user-check"></i>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="numbers">
+                                        <p class="card-category text-white">Mahasiswa Selesai Magang</p>
+                                        <h4 class="card-title text-white">{{ $mahasiswaSelesaiMagang }}</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2" style="flex: 1; margin: 0 5px;">
+                    <div class="card card-stats card-info" style="height: 130px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
                                     <div class="icon-big text-center">
                                         <i class="fas fa-chalkboard-teacher"></i>
                                     </div>
                                 </div>
-                                <div class="col-7">
+                                <div class="col-12">
                                     <div class="numbers">
                                         <p class="card-category text-white">Dosen Pembimbing</p>
                                         <h4 class="card-title text-white">{{ $totalDosenPembimbing }}</h4>
@@ -79,16 +98,16 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card card-stats card-warning">
+                <div class="col-md-2" style="flex: 1; margin: 0 5px;">
+                    <div class="card card-stats card-warning" style="height: 130px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-5">
+                                <div class="col-12">
                                     <div class="icon-big text-center">
                                         <i class="fas fa-percentage"></i>
                                     </div>
                                 </div>
-                                <div class="col-7">
+                                <div class="col-12">
                                     <div class="numbers">
                                         <p class="card-category text-white">Rasio Dosen:Mhs</p>
                                         <h4 class="card-title text-white">1:{{ $rasioDosenMhs }}</h4>
