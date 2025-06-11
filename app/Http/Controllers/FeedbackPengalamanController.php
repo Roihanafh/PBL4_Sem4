@@ -22,10 +22,11 @@ class FeedbackPengalamanController extends Controller
         ];
 
         $activeMenu = 'feedback_pengalaman';
-
+        $mhs_nim = auth()->user()->mahasiswa->mhs_nim;
         // Ambil satu lamaran_id milik mahasiswa
         $lamaranSelesai = LamaranMagangModel::with(['mahasiswa', 'lowongan.perusahaan'])
             ->where('status', 'selesai')
+            ->where('mhs_nim', $mhs_nim)
             ->get();
 
         return view('feedback_magang.index', compact('lamaranSelesai', 'breadcrumb', 'page', 'activeMenu'));
