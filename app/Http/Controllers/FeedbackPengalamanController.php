@@ -87,8 +87,10 @@ class FeedbackPengalamanController extends Controller
     }
     public function partialView()
     {
+        $mhs_nim = auth()->user()->mahasiswa->mhs_nim;
         $lamaranSelesai = LamaranMagangModel::with(['mahasiswa', 'lowongan.perusahaan'])
                 ->where('status', 'selesai')
+                ->where('mhs_nim', $mhs_nim)
                 ->get();
 
         return view('feedback_magang.lamaran_selesai', compact('lamaranSelesai'));
