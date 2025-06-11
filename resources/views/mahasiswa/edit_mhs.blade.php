@@ -116,6 +116,60 @@
             </div>
 
             <div class="form-group">
+                <label>Bidang Keahlian</label>
+                <select name="bidang_keahlian_id[]" class="form-control" multiple required>
+                    @foreach($bidangKeahlian as $keahlian)
+                        <option value="{{ $keahlian->id }}"
+                            {{ in_array($keahlian->id, old('bidang_keahlian_id', $mahasiswa->bidangKeahlian->pluck('id')->toArray() ?? [])) ? 'selected' : '' }}>
+                            {{ $keahlian->nama }}
+                        </option>
+                    @endforeach
+                </select>                
+            </div>
+            
+            <div class="form-group">
+                <label>File CV</label>
+                <input type="file" name="file_cv" id="file_cv" class="form-control-file">
+                <small class="form-text text-muted">Abaikan jika tidak ingin mengubah file CV.</small>
+                <small id="error-file_cv" class="error-text form-text text-danger"></small>
+                @if ($mahasiswa->file_cv)
+                    <a href="{{ asset('storage/' . $mahasiswa->file_cv) }}" target="_blank" class="btn btn-info btn-sm mt-2">
+                        Lihat CV
+                    </a>
+                @else
+                    <span class="text-muted mt-2">Tidak ada CV</span>
+                @endif
+            </div>
+
+            <div class="form-group">
+                <label>Provinsi</label>
+                <select name="provinsi_id" id="provinsi_id" class="form-control">
+                    <option value="">-- Pilih Provinsi --</option>
+                    @foreach ($provinsi as $prov)
+                        <option value="{{ $prov->id }}" 
+                            {{ $mahasiswa->provinsi_id == $prov->id ? 'selected' : '' }}>
+                            {{ $prov->nama }}
+                        </option>
+                    @endforeach
+                </select>
+                <small id="error-provinsi_id" class="error-text form-text text-danger"></small>
+            </div>
+
+            <div class="form-group">
+                <label>Kabupaten/Kota</label>
+                <select name="kabupaten_id" id="kabupaten_id" class="form-control">
+                    <option value="">-- Pilih Kabupaten/Kota --</option>
+                    @foreach ($kabupaten as $kab)
+                        <option value="{{ $kab->id }}" 
+                            {{ $mahasiswa->kabupaten_id == $kab->id ? 'selected' : '' }}>
+                            {{ $kab->nama }}
+                        </option>
+                    @endforeach
+                </select>
+                <small id="error-kabupaten_id" class="error-text form-text text-danger"></small>
+            </div>
+
+            <div class="form-group">
                 <label>Username</label>
                 <input value="{{ $mahasiswa->user->username }}" type="text" name="username" id="username" class="form-control" required>
                 <small id="error-username" class="error-text form-text text-danger"></small>
@@ -210,6 +264,13 @@ $(document).ready(function () {
             alamat: { maxlength: 255 },
             telp: { maxlength: 20 },
             prodi_id: { digits: true },
+            angkatan: { required: true, digits: true, minlength: 4, maxlength: 4 },
+            jenis_kelamin: { required: true, pattern: /^(L|P)$/ },
+            ipk: { number: true, min: 0, max: 4 },
+            bidang_keahlian: { maxlength: 100 },
+            file_cv: { extension: "pdf|doc|docx" },
+            provinsi_id: { digits: true },
+            kabupaten_id: { digits: true },
             username: { required: true, maxlength: 20 },
             password: { minlength: 5, maxlength: 20 },
             profile_picture: { extension: "jpg|jpeg|png|webp", filesize: 2048000 } // max 2 MB

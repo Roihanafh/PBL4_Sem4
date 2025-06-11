@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BidangKeahlianModel;
 use App\Models\MahasiswaModel;
 use App\Models\UserModel;
 use App\Models\ProdiModel;
@@ -13,6 +14,9 @@ use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use Illuminate\Support\Facades\Storage;
+use App\Models\ProvinsiModel;
+use App\Models\KabupatenModel;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -89,47 +93,62 @@ class MahasiswaController extends Controller
 
     public function store_ajax(Request $request)
     {
-        $validatedUser = $request->validate([
+       $validated = $request->validate([
             'username' => 'required|unique:m_users,username',
             'password' => 'required',
-        ]);
-
-        $user = UserModel::create([
-            'username' => $validatedUser['username'],
-            'password' => bcrypt($validatedUser['password']),
-            'level_id' => 3,
-        ]);
-
-        $validatedMhs = $request->validate([
             'mhs_nim' => 'required|unique:m_mahasiswa,mhs_nim',
             'full_name' => 'required',
             'alamat' => 'nullable',
             'telp' => 'nullable',
             'prodi_id' => 'required',
             'angkatan' => 'nullable|integer',
-            'jenis_kelamin' => 'nullable|in:L,P', // L = Laki-laki, P = Perempuan
+            'jenis_kelamin' => 'nullable|in:L,P',
             'ipk' => 'nullable|numeric|min:0|max:4.0',
             'status_magang' => 'required',
+            'file_cv' => 'nullable|file|mimes:pdf,doc,docx|max:2048', // Validasi file CV
+            'bidang_keahlian_id' => 'required|exists:m_bidang_keahlian,id',
+            'provinsi_id' => 'required|exists:m_provinsi,id',
+            'kabupaten_id' => 'required|exists:m_kabupaten,id',
+        ]);
+
+        // Setelah semua validasi berhasil, baru simpan ke database
+
+        $user = UserModel::create([
+            'username' => $validated['username'],
+            'password' => bcrypt($validated['password']),
+            'level_id' => 3,
         ]);
 
         MahasiswaModel::create([
             'user_id' => $user->user_id,
-            'mhs_nim' => $validatedMhs['mhs_nim'],
-            'full_name' => $validatedMhs['full_name'],
-            'alamat' => $validatedMhs['alamat'] ?? null,
-            'telp' => $validatedMhs['telp'] ?? null,
-            'prodi_id' => $validatedMhs['prodi_id'],
-            'angkatan' => $validatedMhs['angkatan'] ?? null,
-            'jenis_kelamin' => $validatedMhs['jenis_kelamin'] ?? null,
-            'ipk' => $validatedMhs['ipk'] ?? null,
-            'status_magang' => $validatedMhs['status_magang'],
-        ]);
+            'mhs_nim' => $validated['mhs_nim'],
+            'full_name' => $validated['full_name'],
+            'alamat' => $validated['alamat'] ?? null,
+            'telp' => $validated['telp'] ?? null,
+            'prodi_id' => $validated['prodi_id'],
+            'angkatan' => $validated['angkatan'] ?? null,
+            'jenis_kelamin' => $validated['jenis_kelamin'] ?? null,
+            'ipk' => $validated['ipk'] ?? null,
+            'status_magang' => $validated['status_magang'],
+            'bidang_keahlian_id' => $validated['bidang_keahlian_id'],
+            'provinsi_id' => $validated['id'],
+            'kabupaten_id' => $validated['id'],
+            'file_cv' => $request->hasFile('file_cv') ? $request->file('file_cv')->store('public/cv') : null,
+            'created_at' => now()
+        ])->save();
+        // Jika ada file CV, simpan di storage
+        if ($request->hasFile('file_cv')) {
+            $path = $request->file('file_cv')->store('public/cv');
+            // Simpan path file CV ke database
+            MahasiswaModel::where('mhs_nim', $validated['mhs_nim'])->update(['file_cv' => str_replace('public/', '', $path)]);
+        }
 
-       return response()->json([
-        'status' => true,
-        'message' => 'Data mahasiswa berhasil disimpan'
+        return response()->json([
+            'status' => true,
+            'message' => 'Registrasi Anda Berhasil'
         ]);
     }
+
 
     public function confirm_ajax($nim)
     {
@@ -205,7 +224,54 @@ class MahasiswaController extends Controller
             'full_name' => 'required|max:100',
             'alamat'    => 'nullable|max:255',    
             'telp'      => 'nullable|max:20',
+            'angkatan'  => 'nullable|integer',
+            'jenis_kelamin' => 'nullable|in:L,P', // L = Laki-laki, P = Perempuan
+            'ipk'       => 'nullable|numeric|min:0|max:4.0',
+            'file_cv' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+            'bidang_keahlian_id' => 'required|array',
+            'bidang_keahlian_id' => 'required|exists:m_bidang_keahlian,id',
+            'provinsi_id' => 'required|exists:m_provinsi,id',
+            'kabupaten_id' => 'required|exists:m_kabupaten,id',
         ]);
+
+        $mahasiswa  = MahasiswaModel::with('user')->find($mhs_nim);
+        
+        $mahasiswaData = [
+            'full_name' => $request->full_name,
+            'alamat' => $request->alamat,
+            'telp' => $request->telp,
+            'angkatan' => $request->angkatan,
+            'jenis_kelamin' => $request->jenis_kelamin,
+            'ipk' => $request->ipk,
+        ];
+
+        // Upload file CV jika ada
+        if ($request->hasFile('file_cv')) {
+            // Hapus CV lama jika ada
+            if ($mahasiswa && $mahasiswa->file_cv && Storage::exists('public/' . $mahasiswa->file_cv)) {
+                Storage::delete('public/' . $mahasiswa->file_cv);
+            }
+
+            $path = $request->file('file_cv')->store('public/cv');
+            $mahasiswaData['file_cv'] = str_replace('public/', '', $path);
+        }
+
+        $mahasiswaUpdated = MahasiswaModel::where('mhs_nim', $mhs_nim)->update($mahasiswaData);
+
+        DB::table('t_minat_mahasiswa')
+            ->where('mhs_nim', $mahasiswaUpdated->mhs_nim)
+            ->delete();
+
+        if ($request->has('bidang_keahlian_id')) {
+            foreach ($request->bidang_keahlian_id as $id) {
+                DB::table('t_minat_mahasiswa')->insert([
+                    'mhs_nim' => $mahasiswaUpdated->mhs_nim,
+                    'bidang_keahlian_id' => $id,
+                ]);
+            }
+        }
+
+
 
         if ($validator->fails()) {
             return response()->json([
@@ -220,7 +286,13 @@ class MahasiswaController extends Controller
             $mahasiswa->full_name = $request->full_name;
             $mahasiswa->alamat = $request->alamat;
             $mahasiswa->telp = $request->telp;
+            $mahasiswa->ipk = $request->ipk;
+            $mahasiswa->angkatan = $request->angkatan;
+            $mahasiswa->jenis_kelamin = $request->jenis_kelamin;
+            $mahasiswa->file_cv = $request->hasFile('file_cv') ? $request->file('file_cv')->store('public/cv') : $mahasiswa->file_cv;
+            
             $mahasiswa->save();
+
 
             // Update user (username dan password)
             $user = $mahasiswa->user;
@@ -446,8 +518,13 @@ class MahasiswaController extends Controller
     public function edit_mhs($mhs_nim)
     {
         $mahasiswa = MahasiswaModel::with(['prodi', 'user'])->find($mhs_nim);
+        $bidangKeahlian = BidangKeahlianModel::all();
+        $provinsi = ProvinsiModel::all();
+        $kabupaten = $mahasiswa->kabupaten_id
+            ? KabupatenModel::where('provinsi_id', $mahasiswa->provinsi_id)->get()
+            : KabupatenModel::all();
 
-        return view('mahasiswa.edit_mhs', compact('mahasiswa'));
+        return view('mahasiswa.edit_mhs', compact('mahasiswa', 'bidangKeahlian', 'provinsi', 'kabupaten'));
     }
 
     public function update_mhs(Request $request, $mhs_nim)
@@ -462,12 +539,20 @@ class MahasiswaController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'username'  => 'required|max:20|unique:m_users,username,' . $mahasiswa->user->user_id . ',user_id',
-            'password'  => 'nullable|min:5|max:20',
+            'username' => 'required|max:20|unique:m_users,username,' . $mahasiswa->user->user_id . ',user_id',
+            'password' => 'nullable|min:5|max:20',
             'full_name' => 'required|max:100',
-            'alamat'    => 'nullable|max:255',
-            'telp'      => 'nullable|max:20',
+            'alamat' => 'nullable|max:255',
+            'telp' => 'nullable|max:20',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'angkatan' => 'nullable|integer',
+            'jenis_kelamin' => 'nullable|in:L,P',
+            'ipk' => 'nullable|numeric|min:0|max:4.0',
+            'file_cv' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+            'bidang_keahlian_id' => 'required|array',
+            'bidang_keahlian_id.*' => 'exists:m_bidang_keahlian,id',
+            'provinsi_id' => 'required|exists:m_provinsi,id',
+            'kabupaten_id' => 'required|exists:m_kabupaten,id',
         ]);
 
         if ($validator->fails()) {
@@ -479,21 +564,40 @@ class MahasiswaController extends Controller
         }
 
         try {
-            $mahasiswa->full_name = $request->full_name;
-            $mahasiswa->alamat = $request->alamat;
-            $mahasiswa->telp = $request->telp;
+            // Update file CV
+            if ($request->hasFile('file_cv')) {
+                if ($mahasiswa->file_cv && Storage::exists('public/' . $mahasiswa->file_cv)) {
+                    Storage::delete('public/' . $mahasiswa->file_cv);
+                }
+                $path = $request->file('file_cv')->store('public/cv');
+                $mahasiswa->file_cv = str_replace('public/', '', $path);
+            }
 
+            // Update foto profil
             if ($request->hasFile('profile_picture')) {
                 if ($mahasiswa->profile_picture && Storage::disk('public')->exists($mahasiswa->profile_picture)) {
                     Storage::disk('public')->delete($mahasiswa->profile_picture);
                 }
-
-                $path = $request->file('profile_picture')->store('profile_mahasiswa', 'public');
-                $mahasiswa->profile_picture = $path;
+                $mahasiswa->profile_picture = $request->file('profile_picture')->store('profile_mahasiswa', 'public');
             }
 
+            // Update data mahasiswa
+            $mahasiswa->fill([
+                'full_name' => $request->full_name,
+                'alamat' => $request->alamat,
+                'telp' => $request->telp,
+                'angkatan' => $request->angkatan,
+                'jenis_kelamin' => $request->jenis_kelamin,
+                'ipk' => $request->ipk,
+                'provinsi_id' => $request->provinsi_id,
+                'kabupaten_id' => $request->kabupaten_id,
+            ]);
             $mahasiswa->save();
 
+            // Update bidang keahlian (relasi many-to-many)
+            $mahasiswa->bidangKeahlian()->sync($request->bidang_keahlian_id);
+
+            // Update akun user
             $user = $mahasiswa->user;
             $user->username = $request->username;
             if (!empty($request->password)) {
@@ -513,6 +617,8 @@ class MahasiswaController extends Controller
             ]);
         }
     }
+
+
 
     public function hapus_foto_profile($mhs_nim)
     {
@@ -546,4 +652,3 @@ class MahasiswaController extends Controller
         }
     }
 }
-

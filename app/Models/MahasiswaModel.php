@@ -25,6 +25,9 @@ class MahasiswaModel extends Model
         'angkatan',
         'jenis_kelamin',
         'ipk',
+        'file_cv',
+        'provinsi',
+        'kabupaten',
         'status_magang',
         'profile_picture',
 
@@ -81,7 +84,7 @@ class MahasiswaModel extends Model
         return $this->belongsTo(DosenModel::class, 'dosen_id', 'dosen_id');
     }
 
-    public function minat()
+    public function bidangKeahlian()
     {
         return $this->belongsToMany(BidangKeahlianModel::class, 't_minat_mahasiswa', 'mhs_nim', 'bidang_keahlian_id','mhs_nim', 'id');
     }
@@ -108,21 +111,20 @@ public function prefrensiLokasi()
         })->toArray();
     }
 
-    public function getDokumenWajibAttribute()
+    public function desa()
     {
-        return JenisDokumenModel::where('default', 1)->get();
-
+        return $this->belongsTo(DesaModel::class, 'desa_id', 'desa_id');
     }
-
-    public function getDokumenTambahanAttribute()
+    public function kecamatan()
     {
-        return JenisDokumenModel::where('default', 0)->get();
+        return $this->belongsTo(KecamatanModel::class, 'kecamatan   _id', 'kecamatan_id');
     }
-
-    public function getDokumenTambahan()
+    public function kabupaten()
     {
-        return DokumenMahasiswaModel::where('mhs_nim', $this->mhs_nim)
-            ->whereIn('jenis_dokumen_id', $this->getDokumenTambahanAttribute()->pluck('id'))
-            ->get();
+        return $this->belongsTo(KabupatenModel::class, 'kabupaten_id', 'kabupaten_id');
+    }
+    public function provinsi()
+    {
+        return $this->belongsTo(ProvinsiModel::class, 'provinsi_id', 'provinsi_id');
     }
 }

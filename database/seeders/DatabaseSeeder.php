@@ -42,8 +42,6 @@ class DatabaseSeeder extends Seeder
 
             WilayahSeeder::class,
             // PrefrensiLokasiMahasiswaSeeder::class,
-            // KeahlianMahasiswaSeeder::class,
-            JenisDokumenSeeder::class,
         ]);
             
     }

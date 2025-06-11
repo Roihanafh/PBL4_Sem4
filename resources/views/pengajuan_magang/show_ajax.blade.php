@@ -136,6 +136,16 @@
                 </div>
             </div>
         @endif
+
+        {{-- CV Mahasiswa --}}
+        @if ($lamaran->mahasiswa->file_cv)
+            <h6 style="color: #1a2e4f; font-weight: 600;"><i class="fas fa-file-pdf me-2"></i>Curriculum Vitae</h6>
+            <div class="card mb-4">
+                <div class="card-body p-0">
+                    <iframe src="{{ asset('storage/' . $lamaran->mahasiswa->file_cv) }}" width="100%" height="500px" style="border: none;"></iframe>
+                </div>
+            </div>
+        @endif
     </div>
 
     @if ($lamaran->status == 'ditolak' || $lamaran->status == 'diterima' || $lamaran->status == 'selesai')

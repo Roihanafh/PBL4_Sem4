@@ -71,34 +71,30 @@ class DosenController extends Controller
 
     public function store_ajax(Request $request)
     {
-        // Validasi data untuk tabel users
-        $validatedUser = $request->validate([
+        // Lakukan semua validasi terlebih dahulu
+        $validated = $request->validate([
             'username' => 'required|unique:m_users,username',
             'password' => 'required',
-        ]);
-
-        // Simpan ke tabel m_users
-        $user = UserModel::create([
-            'username' => $validatedUser['username'],
-            'password' => bcrypt($validatedUser['password']),
-            'level_id' => 2, // misal: level 2 untuk dosen
-        ]);
-
-        // Validasi data untuk tabel m_dosen termasuk bidang penelitian
-        $validatedDosen = $request->validate([
             'nama' => 'required',
             'email' => 'required|email|unique:m_dosen,email',
             'telp' => 'nullable',
-            'id_minat' => 'required|exists:d_bidang_penelitian,id_minat', // tambahkan validasi bidang penelitian
+            'id_minat' => 'required|exists:d_bidang_penelitian,id_minat',
         ]);
 
-        // Simpan ke tabel m_dosen
+        // Setelah validasi sukses, simpan ke m_users
+        $user = UserModel::create([
+            'username' => $validated['username'],
+            'password' => bcrypt($validated['password']),
+            'level_id' => 2,
+        ]);
+
+        // Simpan ke m_dosen
         DosenModel::create([
             'user_id' => $user->user_id,
-            'nama' => $validatedDosen['nama'],
-            'email' => $validatedDosen['email'],
-            'telp' => $validatedDosen['telp'] ?? null,
-            'id_minat' => $validatedDosen['id_minat'], // simpan bidang penelitian
+            'nama' => $validated['nama'],
+            'email' => $validated['email'],
+            'telp' => $validated['telp'] ?? null,
+            'id_minat' => $validated['id_minat'],
         ]);
 
         return response()->json([
@@ -106,6 +102,7 @@ class DosenController extends Controller
             'message' => 'Data dosen berhasil disimpan'
         ]);
     }
+
 
 
     public function confirm_ajax($dosen_id)

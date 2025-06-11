@@ -10,6 +10,10 @@
                     <i class="fa fa-plus"></i> Tambah Aktivitas
                 </button>
 
+            @elseif(isset($lamaranSelesai))
+                <button class="btn btn-primary btn-round ms-auto" onclick="showSuccessMessageSelesai()" >
+                    <i class="fa fa-plus"></i> Tambah Aktivitas
+                </button>
             @else
                 <button class="btn btn-primary btn-round ms-auto" onclick="showErrorMessage()" >
                     <i class="fa fa-plus"></i> Tambah Aktivitas
@@ -111,5 +115,15 @@
             confirmButtonColor: '#3085d6'
         });
     }
+    function showSuccessMessageSelesai() {
+        Swal.fire({
+            icon: 'success',
+            title: 'Magang Selesai',
+            text: 'Selamat, magang Anda telah selesai. Anda tidak perlu mengisi aktivitas lagi.',
+            confirmButtonText: 'Tutup',
+            confirmButtonColor: '#3085d6'
+        });
+    }
+
 </script>
 @endpush

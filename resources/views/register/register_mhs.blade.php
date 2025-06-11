@@ -125,12 +125,25 @@ $(document).ready(function() {
                         });
                     }
                 },
-                error: function() {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Terjadi kesalahan pada server.'
-                    });
+                error: function(xhr) {
+                    if (xhr.status === 422) {
+                        $('.text-danger').text('');
+                        let errors = xhr.responseJSON.errors;
+                        $.each(errors, function(key, value) {
+                            $('#error-' + key).text(value[0]);
+                        });
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Validasi Gagal',
+                            text: xhr.responseJSON.message || 'Mohon periksa kembali input Anda.'
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Terjadi kesalahan pada server.'
+                        });
+                    }
                 }
             });
             return false;

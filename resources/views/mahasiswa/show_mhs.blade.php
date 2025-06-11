@@ -65,6 +65,30 @@
                 <td>{{ $mahasiswa->ipk ?? '-' }}</td>
             </tr>
             <tr>
+                <th class="text-right">Bidang Keahlian:</th>
+                <td>{{ $mahasiswa->bidang_keahlian_id ?? '-' }}</td>
+            </tr>
+            <tr>
+                <th class="text-right">File CV:</th>
+                <td>
+                    @if ($mahasiswa->file_cv)
+                        <a href="{{ asset('storage/' . $mahasiswa->file_cv) }}" target="_blank" class="btn btn-info btn-sm">
+                            Lihat CV
+                        </a>
+                    @else
+                        <span class="text-muted">Tidak ada CV</span>
+                    @endif
+                </td>
+            </tr>
+            <tr>
+                <th class="text-right">Provinsi:</th>
+                <td>{{ $mahasiswa->provinsi->nama ?? '-' }}</td>
+            </tr>
+            <tr>
+                <th class="text-right">Kabupaten:</th>
+                <td>{{ $mahasiswa->kabupaten->nama ?? '-' }}</td>
+            </tr>
+            <tr>
                 <th class="text-right">Status Magang:</th>
                 <td>{{ ucfirst($mahasiswa->status_magang) }}</td>
             </tr>

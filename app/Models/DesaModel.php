@@ -15,4 +15,9 @@ class DesaModel extends Model
     {
         return $this->belongsTo(KecamatanModel::class, 'kecamatan_id');
     }
+    
+    public function mahasiswa()
+    {
+        return $this->hasMany(MahasiswaModel::class, 'desa_id');
+    }
 }

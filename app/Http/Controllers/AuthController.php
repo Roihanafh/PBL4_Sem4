@@ -79,47 +79,53 @@ class AuthController extends Controller
 
     public function storeMahasiswa(Request $request)
     {
-        $validatedUser = $request->validate([
+        // Ubah koma ke titik agar bisa divalidasi sebagai angka desimal
+        //$request->merge([
+            //'//ipk' => str_replace(',', '.', $request->ipk)
+        //]);
+
+        // Gabungkan semua validasi dalam satu langkah
+        $validated = $request->validate([
             'username' => 'required|unique:m_users,username',
             'password' => 'required',
-        ]);
-
-        $user = UserModel::create([
-            'username' => $validatedUser['username'],
-            'password' => bcrypt($validatedUser['password']),
-            'level_id' => 3,
-        ]);
-
-        $validatedMhs = $request->validate([
             'mhs_nim' => 'required|unique:m_mahasiswa,mhs_nim',
             'full_name' => 'required',
             'alamat' => 'nullable',
             'telp' => 'nullable',
             'prodi_id' => 'required',
             'angkatan' => 'nullable|integer',
-            'jenis_kelamin' => 'nullable|in:L,P', // L = Laki-laki, P = Perempuan
+            'jenis_kelamin' => 'nullable|in:L,P',
             'ipk' => 'nullable|numeric|min:0|max:4.0',
             'status_magang' => 'required',
         ]);
 
-        MahasiswaModel::create([
-            'user_id' => $user->user_id,
-            'mhs_nim' => $validatedMhs['mhs_nim'],
-            'full_name' => $validatedMhs['full_name'],
-            'alamat' => $validatedMhs['alamat'] ?? null,
-            'telp' => $validatedMhs['telp'] ?? null,
-            'prodi_id' => $validatedMhs['prodi_id'],
-            'angkatan' => $validatedMhs['angkatan'] ?? null,
-            'jenis_kelamin' => $validatedMhs['jenis_kelamin'] ?? null,
-            'ipk' => $validatedMhs['ipk'] ?? null,
-            'status_magang' => $validatedMhs['status_magang'],
+        // Setelah semua validasi berhasil, baru simpan ke database
+
+        $user = UserModel::create([
+            'username' => $validated['username'],
+            'password' => bcrypt($validated['password']),
+            'level_id' => 3,
         ]);
 
-       return response()->json([
-        'status' => true,
-        'message' => 'Registrasi Anda Berhasil'
+        MahasiswaModel::create([
+            'user_id' => $user->user_id,
+            'mhs_nim' => $validated['mhs_nim'],
+            'full_name' => $validated['full_name'],
+            'alamat' => $validated['alamat'] ?? null,
+            'telp' => $validated['telp'] ?? null,
+            'prodi_id' => $validated['prodi_id'],
+            'angkatan' => $validated['angkatan'] ?? null,
+            'jenis_kelamin' => $validated['jenis_kelamin'] ?? null,
+            'ipk' => $validated['ipk'] ?? null,
+            'status_magang' => $validated['status_magang'],
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Registrasi Anda Berhasil'
         ]);
     }
+
 
     public function registerDosen()
     {
@@ -128,32 +134,27 @@ class AuthController extends Controller
 
     public function storeDosen(Request $request)
     {
-        // Validasi data untuk tabel users
-        $validatedUser = $request->validate([
+        // Gabungkan semua validasi di awal
+        $validated = $request->validate([
             'username' => 'required|unique:m_users,username',
             'password' => 'required',
-        ]);
-
-        // Simpan ke tabel m_users
-        $user = UserModel::create([
-            'username' => $validatedUser['username'],
-            'password' => bcrypt($validatedUser['password']),
-            'level_id' => 2, // misal: level 2 untuk dosen
-        ]);
-
-        // Validasi data untuk tabel m_dosen
-        $validatedDosen = $request->validate([
             'nama' => 'required',
             'email' => 'required|email|unique:m_dosen,email',
             'telp' => 'nullable',
         ]);
 
-        // Simpan ke tabel m_dosen
+        // Setelah validasi berhasil, baru simpan data ke tabel
+        $user = UserModel::create([
+            'username' => $validated['username'],
+            'password' => bcrypt($validated['password']),
+            'level_id' => 2, // level untuk dosen
+        ]);
+
         DosenModel::create([
             'user_id' => $user->user_id,
-            'nama' => $validatedDosen['nama'],
-            'email' => $validatedDosen['email'],
-            'telp' => $validatedDosen['telp'] ?? null,
+            'nama' => $validated['nama'],
+            'email' => $validated['email'],
+            'telp' => $validated['telp'] ?? null,
         ]);
 
         return response()->json([

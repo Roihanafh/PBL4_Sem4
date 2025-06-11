@@ -16,4 +16,8 @@ class KabupatenModel extends Model
         return $this->belongsTo(ProvinsiModel::class, 'provinsi_id');
     }
 
+    public function mahasiswa()
+    {
+        return $this->hasMany(MahasiswaModel::class, 'kabupaten_id');
+    }
 }
