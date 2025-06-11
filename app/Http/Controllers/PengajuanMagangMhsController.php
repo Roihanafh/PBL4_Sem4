@@ -178,6 +178,7 @@ class PengajuanMagangMhsController extends Controller
 
         try {
             $mhs_nim_from_form = $request->mhs_nim; // Ambil NIM dari input form
+            $lowongan_id = $request->lowongan_id;
 
             // Cek apakah mahasiswa sudah memiliki lamaran yang sedang pending atau diterima
             $existingLamaran = LamaranMagangModel::where('mhs_nim', $mhs_nim_from_form)
@@ -200,6 +201,23 @@ class PengajuanMagangMhsController extends Controller
                     ]
                 ], 409); // HTTP 409 Conflict
             }
+
+            $existingPendingLamaran = LamaranMagangModel::where('mhs_nim', $mhs_nim_from_form)
+            ->where('lowongan_id', $lowongan_id)
+            ->where('status', 'pending')
+            ->first();
+
+        if ($existingPendingLamaran) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Anda sudah mengajukan lamaran untuk lowongan ini dan masih menunggu persetujuan.',
+                'details' => [
+                    'lowongan' => $existingPendingLamaran->lowongan->judul,
+                    'status' => $existingPendingLamaran->status,
+                    'tanggal_lamaran' => $existingPendingLamaran->tanggal_lamaran,
+                ]
+            ], 409); // HTTP 409 Conflict
+        }
 
             LamaranMagangModel::create([
                 'mhs_nim' => $mhs_nim_from_form,
