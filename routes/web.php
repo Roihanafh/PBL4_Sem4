@@ -222,6 +222,8 @@ Route::middleware(['auth', 'authorize:mahasiswa'])->group(function () {
         Route::get('/{id}/show_ajax', [LogAktivitasMhsController::class, 'showAjaxMhs']);
         Route::get('/{id}/create', [LogAktivitasMhsController::class, 'create_ajax']);
         Route::post('/ajax', [LogAktivitasMhsController::class, 'store_ajax']);
+        Route::get('/{id}/edit_ajax', [LogAktivitasMhsController::class, 'edit_ajax']);
+        Route::put('/{id}/update_ajax', [LogAktivitasMhsController::class, 'update_ajax']);
     });
 
     Route::group(['prefix' => 'feedback-magang'], function () {

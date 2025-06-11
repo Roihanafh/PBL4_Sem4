@@ -13,6 +13,7 @@ use App\Models\ProdiModel;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Validator;
 
 class LogAktivitasMhsController extends Controller
 {
@@ -221,7 +222,7 @@ class LogAktivitasMhsController extends Controller
         return DataTables::of($aktivitas)
             ->addIndexColumn()
             ->addColumn('aksi', function ($item) {
-                return '<button onclick="modalAction(\'' . url('/log-aktivitas-mhs/edit/' . $item->aktivitas_id) . '\')" class="btn btn-sm btn-warning"><i class="fa fa-edit"></i> Edit</button> ' .
+                return '<button onclick="modalAction(\'' . url('/log-aktivitas-mhs/' . $item->aktivitas_id) . '/edit_ajax'. '\')" class="btn btn-sm btn-warning"><i class="fa fa-edit"></i> Edit</button> ' .
                     '<button onclick="modalAction(\'' . url('/log-aktivitas-mhs/' . $item->aktivitas_id . '/show_ajax') . '\')" class="btn btn-info btn-sm"><i class="fa fa-eye"></i></button>';
             })
             ->rawColumns(['aksi'])
@@ -288,5 +289,46 @@ class LogAktivitasMhsController extends Controller
             'message' => 'Data log aktivitas berhasil disimpan'
         ]);
     }
+
+    public function edit_ajax($aktivitas_id)
+    {
+        $aktivitas = LogAktivitasMhsModel::select()->where('aktivitas_id', $aktivitas_id)->first();
+        return view('log_aktivitas_mhs.edit_ajax', compact('aktivitas'));
+    }
+
+    public function update_ajax(Request $request, $aktivitas_id)
+    {
+        $aktivitas = LogAktivitasMhsModel::where('aktivitas_id', $aktivitas_id)->first();
+
+        if (!$aktivitas) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data tidak ditemukan'
+            ]);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'waktu' => 'required|date',
+            'keterangan' => 'required|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validasi gagal',
+                'msgField' => $validator->errors()
+            ], 422);
+        }
+
+        $aktivitas->waktu = $request->waktu;
+        $aktivitas->keterangan = $request->keterangan;
+        $aktivitas->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Data log aktivitas berhasil diubah'
+        ]);
+    }
+
 }
 
