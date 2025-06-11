@@ -137,7 +137,7 @@ class MahasiswaController extends Controller
 
         return response()->json([
             'status' => true,
-            'message' => 'Registrasi Anda Berhasil'
+            'message' => 'Data Mahasiswa Berhasil Ditambahkan'
         ]);
     }
 

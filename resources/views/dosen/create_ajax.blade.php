@@ -65,8 +65,8 @@ $(document).ready(function() {
             username: { required: true, minlength: 3, maxlength: 20 },
             password: { required: true, minlength: 5, maxlength: 20 },
             nama: { required: true, minlength: 3, maxlength: 100 },
-            email: { required: true, email: true },
-            telp: { required: true, maxlength: 20 },
+            email: { email: true },
+            telp: { maxlength: 20 },
             id_minat: { required: true }
         },
         submitHandler: function(form) {
@@ -101,12 +101,14 @@ $(document).ready(function() {
                         });
                     }
                 },
-                error: function() {Add commentMore actions
+                error: function() {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
                         text: 'Terjadi kesalahan pada server.'
                     });
+                }
+            });
             return false;
         },
         errorElement: 'span',

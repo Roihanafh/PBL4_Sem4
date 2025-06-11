@@ -89,12 +89,14 @@ $(document).ready(function() {
                         });
                     }
                 },
-                error: function() {Add commentMore actions
+                error: function() {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
                         text: 'Terjadi kesalahan pada server.'
                     });
+                }
+            });
             return false;
         },
         errorElement: 'span',
