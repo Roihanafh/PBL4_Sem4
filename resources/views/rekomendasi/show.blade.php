@@ -179,10 +179,20 @@
         <h4>{{ $lowongan->judul }}</h4>
         <h6 class="text-muted">{{ $lowongan->perusahaan->nama }}</h6>
         <p class="text-secondary mb-4">
-        <i class="fas fa-map-marker-alt"></i> {{ $l->provinsi->alt_name ?? '-' }}
-        &nbsp;&bull;&nbsp;
-        <i class="fas fa-briefcase"></i> Onsite
-        </p>
+        <small class="text-secondary d-block mb-1">
+          <i class="fas fa-map-marker-alt"></i>
+          {{ $lowongan->provinsi->alt_name ?? '-' }}
+        </small>
+
+        @php
+          // Humanize “on_site” → “On Site”, etc.
+          $typeText = ucfirst(str_replace('_',' ',$lowongan->tipe_bekerja));
+        @endphp
+
+        <small class="text-secondary d-block mb-3">
+          <i class="fas fa-briefcase"></i>
+          {{ $typeText }}
+        </small>
 
         {{-- Tabs Deskripsi / Perusahaan --}}
         <ul class="nav nav-tabs mb-4">
