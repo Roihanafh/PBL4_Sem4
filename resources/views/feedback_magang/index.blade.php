@@ -30,7 +30,7 @@
     
                             <div class="info-section">
                                 <p class="text-secondary mb-2"><i class="fas fa-user me-2 text-primary"></i> <strong>Mahasiswa:</strong> {{ $lamaran->mahasiswa->full_name ?? '-' }}</p>
-                                <p class="text-secondary mb-2"><i class="fas fa-map-marker-alt me-2 text-primary"></i> <strong>Lokasi:</strong> {{ $lamaran->lowongan->lokasi ?? '-' }}</p>
+                                <p class="text-secondary mb-2"><i class="fas fa-map-marker-alt me-2 text-primary"></i> <strong>Lokasi:</strong> {{ $lamaran->lowongan->provinsi->nama ?? '-' }}</p>
                                 <p class="text-secondary mb-2"><i class="fas fa-calendar-alt me-2 text-primary"></i> <strong>Mulai Magang:</strong> {{ \Carbon\Carbon::parse($lamaran->lowongan->tanggal_mulai_magang)->format('d M Y') }}</p>
                                 <p class="text-secondary mb-2"><i class="fas fa-hourglass-end me-2 text-primary"></i> <strong>Deadline:</strong> {{ \Carbon\Carbon::parse($lamaran->lowongan->deadline_lowongan)->format('d M Y') }}</p>
                                 <p class="text-secondary mb-2"><i class="fas fa-users me-2 text-primary"></i> <strong>Kuota:</strong> {{ $lamaran->lowongan->kuota ?? '-' }}</p>
