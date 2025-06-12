@@ -519,6 +519,7 @@ class MahasiswaController extends Controller
             'provinsi',
             'kabupaten',
             'bidangKeahlian',
+            'skills',
         ])->where('mhs_nim', $mhs_nim)->first();
 
 
@@ -542,10 +543,11 @@ class MahasiswaController extends Controller
         $negara = NegaraModel::all();
         $provinsi = ProvinsiModel::all();
         $allSkills      = SkillModel::all();             // ← add this
+        $durasiList = [3 => '3 Bulan', 6 => '6 Bulan'];
         $kabupaten = $mahasiswa->kabupaten_id
             ? KabupatenModel::where('provinsi_id', $mahasiswa->provinsi_id)->get()
             : KabupatenModel::all();
-
+        $durasiList = [3 => '3 Bulan', 6 => '6 Bulan'];
         return view(
             'mahasiswa.edit_mhs',
             [
@@ -555,6 +557,7 @@ class MahasiswaController extends Controller
                 'kabupatenList' => $kabupaten,
                 'negaraList' => $negara,
                 'allSkills' => $allSkills, // ← add this
+                'durasiList' => $durasiList, // ← add this
                 
             ]
         );
@@ -590,6 +593,9 @@ class MahasiswaController extends Controller
             'kabupaten_id' => 'nullable|exists:m_kabupaten,id',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
+            'durasi' => 'required|in:3,6', // Periode magang (3 atau 6 bulan)
+            'skills'   => 'nullable|array',
+            'skills.*' => 'integer|exists:skills,id', // Validasi untuk skills
 
         ]);
 
@@ -632,7 +638,9 @@ class MahasiswaController extends Controller
                 'ipk' => $request->ipk,
                 'provinsi_id' => $request->provinsi_id,
                 'kabupaten_id' => $request->kabupaten_id,
-
+                'negara_id' => $request->negara_id,
+                'durasi' => $request->durasi, // Periode magang
+                'skills' => $request->input('skills', []), // Update skills
             ]);
             $mahasiswa->save();
 
@@ -664,6 +672,12 @@ class MahasiswaController extends Controller
                 ]
             );
 
+            // Update skills mahasiswa
+            if ($request->has('skills')) {
+                $mahasiswa->skills()->sync($request->input('skills', []));
+            } else {
+                $mahasiswa->skills()->detach();
+            }
 
             // Update bidang keahlian (relasi many-to-many)
             $mahasiswa->bidangKeahlian()->sync($request->bidang_keahlian_id);

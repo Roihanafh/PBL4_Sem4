@@ -4,9 +4,9 @@
 <div class="card">
   <div class="card-header">
     <div class="d-flex gap-2 align-items-center flex-wrap">
-    <button onclick="modalAction('{{ url('/prodi/import') }}')" class="btn btn-info">
+    {{-- <button onclick="modalAction('{{ url('/prodi/import') }}')" class="btn btn-info">
         Import Prodi
-    </button>
+    </button> --}}
     <a href="{{ url('/prodi/export_excel') }}" class="btn btn-primary">
         <i class="fa fa-file-excel"></i> Export EXCEL Prodi
     </a>

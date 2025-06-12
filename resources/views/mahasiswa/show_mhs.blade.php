@@ -78,6 +78,21 @@
                     @endif
                 </td>
             </tr>
+
+            <tr>
+                <th class="text-right">Skills</th>
+                <td>
+                    @if ($mahasiswa->skills->isNotEmpty())
+                        <ul class="mb-0 pl-3">
+                            @foreach ($mahasiswa->skills as $skill)
+                                <li>{{ $skill->nama }}</li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <span class="text-muted">Tidak ada skill terdaftar</span>
+                    @endif
+                </td>
+            </tr>
             
             <tr>
                 <th class="text-right">File CV:</th>
@@ -99,6 +114,17 @@
                         {{ $mahasiswa->preferensiLokasi->kabupaten->nama ?? '-' }},
                         {{ $mahasiswa->preferensiLokasi->provinsi->nama ?? '-' }},
                         {{ $mahasiswa->preferensiLokasi->negara->nama ?? '-' }}<br>
+                    @else
+                        <span class="text-muted">Belum diisi</span>
+                    @endif
+                </td>
+            </tr>
+
+            <tr>
+                <th class="text-right">Durasi Magang:</th>
+                <td>
+                    @if ($mahasiswa->durasi)
+                        {{ $mahasiswa->durasi }} bulan
                     @else
                         <span class="text-muted">Belum diisi</span>
                     @endif
