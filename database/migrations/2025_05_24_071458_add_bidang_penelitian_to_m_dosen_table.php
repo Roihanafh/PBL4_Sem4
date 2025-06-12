@@ -25,9 +25,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Schema::table('m_dosen', function (Blueprint $table) {
-        //     $table->dropForeign(['id_minat']); // hapus foreign key dulu
-        //     $table->dropColumn('id_minat ');    // lalu hapus kolom
-        // });
+        Schema::table('m_dosen', function (Blueprint $table) {
+            $table->dropForeign(['id_minat']); // hapus foreign key dulu
+            $table->dropColumn('id_minat ');    // lalu hapus kolom
+        });
     }
 };

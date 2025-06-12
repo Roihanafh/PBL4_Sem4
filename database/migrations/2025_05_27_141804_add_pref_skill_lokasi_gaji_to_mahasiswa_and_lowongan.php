@@ -24,12 +24,12 @@ public function up(): void
 }
     public function down(): void
     {
-        // Schema::table('m_mahasiswa', function (Blueprint $table) {
-        //     $table->dropColumn(['pref', 'skill', 'lokasi', 'gaji_minimum', 'durasi']);
-        // });
+        Schema::table('m_mahasiswa', function (Blueprint $table) {
+            $table->dropColumn(['pref', 'skill', 'lokasi', 'gaji_minimum', 'durasi']);
+        });
 
-        // Schema::table('t_lowongan_magang', function (Blueprint $table) {
-        //     $table->dropColumn('gaji');
-        // });
+        Schema::table('t_lowongan_magang', function (Blueprint $table) {
+            $table->dropColumn('gaji');
+        });
     }
 };

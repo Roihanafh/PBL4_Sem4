@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Schema::create('d_bidang_penelitian', function (Blueprint $table) {
-        //     $table->id('id_minat');
-        //     $table->string('bidang', 100);
-        //     $table->timestamps();
-        // });
+        Schema::create('d_bidang_penelitian', function (Blueprint $table) {
+            $table->id('id_minat');
+            $table->string('bidang', 100);
+            $table->timestamps();
+        });
     }
 
 
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Schema::dropIfExists('d_bidang_penelitian');
+        Schema::dropIfExists('d_bidang_penelitian');
     }
 };
