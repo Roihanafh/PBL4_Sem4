@@ -181,7 +181,7 @@
                 <select name="tipe_bekerja" id="tipe_bekerja" class="form-control">
                     <option value="">-- Pilih Tipe Bekerja --</option>
                     <option value="remote" {{ $mahasiswa->tipe_bekerja == 'remote' ? 'selected' : '' }}>Remote</option>
-                    <option value="onsite" {{ $mahasiswa->tipe_bekerja == 'onsite' ? 'selected' : '' }}>Onsite</option>
+                    <option value="on_site" {{ $mahasiswa->tipe_bekerja == 'on_site' ? 'selected' : '' }}>On_site</option>
                     <option value="hybrid" {{ $mahasiswa->tipe_bekerja == 'hybrid' ? 'selected' : '' }}>Hybrid</option>
                 </select>
                 <small id="error-tipe_bekerja" class="error-text form-text text-danger"></small>
