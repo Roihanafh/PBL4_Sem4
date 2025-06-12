@@ -40,7 +40,7 @@ class WelcomeController extends Controller
             ->count('mhs_nim');
 
         // 4. Total Dosen Pembimbing
-        $totalDosenPembimbing = DosenModel::has('mahasiswa')->count();
+        $totalDosenPembimbing = LamaranMagangModel::has('dosen')->count();
 
         // 5. Rasio Dosen:Mhs (format: 1:X)
         $rasioDosenMhs = $totalDosenPembimbing > 0 ?
@@ -113,7 +113,8 @@ class WelcomeController extends Controller
             ->count('mhs_nim');
 
         // 4. Total Dosen Pembimbing
-        $totalDosenPembimbing = DosenModel::has('mahasiswa')->count();
+        $totalDosenPembimbing = LamaranMagangModel::whereNotNull('dosen_id')->count();
+
 
         // 5. Rasio Dosen:Mhs (format: 1:X)
         $rasioDosenMhs = $totalDosenPembimbing > 0 ?
@@ -199,7 +200,7 @@ class WelcomeController extends Controller
             ->orderBy('deadline_lowongan', 'asc')
             ->limit(10)
             ->get();
-            
+
         $recentApplications = LamaranMagangModel::with('lowongan')
             ->where('mhs_nim', $mhs->mhs_nim)
             ->orderBy('tanggal_lamaran', 'desc')
