@@ -42,6 +42,17 @@
     </div>
   </div>
   <div class="card-body">
+    <div class="row mb-3">
+          <div class="col-md-3">
+              <label for="prodi_id" class="form-label">Filter:</label>
+                <select id="filter_prodi_id" name="filter_prodi_id" class="form-control">
+                  <option value="">- Semua Prodi -</option>
+                  @foreach($prodis as $prodi)
+                      <option value="{{ $prodi->prodi_id }}">{{ $prodi->nama_prodi }}</option>
+                  @endforeach
+              </select>
+          </div>
+      </div>
     <div class="table-responsive">
       <table
         id="pengajuan-magang-table"
@@ -81,18 +92,21 @@
         
     });
     $(document).ready(function() {
-        tablePengajuanMagang = $('#pengajuan-magang-table').DataTable({
+        var tablePengajuanMagang = $('#pengajuan-magang-table').DataTable({
             processing: true,
             serverSide: true,
             ajax: {
                 url: "{{ url('pengajuan-magang/list') }}",
-                type: "POST"
+                type: "POST",
+                data: function (d) {
+                    d.prodi_id = $('#filter_prodi_id').val(); // filter di luar modal
+                }
             },
             columns: [
                 { data: 'DT_RowIndex',  className: "text-center", orderable: false, searchable: false, width: "5%" },
                 { data: 'mahasiswa_nama' },
                 { data: 'mhs_nim' },
-                { data: 'prodi' },
+                { data: 'prodi', name: 'prodi.nama_prodi' },
                 { data: 'perusahaan_nama' },
                 { data: 'lowongan_judul'},
                 { data: 'tanggal_lamaran' },
@@ -121,13 +135,24 @@
             }
         ]
         });
+
+        initProdiFilterListener();
+
+        $('#myModal').on('hidden.bs.modal', function () {
+            tablePengajuanMagang.ajax.reload(null, false);
+            initProdiFilterListener(); // jaga-jaga
+        });
     });
     function modalAction(url = ''){
         $('#myModal .modal-content').load(url,function(){
             $('#myModal').modal('show');
         });
     }
-
+    function initProdiFilterListener() {
+      $('#filter_prodi_id').off('change').on('change', function () {
+          $('#pengajuan-magang-table').DataTable().ajax.reload();
+      });
+    }
 
 </script>
 @endpush
