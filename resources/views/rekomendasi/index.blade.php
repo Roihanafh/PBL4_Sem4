@@ -63,57 +63,50 @@
 
       {{-- 2) Skill yang cocok → dropdown multi-checkbox --}}
       <div class="col-md-2">
-        @php
-          // Daftar skills yang ingin ditampilkan di dropdown
-          $allSkills = [
-            'Java', 'Python', 'JavaScript', 'PHP',
-            'C#', 'C++', 'HTML', 'CSS', 'SQL',
-            'Git', 'Linux'
-          ];
-          // Ambil nilai yang dicentang (jika ada)
-          $selected = request('skills', []);
-        @endphp
+@php
+  $selected = request('skills', []);
+@endphp
 
-        <div class="dropdown">
-          <button
-            class="btn btn-light dropdown-toggle w-100 text-start"
-            type="button"
-            id="skillsDropdown"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            Skill yang cocok
-            @if(!empty($selected))
-              ({{ count($selected) }})
-            @endif
-          </button>
+<div class="dropdown">
+  <button
+    class="btn btn-light dropdown-toggle w-100 text-start"
+    type="button"
+    id="skillsDropdown"
+    data-bs-toggle="dropdown"
+    aria-expanded="false"
+  >
+    Skill yang cocok
+    @if(count($selected))
+      ({{ count($selected) }})
+    @endif
+  </button>
 
-          <div
-            class="dropdown-menu p-3"
-            aria-labelledby="skillsDropdown"
-            style="max-height: 200px; overflow-y: auto;"
-            data-bs-auto-close="outside"
-          >
-            @foreach($allSkills as $skillOption)
-              <div class="form-check">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  name="skills[]"
-                  id="skill_{{ \Str::slug($skillOption) }}"
-                  value="{{ $skillOption }}"
-                  {{ in_array($skillOption, (array)$selected) ? 'checked' : '' }}
-                >
-                <label
-                  class="form-check-label"
-                  for="skill_{{ \Str::slug($skillOption) }}"
-                >
-                  {{ $skillOption }}
-                </label>
-              </div>
-            @endforeach
-          </div>
-        </div>
+  <div
+    class="dropdown-menu p-3"
+    aria-labelledby="skillsDropdown"
+    style="max-height: 200px; overflow-y: auto;"
+    data-bs-auto-close="outside"
+  >
+    @foreach($allSkills as $skill)
+      <div class="form-check">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          name="skills[]"
+          id="skill_{{ \Str::slug($skill->nama) }}"
+          value="{{ $skill->nama }}"
+          {{ in_array($skill->nama, $selected) ? 'checked' : '' }}
+        >
+        <label
+          class="form-check-label"
+          for="skill_{{ \Str::slug($skill->nama) }}"
+        >
+          {{ $skill->nama }}
+        </label>
+      </div>
+    @endforeach
+  </div>
+</div>
       </div>
 
       {{-- 3) Lokasi --}}

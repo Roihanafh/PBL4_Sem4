@@ -11,6 +11,7 @@ use App\Models\PeriodeMagangModel;
 use Illuminate\Support\Facades\Auth;
 use App\Models\MahasiswaModel;
 use App\Models\ProvinsiModel;
+use App\Models\SkillModel;
 use Carbon\Carbon;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
@@ -259,13 +260,29 @@ public function rekomendasi(Request $request, SmartRecommendationService $smart)
     // ---------------------------
     // 1. Ambil data mahasiswa
     // ---------------------------
-    $mhs = MahasiswaModel::where('user_id', Auth::id())->firstOrFail();
+    $mhs = MahasiswaModel::where('user_id', Auth::id())
+         ->with('provinsipref', 'skills')
+         ->firstOrFail();
 
     // Pecah keyword pref & skill
-    $prefKeywords  = array_filter(array_map('trim', explode(',', $mhs->pref)));
-    $skillKeywords = array_filter(array_map('trim', explode(',', $mhs->skill)));
+    // $prefKeywords  = array_filter(array_map('trim', explode(',', $mhs->pref)));
+    $prefFrases = array_filter(array_map('trim', explode(',', $mhs->pref)));
+    $prefKeywords = [];
+    foreach ($prefFrases as $frase) {
+        // explode on whitespace—bisa multi space, tab, dll
+        foreach (preg_split('/\s+/', $frase) as $kata) {
+            $kata = strtolower(trim($kata));
+            if ($kata !== '') {
+                $prefKeywords[] = $kata;
+            }
+        }
+    }
+    $prefKeywords = array_values(array_unique($prefKeywords));
+    // now from pivot instead of comma‐string:
+    $skillKeywords = $mhs->skills->pluck('nama')->map(fn($s)=>trim($s))->filter()->toArray();
     $totalPref     = count($prefKeywords) ?: 1;
     $totalSkill    = count($skillKeywords) ?: 1;
+    $prefFrases = array_filter(array_map('trim', explode(',', $mhs->pref)));
 
     // Durasi & tipe_bekerja preferensi mahasiswa
     $durasiPreferensiMhs = (float) $mhs->durasi; // misal 3 atau 6
@@ -320,17 +337,17 @@ public function rekomendasi(Request $request, SmartRecommendationService $smart)
             $durasiPreferensiMhs,
             $tipeBekerjaMhs
         ) {
-            // PREF
-            $prefMatches = 0;
-            foreach ($prefKeywords as $kw) {
-                if ($kw !== '' && (
-                    stripos($l->judul, $kw) !== false ||
-                    stripos($l->deskripsi, $kw) !== false
-                )) {
-                    $prefMatches++;
+            // Hitung kemunculan kata‐kata pref di judul+deskripsi
+            $judulDesc = strtolower($l->judul . ' ' . $l->deskripsi);
+            $matchCount = 0;
+            foreach ($prefKeywords as $kata) {
+                if (strpos($judulDesc, $kata) !== false) {
+                    $matchCount++;
                 }
             }
-            $prefValue = $prefMatches / $totalPref;
+
+            // Skor pref = jumlah kata yang match / total kata
+            $prefValue = $matchCount / $totalPref;
 
             // SKILL
             $skillMatches = 0;
@@ -359,8 +376,11 @@ public function rekomendasi(Request $request, SmartRecommendationService $smart)
                 }
             
             // TIPE_BEKERJA (binary match)
-            $tipeBekerjaLowongan = strtolower($l->tipe_bekerja ?? '');
-            $tipeBekerjaValue    = ($tipeBekerjaLowongan === $tipeBekerjaMhs) ? 1.0 : 0.0;
+            $clean = fn($s) => strtolower(str_replace([' ', '-'], '_', trim($s)));
+
+            $mhsType  = $clean($mhs->tipe_bekerja);
+            $lowType  = $clean($l->tipe_bekerja);
+            $tipeBekerjaValue = ($mhsType === $lowType) ? 1.0 : 0.0;
 
             // DURASI (normalized difference)
             $durasiLowongan = (float) $l->durasi;
@@ -411,6 +431,8 @@ public function rekomendasi(Request $request, SmartRecommendationService $smart)
     }
     $provinsi = ProvinsiModel::all(); 
 
+    $allSkills = SkillModel::orderBy('nama')->get();
+
     // 9. Bukan AJAX → kembalikan view penuh:
     return view('rekomendasi.index', [
         'breadcrumb' => (object)[
@@ -422,6 +444,7 @@ public function rekomendasi(Request $request, SmartRecommendationService $smart)
         'provinsi'  => $provinsi,
         'lowongan'   => $ranked,
         'mhs'        => $mhs,
+        'allSkills'  => $allSkills,
     ]);
 }
 
