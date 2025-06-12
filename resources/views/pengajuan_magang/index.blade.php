@@ -53,6 +53,7 @@
             <th>No. </th>
             <th>Nama Mahasiswa</th>
             <th>NIM</th>
+            <th>Prodi</th>
             <th>Nama Perusahaan</th>
             <th>Lowongan</th>
             <th>Tanggal Lamaran</th>
@@ -91,6 +92,7 @@
                 { data: 'DT_RowIndex',  className: "text-center", orderable: false, searchable: false, width: "5%" },
                 { data: 'mahasiswa_nama' },
                 { data: 'mhs_nim' },
+                { data: 'prodi' },
                 { data: 'perusahaan_nama' },
                 { data: 'lowongan_judul'},
                 { data: 'tanggal_lamaran' },
