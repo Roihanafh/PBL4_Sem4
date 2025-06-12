@@ -1,41 +1,22 @@
 <?php
 
-namespace Database\Seeders;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
-
-class SkillsTableSeeder extends Seeder
+class CreateSkillsTable extends Migration
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
+    public function up()
     {
-        $now = Carbon::now();
+        Schema::create('skills', function (Blueprint $table) {
+            $table->id();                  // skill ID
+            $table->string('nama')->unique();
+            $table->timestamps();         // optional
+        });
+    }
 
-        $skills = [
-            'Teamwork',
-            'Communication',
-            'Problem Solving',
-            'Leadership',
-            'Creativity',
-            'Adaptability',
-            'Time Management',
-            'Critical Thinking',
-            'Technical Writing',
-            'Programming',
-        ];
-
-        $data = array_map(function ($skill) use ($now) {
-            return [
-                'nama'       => $skill,
-                'created_at' => $now,
-                'updated_at' => $now,
-            ];
-        }, $skills);
-
-        DB::table('skills')->insert($data);
+    public function down()
+    {
+        Schema::dropIfExists('skills');
     }
 }
