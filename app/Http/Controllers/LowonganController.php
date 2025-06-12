@@ -4,6 +4,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BidangKeahlianModel;
 use Illuminate\Http\Request;
 use App\Models\LowonganModel;
 use App\Models\PerusahaanModel;
@@ -433,6 +434,8 @@ public function rekomendasi(Request $request, SmartRecommendationService $smart)
 
     $allSkills = SkillModel::orderBy('nama')->get();
 
+    $allBidang      = BidangKeahlianModel::orderBy('nama')->get();
+
     // 9. Bukan AJAX → kembalikan view penuh:
     return view('rekomendasi.index', [
         'breadcrumb' => (object)[
@@ -443,6 +446,7 @@ public function rekomendasi(Request $request, SmartRecommendationService $smart)
         'activeMenu' => 'rekomendasi',
         'provinsi'  => $provinsi,
         'lowongan'   => $ranked,
+        'allBidang'    => $allBidang, 
         'mhs'        => $mhs,
         'allSkills'  => $allSkills,
     ]);

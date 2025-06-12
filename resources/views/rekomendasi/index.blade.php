@@ -48,18 +48,23 @@
   {{-- ===================================== --}}
 
   {{-- Filter form --}}
-  <form id="filter-form" class="card mb-4 p-3 bg-dark text-white">
-    <div class="row g-3">
-      {{-- 1) Posisi / Jabatan --}}
-      <div class="col-md-2">
-        <input
-          type="text"
-          name="posisi"
-          class="form-control"
-          placeholder="Posisi / Jabatan"
-          value="{{ request('posisi') }}"
-        >
-      </div>
+<form id="filter-form" class="card mb-4 p-3 bg-dark text-white">
+  <div class="row g-3">
+
+    {{-- 1) Posisi / Jabatan as dropdown --}}
+    <div class="col-md-2">
+      <select name="posisi" class="form-select">
+        <option value="">— Semua Posisi —</option>
+        @foreach($allBidang as $bidang)
+          <option
+            value="{{ $bidang->nama }}"
+            {{ request('posisi') === $bidang->nama ? 'selected' : '' }}
+          >
+            {{ $bidang->nama }}
+          </option>
+        @endforeach
+      </select>
+    </div>
 
       {{-- 2) Skill yang cocok → dropdown multi-checkbox --}}
       <div class="col-md-2">
