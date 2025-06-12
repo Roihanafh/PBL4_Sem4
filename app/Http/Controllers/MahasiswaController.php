@@ -540,7 +540,7 @@ class MahasiswaController extends Controller
             : KabupatenModel::all();
         $tipe_bekerjaList = [
             'remote' => 'Remote',
-            'onsite' => 'Onsite',
+            'o_nsite' => 'On_site',
             'hybrid' => 'Hybrid'
         ];
         return view(
@@ -592,7 +592,7 @@ class MahasiswaController extends Controller
             'durasi' => 'required|in:3,6', // Periode magang (3 atau 6 bulan)
             'skills'   => 'nullable|array',
             'skills.*' => 'integer|exists:skills,id', // Validasi untuk skills
-            'tipe_bekerja' => 'nullable|in:remote,onsite,hybrid', // Validasi tipe bekerja
+            'tipe_bekerja' => 'nullable|in:remote,on_site,hybrid', // Validasi tipe bekerja
 
         ]);
 
@@ -676,6 +676,14 @@ class MahasiswaController extends Controller
             } else {
                 $mahasiswa->skills()->detach();
             }
+
+            // Update tipe bekerja
+            if ($request->has('tipe_bekerja')) {
+                $mahasiswa->tipe_bekerja = $request->tipe_bekerja;
+            } else {
+                $mahasiswa->tipe_bekerja = null; // Atau nilai default lainnya
+            }
+            $mahasiswa->save();
 
 
             // Update bidang keahlian (relasi many-to-many)
