@@ -43,6 +43,8 @@ class DatabaseSeeder extends Seeder
             BidangKeahlianSeeder::class,
 
             // PrefrensiLokasiMahasiswaSeeder::class,
+
+            SkillsTableSeeder::class,
         ]);
             
     }

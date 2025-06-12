@@ -18,6 +18,7 @@ use App\Models\NegaraModel;
 use App\Models\PrefrensiLokasiMahasiswaModel;
 use App\Models\ProvinsiModel;
 use App\Models\KabupatenModel;
+use App\Models\SkillModel;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -195,11 +196,12 @@ class MahasiswaController extends Controller
 
     public function edit_ajax($mhs_nim)
     {
-        $mahasiswa = MahasiswaModel::with(['prodi', 'user', 'provinsi', 'kabupaten'])->find($mhs_nim);
+        $mahasiswa = MahasiswaModel::with(['prodi', 'user', 'provinsi', 'kabupaten', 'skills'])->find($mhs_nim);
         $prodiList = ProdiModel::all();
         $bidangKeahlian = BidangKeahlianModel::all(); // Tambahkan baris ini
         $negaraList = NegaraModel::all();
         $provinsiList = ProvinsiModel::all();
+        $allSkills    = SkillModel::all(); 
         $kabupatenList = $mahasiswa->kabupaten_id
             ? KabupatenModel::where('provinsi_id', $mahasiswa->provinsi_id)->get()
             : KabupatenModel::all();
@@ -211,7 +213,8 @@ class MahasiswaController extends Controller
             'bidangKeahlian',
             'negaraList',
             'provinsiList',
-            'kabupatenList'
+            'kabupatenList',
+            'allSkills',
         ));
 
     }
@@ -239,6 +242,9 @@ class MahasiswaController extends Controller
         'jenis_kelamin' => 'nullable|in:L,P',
         'ipk'           => 'nullable|numeric|min:0|max:4.0',
         'file_cv'       => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+        'skills'   => 'nullable|array',
+        'skills.*' => 'integer|exists:skills,id',
+        'durasi'   => 'required|in:3,6',
     ]);
 
     if ($validator->fails()) {
@@ -272,7 +278,11 @@ class MahasiswaController extends Controller
         $mahasiswa->jenis_kelamin = $request->jenis_kelamin;
         $mahasiswa->ipk = $request->ipk;
         $mahasiswa->file_cv = $fileCV;
+        $mahasiswa->durasi = $request->durasi;
+        $mahasiswa->skills()->sync($request->input('skills', []));
         $mahasiswa->save();
+
+        
 
         // Update data user
         $user = $mahasiswa->user;
@@ -298,6 +308,8 @@ class MahasiswaController extends Controller
 
             DB::table('t_minat_mahasiswa')->insert($minat);
         }
+        
+        
 
         DB::commit();
 
@@ -525,10 +537,11 @@ class MahasiswaController extends Controller
 
     public function edit_mhs($mhs_nim)
     {
-        $mahasiswa = MahasiswaModel::with(['prodi', 'user', 'provinsi', 'kabupaten'])->find($mhs_nim);
+        $mahasiswa = MahasiswaModel::with(['prodi', 'user', 'provinsi', 'kabupaten', 'skills'])->find($mhs_nim);
         $bidangKeahlian = BidangKeahlianModel::all();
         $negara = NegaraModel::all();
         $provinsi = ProvinsiModel::all();
+        $allSkills      = SkillModel::all();             // ← add this
         $kabupaten = $mahasiswa->kabupaten_id
             ? KabupatenModel::where('provinsi_id', $mahasiswa->provinsi_id)->get()
             : KabupatenModel::all();
@@ -540,7 +553,9 @@ class MahasiswaController extends Controller
                 'bidangKeahlian' => $bidangKeahlian,
                 'provinsiList' => $provinsi,
                 'kabupatenList' => $kabupaten,
-                'negaraList' => $negara
+                'negaraList' => $negara,
+                'allSkills' => $allSkills, // ← add this
+                
             ]
         );
     }
@@ -652,6 +667,13 @@ class MahasiswaController extends Controller
 
             // Update bidang keahlian (relasi many-to-many)
             $mahasiswa->bidangKeahlian()->sync($request->bidang_keahlian_id);
+
+            $names = BidangKeahlianModel::whereIn('id', $request->bidang_keahlian_id)
+                        ->pluck('nama')           // get the “nama” column
+                        ->toArray();              // [ 'Java', 'PHP', … ]
+
+            $mahasiswa->pref = implode(', ', $names);  // "Java, PHP, C++"
+            $mahasiswa->save();
 
             // Update akun user
             $user = $mahasiswa->user;

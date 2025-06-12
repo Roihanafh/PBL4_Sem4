@@ -222,7 +222,7 @@
     });
   });
 </script>
-<script>
+{{-- <script>
   // submit filter form → reload page dengan query param
   $('#filter-form').on('submit', function(e){
     e.preventDefault();
@@ -232,5 +232,5 @@
     else url.searchParams.delete('lokasi');
     window.location.href = url.toString();
   });
-</script>
+</script> --}}
 @endpush

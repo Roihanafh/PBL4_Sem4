@@ -150,4 +150,16 @@ class MahasiswaModel extends Model
     {
         return $this->hasMany(MinatMahasiswaModel::class, 'mhs_nim', 'mhs_nim');
     }
+
+    public function skills()
+{
+    return $this->belongsToMany(
+        SkillModel::class,
+        'mahasiswa_skill',
+        'mhs_nim',
+        'skill_id',
+        'mhs_nim',
+        'id'
+    );
+}
 }

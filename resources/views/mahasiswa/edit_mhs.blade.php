@@ -126,6 +126,53 @@
                     @endforeach
                 </select>                
             </div>
+
+            {{-- Skills (multi-checkbox) --}}
+            <div class="form-group">
+            <label>Skills</label>
+            <div class="row">
+                @foreach($allSkills as $skill)
+                        <div class="col-md-4">
+                            <div class="form-check">
+                            <input 
+                                class="form-check-input"
+                                type="checkbox"
+                                name="skills[]"
+                                id="skill_{{ $skill->id }}"
+                                value="{{ $skill->id }}"
+                                {{ in_array($skill->id, $mahasiswa->skills->pluck('id')->toArray()) ? 'checked' : '' }}
+                            >
+                            <label class="form-check-label" for="skill_{{ $skill->id }}">
+                                {{ $skill->nama }}
+                            </label>
+                            </div>
+                        </div>
+                        @endforeach
+            </div>
+            <small id="error-skills" class="text-danger"></small>
+            </div>
+
+            {{-- Durasi Magang --}}
+            <div class="form-group">
+            <label>Durasi Magang (bulan)</label>
+            <select name="durasi" class="form-control" required>
+                <option value="">— Pilih Durasi —</option>
+                <option value="3" {{ $mahasiswa->durasi == 3 ? 'selected' : '' }}>3 bulan</option>
+                <option value="6" {{ $mahasiswa->durasi == 6 ? 'selected' : '' }}>6 bulan</option>
+            </select>
+            <small id="error-durasi" class="text-danger"></small>
+            </div>
+
+            <div class="form-group">
+                <label>File CV</label><br>
+                @if ($mahasiswa->file_cv)
+                    <a href="{{ asset('storage/' . $mahasiswa->file_cv) }}" target="_blank" class="btn btn-info btn-sm">
+                        Lihat CV
+                    </a>
+                @else
+                    <span class="text-muted">Tidak ada CV</span>
+                @endif
+            </div>
             
             <div class="form-group">
                 <label>File CV</label>
