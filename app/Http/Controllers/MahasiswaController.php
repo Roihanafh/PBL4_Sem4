@@ -253,7 +253,7 @@ class MahasiswaController extends Controller
         'file_cv'       => 'nullable|file|mimes:pdf,doc,docx|max:2048',
         'skills'   => 'nullable|array',
         'skills.*' => 'integer|exists:skills,id',
-        'durasi'   => 'required|in:3,6',
+       // 'durasi'   => 'required|in:3,6',
     ]);
 
     if ($validator->fails()) {
