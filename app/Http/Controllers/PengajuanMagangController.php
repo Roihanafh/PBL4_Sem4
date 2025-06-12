@@ -40,7 +40,8 @@ class PengajuanMagangController extends Controller
 {
     if ($request->ajax()) {
         $pengajuan = LamaranMagangModel::with(['mahasiswa.prodi', 'lowongan.perusahaan'])
-            ->select('*');
+            ->select('*')
+            ->orderBy('tanggal_lamaran', 'DESC');
 
         // Filter berdasarkan prodi_id
         if ($request->prodi_id) {
