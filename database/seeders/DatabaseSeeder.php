@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Auth;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,5 +19,31 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+
+        $this->call([
+            AuthLevelSeeder::class,
+            UserSeeder::class,
+            ProgramStudiSeeder::class,
+            MahasiswaSeeder::class,
+            DosenSeeder::class,
+            AdminSeeder::class,
+            
+            PerusahaanMitraSeeder::class,
+            PeriodeMagangSeeder::class,
+
+            WilayahSeeder::class,
+
+            LowonganMagangSeeder::class,
+            LamaranMagangSeeder::class,
+
+            LogAktivitasMhsSeeder::class,
+            // FeedbackSeeder::class,
+
+            BidangPenelitianSeeder::class,
+            BidangKeahlianSeeder::class,
+
+            // PrefrensiLokasiMahasiswaSeeder::class,
+        ]);
+            
     }
 }

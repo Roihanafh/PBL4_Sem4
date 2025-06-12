@@ -1,0 +1,57 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+
+class MahasiswaSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        $data = [
+            [
+                'mhs_nim'        => '2341720226',
+                'user_id'        => 3,
+                'full_name'      => 'Ramadhani Bi Hayyin',
+                'alamat'         => 'Jl. Kembang Kertas',
+                'telp'           => '081333537649',
+                'prodi_id'       => 1, // disesuaikan dengan migration
+                'angkatan'       => '2023',
+                'jenis_kelamin'  => 'L',
+                'ipk'            => 3.5,
+                'status_magang'  => 'Belum Magang',
+            ],
+            [
+                'mhs_nim'        => '2341720227',
+                'user_id'        => 4,
+                'full_name'      => 'Muhammad Rizky',
+                'alamat'         => 'Jl. Kembang Kertas',
+                'telp'           => '08123456789',
+                'prodi_id'       => 1, // disesuaikan dengan migration
+                'angkatan'       => '2023',
+                'jenis_kelamin'  => 'L',
+                'ipk'            => 3.2,
+                'status_magang'  => 'Belum Magang',
+            ],
+            [
+                'mhs_nim'        => '2341720228',
+                'user_id'        => 5,
+                'full_name'      => 'Muhammad Fauzan',
+                'alamat'         => 'Jl. Kembang Kertas',
+                'telp'           => '08123456789',
+                'prodi_id'       => 1, // disesuaikan dengan migration
+                'angkatan'       => '2023',
+                'jenis_kelamin'  => 'L',
+                'ipk'            => 3.8,
+                'status_magang'  => 'Belum Magang',
+            ],  
+        ];
+        DB::table('m_mahasiswa')->insert($data);
+        }
+    }
+
