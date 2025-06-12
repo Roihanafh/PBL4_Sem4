@@ -178,14 +178,22 @@ class MahasiswaController extends Controller
         ]);
     }
 
-    public function show_ajax(String $nim)
+     public function show_ajax($mhs_nim)
     {
-        $mahasiswa = MahasiswaModel::with(['prodi', 'user'])->where('mhs_nim', $nim)->first();
+        $mahasiswa = MahasiswaModel::with([
+            'user',
+            'prodi',
+            'provinsi',
+            'kabupaten',
+            'bidangKeahlian',
+            'skills',
+        ])->where('mhs_nim', $mhs_nim)->first();
+
 
         if (!$mahasiswa) {
             return response()->json([
                 'status' => false,
-                'message' => 'Data mahasiswa dengan NIM ' . $nim . ' tidak ditemukan.'
+                'message' => 'Data mahasiswa dengan NIM ' . $mhs_nim . ' tidak ditemukan.'
             ], 404);
         }
 
@@ -193,6 +201,7 @@ class MahasiswaController extends Controller
             'mahasiswa' => $mahasiswa
         ]);
     }
+
 
     public function edit_ajax($mhs_nim)
     {
