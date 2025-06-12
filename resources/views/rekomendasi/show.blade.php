@@ -42,12 +42,12 @@
         <strong class="d-block mb-1 text-truncate">{{ $l->judul }}</strong>
 
         <small class="text-secondary d-block mb-1">
-        <i class="fas fa-map-marker-alt"></i> {{ $l->lokasi }}
+        <i class="fas fa-map-marker-alt"></i> {{ $l->provinsi->alt_name ?? '-' }}
         </small>
 
         <div class="small mb-2">
         <span class="badge bg-success">Umum</span>
-        <span class="badge bg-secondary">{{ $l->durasi }} bln</span>
+        <span class="badge bg-secondary">{{ $l->durasi ?? '-' }} bln</span>
         <span class="badge bg-dark">Onsite</span>
         </div>
 
@@ -106,15 +106,12 @@
     if (empty(Auth::user()->mahasiswa->file_cv)) { // Assuming file_cv is part of the student data
         $missingFields[] = 'CV';
     }
-    if (empty(Auth::user()->mahasiswa->provinsi)) {
-        $missingFields[] = 'Provinsi';
+    if (empty(Auth::user()->mahasiswa->lokasi)) {
+        $missingFields[] = 'lokasi';
     }
-    if (empty(Auth::user()->mahasiswa->kabupaten)) {
-        $missingFields[] = 'Kabupaten';
-    }
-    if (empty(Auth::user()->mahasiswa->t_minat_mahasiswa->bidang_keahlian_id)) {
-        $missingFields[] = 'Bidang Keahlian';
-    }
+    // if (empty(Auth::user()->mahasiswa->t_minat_mahasiswa->bidang_keahlian_id)) {
+    //     $missingFields[] = 'Bidang Keahlian';
+    // }
 
 
 
@@ -162,7 +159,7 @@
         <h4>{{ $lowongan->judul }}</h4>
         <h6 class="text-muted">{{ $lowongan->perusahaan->nama }}</h6>
         <p class="text-secondary mb-4">
-        <i class="fas fa-map-marker-alt"></i> {{ $lowongan->lokasi }}
+        <i class="fas fa-map-marker-alt"></i> {{ $l->provinsi->alt_name ?? '-' }}
         &nbsp;&bull;&nbsp;
         <i class="fas fa-briefcase"></i> Onsite
         </p>

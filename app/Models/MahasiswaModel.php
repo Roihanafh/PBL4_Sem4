@@ -30,6 +30,7 @@ class MahasiswaModel extends Model
         'kabupaten',
         'status_magang',
         'profile_picture',
+        'bidang_keahlian_id',
 
         // <<-- tambahkan preferensi di sini
         'pref',           // preferensi kerja
@@ -86,14 +87,20 @@ class MahasiswaModel extends Model
 
     public function bidangKeahlian()
     {
-        return $this->belongsToMany(BidangKeahlianModel::class, 't_minat_mahasiswa', 'mhs_nim', 'bidang_keahlian_id','mhs_nim', 'id');
+        return $this->belongsToMany(
+            BidangKeahlianModel::class,
+            't_minat_mahasiswa',
+            'mhs_nim',                // foreign key di pivot ke Mahasiswa
+            'bidang_keahlian_id',     // foreign key di pivot ke BidangKeahlian
+            'mhs_nim',                // local key di MahasiswaModel
+            'id'                      // local key di BidangKeahlianModel
+        );
     }
 
-public function prefrensiLokasi()
-{
-    return $this->hasMany(PrefrensiLokasiMahasiswaModel::class, 'mhs_nim', 'mhs_nim');
-}
-
+    public function preferensiLokasi()
+    {
+        return $this->hasOne(PrefrensiLokasiMahasiswaModel::class, 'mhs_nim', 'mhs_nim');
+    }
 
     public function getGenderNameAttribute()
     {
@@ -126,5 +133,21 @@ public function prefrensiLokasi()
     public function provinsi()
     {
         return $this->belongsTo(ProvinsiModel::class, 'provinsi_id', 'provinsi_id');
+    }
+
+    public function provinsipref()
+    {
+        return $this->belongsTo(ProvinsiModel::class, 'lokasi', 'id');
+    }
+
+    public function negara()
+    {
+        return $this->belongsTo(NegaraModel::class, 'negara_id', 'id');
+    }
+
+
+    public function minat()
+    {
+        return $this->hasMany(MinatMahasiswaModel::class, 'mhs_nim', 'mhs_nim');
     }
 }

@@ -36,7 +36,7 @@
       <tr><th>Deskripsi</th><td>{{ $lowongan->deskripsi }}</td></tr>
       <tr><th>Tanggal Mulai</th><td>{{ $lowongan->tanggal_mulai_magang->format('d-m-Y') }}</td></tr>
       <tr><th>Deadline</th><td>{{ $lowongan->deadline_lowongan->format('d-m-Y') }}</td></tr>
-      <tr><th>Lokasi</th><td>{{ $lowongan->lokasi }}</td></tr>
+      <tr><th>Lokasi</th><td>{{ $lowongan->provinsi->alt_name ?? '-' }}</td></tr>
       <tr><th>Perusahaan</th><td>{{ $lowongan->perusahaan->nama ?? '-' }}</td></tr>
       <tr><th>Periode</th><td>{{ $lowongan->periode->periode ?? '-' }}</td></tr>
       <tr>

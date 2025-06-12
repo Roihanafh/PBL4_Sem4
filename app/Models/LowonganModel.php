@@ -65,4 +65,9 @@ class LowonganModel extends Model
         return $this->hasMany(FeedbackModel::class, 'target_id', 'lowongan_id')
                     ->where('target_type', 'lowongan');
     }
+
+        public function provinsi()
+    {
+        return $this->belongsTo(\App\Models\ProvinsiModel::class, 'lokasi', 'id');
+    }
 }

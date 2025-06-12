@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -73,6 +72,36 @@ class PerusahaanMitraSeeder extends Seeder
                 'alamat' => 'Jl. Kajaolalido No. 8, Makassar',
                 'email'  => 'support@cloudservices.co.id',
                 'telp'   => '0411-123987',
+            ],
+            [
+                'nama'   => 'PT Automasi QA',
+                'alamat' => 'Jl. MH. Thamrin No. 100, Jakarta',
+                'email'  => 'hr@automasiqa.co.id',
+                'telp'   => '021-7771234',
+            ],
+            [
+                'nama'   => 'PT Blockchain Nusantara',
+                'alamat' => 'Jl. Sudirman No. 55, Jakarta Selatan',
+                'email'  => 'info@blockchain.co.id',
+                'telp'   => '021-8885678',
+            ],
+            [
+                'nama'   => 'PT Game Studio',
+                'alamat' => 'Jl. Pahlawan No. 10, Surabaya',
+                'email'  => 'games@studiosoftware.co.id',
+                'telp'   => '031-9992345',
+            ],
+            [
+                'nama'   => 'PT Digital Marketing',
+                'alamat' => 'Jl. Kalimantan No. 33, Banjarmasin',
+                'email'  => 'marketing@digitalco.id',
+                'telp'   => '0511-321987',
+            ],
+            [
+                'nama'   => 'PT Business Development Indonesia',
+                'alamat' => 'Jl. Gajah Mada No. 45, Yogyakarta',
+                'email'  => 'bd@businessdev.co.id',
+                'telp'   => '0274-123890',
             ],
         ];
 

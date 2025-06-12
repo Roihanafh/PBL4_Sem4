@@ -57,8 +57,19 @@
             </tr>
             <tr>
                 <th class="text-right">Bidang Keahlian:</th>
-                <td>{{ $mahasiswa->bidang_keahlian_id ?? '-' }}</td>
+                <td>
+                    @if ($mahasiswa->bidangKeahlian->isNotEmpty())
+                        <ul class="mb-0 pl-3">
+                            @foreach ($mahasiswa->bidangKeahlian as $minat)
+                                <li>{{ $minat->nama }}</li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <span class="text-muted">Tidak ada minat terdaftar</span>
+                    @endif
+                </td>
             </tr>
+            
             <tr>
                 <th class="text-right">File CV:</th>
                 <td>
@@ -71,13 +82,18 @@
                     @endif
                 </td>
             </tr>
+
             <tr>
-                <th class="text-right">Provinsi:</th>
-                <td>{{ $mahasiswa->provinsi->nama ?? '-' }}</td>
-            </tr>
-            <tr>
-                <th class="text-right">Kabupaten:</th>
-                <td>{{ $mahasiswa->kabupaten->nama ?? '-' }}</td>
+                <th class="text-right">Preferensi Lokasi:</th>
+                <td>
+                    @if ($mahasiswa->preferensiLokasi)
+                        {{ $mahasiswa->preferensiLokasi->kabupaten->nama ?? '-' }},
+                        {{ $mahasiswa->preferensiLokasi->provinsi->nama ?? '-' }},
+                        {{ $mahasiswa->preferensiLokasi->negara->nama ?? '-' }}<br>
+                    @else
+                        <span class="text-muted">Belum diisi</span>
+                    @endif
+                </td>
             </tr>
             <tr>
                 <th class="text-right">Status Magang:</th>

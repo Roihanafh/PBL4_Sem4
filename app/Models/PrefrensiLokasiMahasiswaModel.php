@@ -11,6 +11,15 @@ class PrefrensiLokasiMahasiswaModel extends Model
 
     protected $table = 't_prefrensi_lokasi_mahasiswa';
 
+    protected $fillable = [
+        'mhs_nim',
+        'negara_id',
+        'kabupaten_id',
+        'provinsi_id',
+        'longitude',
+        'latitude',
+    ];
+
     protected $casts = [
         'longitude' => 'float',
         'latitude' => 'float',
@@ -20,24 +29,19 @@ class PrefrensiLokasiMahasiswaModel extends Model
     {
         return $this->belongsTo(MahasiswaModel::class, 'mhs_nim', 'mhs_nim');
     }
-
-    public function desa()
-    {
-        return $this->belongsTo(DesaModel::class, 'desa_id', 'desa_id');
-    }
-
-    public function kecamatan()
-    {
-        return $this->belongsTo(KecamatanModel::class, 'kecamatan_id', 'kecamatan_id');
-    }
     
     public function kabupaten()
     {
-        return $this->belongsTo(KabupatenModel::class, 'kabupaten_id', 'kabupaten_id');
+        return $this->belongsTo(KabupatenModel::class, 'kabupaten_id', 'id');
     }
 
     public function provinsi()
     {
-        return $this->belongsTo(ProvinsiModel::class, 'provinsi_id', 'provinsi_id');
+        return $this->belongsTo(ProvinsiModel::class, 'provinsi_id', 'id');
+    }
+
+    public function negara()
+    {
+        return $this->belongsTo(NegaraModel::class, 'negara_id', 'id');
     }
 }

@@ -19,10 +19,8 @@ return new class extends Migration
     $table->unsignedBigInteger('negara_id');
     $table->unsignedBigInteger('provinsi_id')->nullable();
     $table->unsignedBigInteger('kabupaten_id')->nullable();
-    $table->unsignedBigInteger('kecamatan_id')->nullable();
-    $table->unsignedBigInteger('desa_id')->nullable();
 
-    $table->string('nama_tampilan', 255);
+    $table->string('nama_tampilan', 255)->nullable();
     $table->timestamps();
 
     // Foreign key manual karena mhs_nim bertipe string
@@ -30,8 +28,6 @@ return new class extends Migration
     $table->foreign('negara_id')->references('id')->on('m_negara')->onDelete('cascade');
     $table->foreign('provinsi_id')->references('id')->on('m_provinsi')->onDelete('cascade');
     $table->foreign('kabupaten_id')->references('id')->on('m_kabupaten')->onDelete('cascade');
-    $table->foreign('kecamatan_id')->references('id')->on('m_kecamatan')->onDelete('cascade');
-    $table->foreign('desa_id')->references('id')->on('m_desa')->onDelete('cascade');
 });
 
     }

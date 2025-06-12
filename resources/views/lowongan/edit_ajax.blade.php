@@ -46,11 +46,19 @@
     </div>
 
     {{-- Lokasi --}}
-    <div class="form-group">
-      <label for="lokasi">Lokasi</label>
-      <input type="text" class="form-control" id="lokasi" name="lokasi" value="{{ $lowongan->lokasi }}" required>
-      <div class="text-danger" id="error-lokasi"></div>
-    </div>
+  <div class="form-group">
+    <label for="lokasi">Lokasi (Provinsi)</label>
+    <select class="form-control" id="lokasi" name="lokasi" required>
+      <option value="">-- Pilih Provinsi --</option>
+      @foreach($provinsi as $prov)
+        <option value="{{ $prov->id }}"
+          {{ $lowongan->lokasi == $prov->id ? 'selected' : '' }}>
+          {{ $prov->alt_name }}
+        </option>
+      @endforeach
+    </select>
+    <div class="text-danger" id="error-lokasi"></div>
+  </div>
 
     <div class="form-row">
       {{-- Perusahaan --}}

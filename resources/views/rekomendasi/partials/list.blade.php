@@ -8,7 +8,7 @@
         </p>
         <h6 class="text-muted">{{ $l->perusahaan->nama ?? '-' }}</h6>
         <h5 class="card-title">{{ $l->judul }}</h5>
-        <p class="text-secondary">{{ $l->lokasi }}</p>
+        <p class="text-secondary">{{ $l->provinsi->alt_name ?? '-' }}</p>
         <p class="small mb-1">
           <span class="badge bg-success">Umum</span>
           <span class="badge bg-secondary">{{ $l->durasi ?? '-' }} bulan</span>

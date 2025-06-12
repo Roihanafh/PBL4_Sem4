@@ -31,6 +31,8 @@ class DatabaseSeeder extends Seeder
             PerusahaanMitraSeeder::class,
             PeriodeMagangSeeder::class,
 
+            WilayahSeeder::class,
+
             LowonganMagangSeeder::class,
             LamaranMagangSeeder::class,
 
@@ -40,7 +42,6 @@ class DatabaseSeeder extends Seeder
             BidangPenelitianSeeder::class,
             BidangKeahlianSeeder::class,
 
-            WilayahSeeder::class,
             // PrefrensiLokasiMahasiswaSeeder::class,
         ]);
             

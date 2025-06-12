@@ -27,55 +27,68 @@ class PengajuanMagangController extends Controller
         ];
 
         $activeMenu = 'pengajuan_magang'; // set menu yang sedang aktif
-
+        $prodis = ProdiModel::all(); // ambil data prodi untuk filter
         return view('pengajuan_magang.index', [
             'breadcrumb' => $breadcrumb,
             'page' => $page,
-            'activeMenu' => $activeMenu
+            'activeMenu' => $activeMenu,
+            'prodis' => $prodis
         ]);
     }
 
-    public function list()
-    {
-        $lamaran = LamaranMagangModel::with('lowongan', 'dosen', 'mahasiswa')->get();
-        
-        return DataTables::of($lamaran)
+    public function list(Request $request)
+{
+    if ($request->ajax()) {
+        $pengajuan = LamaranMagangModel::with(['mahasiswa.prodi', 'lowongan.perusahaan'])
+            ->select('*');
+
+        // Filter berdasarkan prodi_id
+        if ($request->prodi_id) {
+            $pengajuan->whereHas('mahasiswa', function ($query) use ($request) {
+                $query->where('prodi_id', $request->prodi_id);
+            });
+        }
+
+        return DataTables::of($pengajuan)
             ->addIndexColumn()
-            ->addColumn('mahasiswa_nama', function ($lmr) {
-                return $lmr->mahasiswa ? $lmr->mahasiswa->full_name : '-';
+            ->addColumn('mahasiswa_nama', function ($item) {
+                return $item->mahasiswa->full_name ?? '-';
             })
-            ->addColumn('mhs_nim', function ($lmr) {
-                return $lmr->mahasiswa ? $lmr->mahasiswa->mhs_nim : '-';
+            ->addColumn('mhs_nim', function ($item) {
+                return $item->mahasiswa->mhs_nim ?? '-';
             })
-            ->addColumn('perusahaan_nama', function ($lmr) {
-                return $lmr->lowongan ? $lmr->lowongan->perusahaan->nama : '-';
+            ->addColumn('prodi', function ($item) {
+                return $item->mahasiswa->prodi->nama_prodi ?? '-';
             })
-            ->addColumn('lowongan_judul', function ($lmr) {
-                return $lmr->lowongan ? $lmr->lowongan->judul : '-';
+            ->addColumn('perusahaan_nama', function ($item) {
+                return $item->lowongan->perusahaan->nama ?? '-';
             })
-            ->addColumn('dosen_nama', function ($lmr) {
-                return $lmr->dosen ? $lmr->dosen->nama : '-';
+            ->addColumn('lowongan_judul', function ($item) {
+                return $item->lowongan->judul ?? '-';
             })
-            ->addColumn('tanggal_lamaran', function ($lmr) {
-                return $lmr->tanggal_lamaran ?? '-';
+            ->addColumn('tanggal_lamaran', function ($item) {
+                return \Carbon\Carbon::parse($item->tanggal_lamaran)->format('d-m-Y');
             })
-            ->addColumn('status', function ($lmr) {
-                return $lmr->status ?? '-';
+            ->addColumn('status', function ($item) {
+                return $item->status;
             })
-            ->addColumn('aksi', function ($lmr) {
-                $btn  = '<div class="btn-group" role="group">';
-                $btn .= '<button onclick="modalAction(\''.url('/pengajuan-magang/' . $lmr->lamaran_id . '/show_ajax').'\')" class="btn btn-primary btn-sm" style="margin-right: 5px;" title="Detail Data">';
-                $btn .= '<i class="fas fa-info-circle"></i></button>';
-                $btn .= '<button onclick="modalAction(\''.url('/pengajuan-magang/' . $lmr->lamaran_id . '/edit_ajax').'\')" class="btn btn-warning btn-sm" style="margin-right: 5px;" title="Edit Data">';
-                $btn .= '<i class="fas fa-edit"></i></button>';
-                $btn .= '<button onclick="modalAction(\''.url('/pengajuan-magang/' . $lmr->lamaran_id . '/delete_ajax').'\')" class="btn btn-danger btn-sm" title="Hapus Data">';
-                $btn .= '<i class="fas fa-trash-alt"></i></button>';
-                $btn .= '</div>';
-                return $btn;
+            ->addColumn('aksi', function ($item) {
+                $urlShow = url('/pengajuan-magang/' . $item->lamaran_id . '/show_ajax');
+                $urlEdit = url('/pengajuan-magang/' . $item->lamaran_id . '/edit_ajax');
+                $urlDelete = url('/pengajuan-magang/' . $item->lamaran_id . '/delete_ajax');
+                return '
+                    <div class="btn-group" role="group">
+                        <button onclick="modalAction(\'' . $urlShow . '\')" class="btn btn-primary btn-sm"><i class="fas fa-info-circle"></i></button>
+                        <button onclick="modalAction(\'' . $urlEdit . '\')" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></button>
+                        <button onclick="modalAction(\'' . $urlDelete . '\')" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                ';
             })
             ->rawColumns(['aksi'])
             ->make(true);
     }
+}
+
 
     public function show_ajax(String $lamaran_id)
     {
