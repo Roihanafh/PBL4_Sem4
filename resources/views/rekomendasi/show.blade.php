@@ -227,9 +227,35 @@
         {{-- Tab Perusahaan --}}
         <div class="tab-pane fade" id="perusahaan">
           <h5><i class="fas fa-building"></i> {{ $lowongan->perusahaan->nama }}</h5>
-          <p>{{ $lowongan->perusahaan->deskripsi ?? '—' }}</p>
+
+          <p>
+            <strong><i class="fas fa-map-marker-alt"></i> Alamat:</strong><br>
+            {{ $lowongan->perusahaan->alamat ?? '—' }}
+          </p>
+
+          <p>
+            <strong><i class="fas fa-envelope"></i> Email:</strong><br>
+            @if($lowongan->perusahaan->email)
+              <a href="mailto:{{ $lowongan->perusahaan->email }}">
+                {{ $lowongan->perusahaan->email }}
+              </a>
+            @else
+              —
+            @endif
+          </p>
+
+          <p>
+            <strong><i class="fas fa-phone"></i> Telepon:</strong><br>
+            @if($lowongan->perusahaan->telp)
+              <a href="tel:{{ $lowongan->perusahaan->telp }}">
+                {{ $lowongan->perusahaan->telp }}
+              </a>
+            @else
+              —
+            @endif
+          </p>
         </div>
-        </div>
+
 
         {{-- Share link --}}
         <div class="mt-4">
