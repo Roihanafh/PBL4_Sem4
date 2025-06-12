@@ -199,10 +199,10 @@ class WelcomeController extends Controller
             ->orderBy('deadline_lowongan', 'asc')
             ->limit(10)
             ->get();
-
-        // 5. Recent Applications = 5 lamaran apa saja (tanpa orderBy, karena tidak ada 'id' atau 'created_at')
+            
         $recentApplications = LamaranMagangModel::with('lowongan')
-            ->where('mhs_nim', $mhs->nim)
+            ->where('mhs_nim', $mhs->mhs_nim)
+            ->orderBy('tanggal_lamaran', 'desc')
             ->limit(5)
             ->get();
 

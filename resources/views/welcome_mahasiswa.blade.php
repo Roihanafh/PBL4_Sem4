@@ -488,23 +488,27 @@
                       <td class="ps-4">{{ $idx + 1 }}</td>
                       <td class="fw-semibold">{{ $app->lowongan->judul }}</td>
                       <td>
-                        @switch($app->status)
-                          @case('submitted')
-                            <span class="badge bg-warning bg-opacity-25 text-warning">Submitted</span>
-                            @break
-                          @case('under_review')
-                            <span class="badge bg-info bg-opacity-25 text-info">Under Review</span>
-                            @break
-                          @case('diterima')
-                            <span class="badge bg-success bg-opacity-25 text-success">Diterima</span>
-                            @break
-                          @case('ditolak')
-                            <span class="badge bg-danger bg-opacity-25 text-danger">Ditolak</span>
-                            @break
-                          @default
-                            <span class="badge bg-secondary bg-opacity-25 text-secondary">
-                              {{ ucfirst($app->status) }}
-                            </span>
+                      @switch($app->status)
+                        @case('pending')
+                          <span class="badge bg-warning bg-opacity-25 text-dark">Pending</span>
+                          @break
+
+                        @case('diterima')
+                          <span class="badge bg-success bg-opacity-25 text-dark">Diterima</span>
+                          @break
+
+                        @case('selesai')
+                          <span class="badge bg-primary bg-opacity-25 text-dark">Selesai</span>
+                          @break
+
+                        @case('ditolak')
+                          <span class="badge bg-danger bg-opacity-25 text-dark">Ditolak</span>
+                          @break
+
+                        @default
+                          <span class="badge bg-secondary bg-opacity-25 text-dark">
+                            {{ ucfirst($app->status) }}
+                          </span>
                         @endswitch
                       </td>
                     </tr>
