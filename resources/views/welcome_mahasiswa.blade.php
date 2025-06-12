@@ -334,28 +334,27 @@
         </div>
       </div>
     </div>
-    <!-- In Progress Applications -->
-    <div class="col-12 col-md-4">
-      <div class="card card-stat shadow-sm border-0 h-100">
-        <div class="card-body d-flex align-items-center gap-3">
-          <span class="fs-2 text-warning"><i class="fas fa-spinner"></i></span>
-          <div>
-            <span class="small text-secondary d-block">In Progress</span>
-            <h2 class="fw-semibold mb-0 counter" data-count="{{ $inProgressApplications }}">0</h2>
-          </div>
+  <!-- In Progress Applications -->
+  <div class="col-12 col-md-4">
+    <div class="card card-stat shadow-sm border-0 h-100">
+      <div class="card-body d-flex align-items-center gap-3">
+        <span class="fs-2 text-warning"><i class="fas fa-spinner"></i></span>
+        <div>
+          <span class="small text-secondary d-block">In Progress</span>
+          <h2 class="fw-semibold mb-0 counter" data-count="{{ $inProgressApplications }}">0</h2>
         </div>
       </div>
     </div>
-    <!-- Completed (Placeholder) -->
-    <div class="col-12 col-md-4">
-      <div class="card card-stat shadow-sm border-0 h-100">
-        <div class="card-body d-flex align-items-center gap-3">
-          <span class="fs-2 text-success"><i class="fas fa-clipboard-list"></i></span>
-          <div>
-            <span class="small text-secondary d-block">Completed</span>
-            <h2 class="fw-semibold mb-0 counter"
-                data-count="{{ $inProgressApplications == 0 ? 0 : ($inProgressApplications - 1) }}">0</h2>
-          </div>
+  </div>
+
+  <!-- Completed Applications -->
+  <div class="col-12 col-md-4">
+    <div class="card card-stat shadow-sm border-0 h-100">
+      <div class="card-body d-flex align-items-center gap-3">
+        <span class="fs-2 text-success"><i class="fas fa-clipboard-list"></i></span>
+        <div>
+          <span class="small text-secondary d-block">Completed</span>
+          <h2 class="fw-semibold mb-0 counter" data-count="{{ $completedApplications }}">0</h2>
         </div>
       </div>
     </div>

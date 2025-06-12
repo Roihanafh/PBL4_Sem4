@@ -181,8 +181,13 @@ class WelcomeController extends Controller
         $totalRecommendations = LowonganModel::where('status', 'aktif')->count();
 
         // 3. Applications In Progress = lamaran milik mahasiswa yang status-nya belum selesai
-        $inProgressApplications = LamaranMagangModel::where('mhs_nim', $mhs->nim)
-            ->whereIn('status', ['submitted', 'under_review'])
+        $inProgressApplications = LamaranMagangModel::where('mhs_nim', $mhs->mhs_nim)
+            ->where('status', 'pending')
+            ->count();
+
+        // 4. Completed = all “diterima”
+        $completedApplications = LamaranMagangModel::where('mhs_nim', $mhs->mhs_nim)
+            ->where('status', 'diterima')
             ->count();
 
         // 4. Upcoming Deadlines = lowongan "aktif" whose deadline_lowongan dalam 7 hari ke depan
@@ -208,6 +213,7 @@ class WelcomeController extends Controller
             'inProgressApplications' => $inProgressApplications,
             'upcomingDeadlines'      => $upcomingDeadlines,
             'recentApplications'     => $recentApplications,
+            'completedApplications'  => $completedApplications,
         ]);
     }
 }
