@@ -556,7 +556,11 @@ class MahasiswaController extends Controller
         $kabupaten = $mahasiswa->kabupaten_id
             ? KabupatenModel::where('provinsi_id', $mahasiswa->provinsi_id)->get()
             : KabupatenModel::all();
-        $durasiList = [3 => '3 Bulan', 6 => '6 Bulan'];
+        $tipe_bekerjaList = [
+            'remote' => 'Remote',
+            'onsite' => 'Onsite',
+            'hybrid' => 'Hybrid'
+        ];
         return view(
             'mahasiswa.edit_mhs',
             [
@@ -567,6 +571,7 @@ class MahasiswaController extends Controller
                 'negaraList' => $negara,
                 'allSkills' => $allSkills, // ← add this
                 'durasiList' => $durasiList, // ← add this
+                'tipe_bekerjaList' => $tipe_bekerjaList, // ← add this
                 
             ]
         );
@@ -605,6 +610,7 @@ class MahasiswaController extends Controller
             'durasi' => 'required|in:3,6', // Periode magang (3 atau 6 bulan)
             'skills'   => 'nullable|array',
             'skills.*' => 'integer|exists:skills,id', // Validasi untuk skills
+            'tipe_bekerja' => 'nullable|in:remote,onsite,hybrid', // Validasi tipe bekerja
 
         ]);
 
@@ -650,6 +656,7 @@ class MahasiswaController extends Controller
                 'negara_id' => $request->negara_id,
                 'durasi' => $request->durasi, // Periode magang
                 'skills' => $request->input('skills', []), // Update skills
+                'tipe_bekerja' => $request->tipe_bekerja, // Tipe bekerja
             ]);
             $mahasiswa->save();
 
@@ -687,6 +694,7 @@ class MahasiswaController extends Controller
             } else {
                 $mahasiswa->skills()->detach();
             }
+
 
             // Update bidang keahlian (relasi many-to-many)
             $mahasiswa->bidangKeahlian()->sync($request->bidang_keahlian_id);

@@ -130,6 +130,17 @@
                     @endif
                 </td>
             </tr>
+
+            <tr>
+                <th class="text-right">Tipe Bekerja:</th>
+                <td>
+                    @if ($mahasiswa->tipe_bekerja)
+                        {{ ucfirst($mahasiswa->tipe_bekerja) }}
+                    @else
+                        <span class="text-muted">Belum diisi</span>
+                    @endif
+                </td>
+            </tr>
             
             
             <tr>

@@ -115,6 +115,12 @@
                 <th class="text-right">Durasi Magang:</th>
                 <td>{{ $mahasiswa->durasi}} bulan</td>
             </tr>
+
+            <tr>
+                <th class="text-right">Tipe Bekerja:</th>
+                <td>{{$mahasiswa->tipe_bekerja}}</td>
+            </tr>
+
             </table>
         </div>
         <div class="modal-footer">

@@ -115,17 +115,30 @@
                 <small id="error-ipk" class="error-text form-text text-danger"></small>
             </div>
 
-            <div class="form-group">
-                <label>Bidang Keahlian</label>
-                <select name="bidang_keahlian_id[]" class="form-control" multiple required>
-                    @foreach($bidangKeahlian as $keahlian)
-                        <option value="{{ $keahlian->id }}"
-                            {{ in_array($keahlian->id, old('bidang_keahlian_id', $mahasiswa->bidangKeahlian->pluck('id')->toArray() ?? [])) ? 'selected' : '' }}>
-                            {{ $keahlian->nama }}
-                        </option>
-                    @endforeach
-                </select>                
+ {{-- Bidang Keahlian (multi-checkbox seperti Skills) --}}
+ <div class="form-group">
+    <label>Bidang Keahlian</label>
+    <div class="row">
+        @foreach($bidangKeahlian as $keahlian)
+            <div class="col-md-4">
+                <div class="form-check">
+                    <input 
+                        class="form-check-input"
+                        type="checkbox"
+                        name="bidang_keahlian_id[]"
+                        id="bidang_keahlian_{{ $keahlian->id }}"
+                        value="{{ $keahlian->id }}"
+                        {{ in_array($keahlian->id, old('bidang_keahlian_id', $mahasiswa->bidangKeahlian->pluck('id')->toArray() ?? [])) ? 'checked' : '' }}
+                    >
+                    <label class="form-check-label" for="bidang_keahlian_{{ $keahlian->id }}">
+                        {{ $keahlian->nama }}
+                    </label>
+                </div>
             </div>
+        @endforeach
+    </div>
+    <small id="error-bidang_keahlian_id" class="text-danger"></small>
+</div>
 
             {{-- Skills (multi-checkbox) --}}
             <div class="form-group">
@@ -161,6 +174,17 @@
                 <option value="6" {{ $mahasiswa->durasi == 6 ? 'selected' : '' }}>6 bulan</option>
             </select>
             <small id="error-durasi" class="text-danger"></small>
+            </div>
+
+            <div class="form-group">
+                <label>Tipe Bekerja</label>
+                <select name="tipe_bekerja" id="tipe_bekerja" class="form-control">
+                    <option value="">-- Pilih Tipe Bekerja --</option>
+                    <option value="remote" {{ $mahasiswa->tipe_bekerja == 'remote' ? 'selected' : '' }}>Remote</option>
+                    <option value="onsite" {{ $mahasiswa->tipe_bekerja == 'onsite' ? 'selected' : '' }}>Onsite</option>
+                    <option value="hybrid" {{ $mahasiswa->tipe_bekerja == 'hybrid' ? 'selected' : '' }}>Hybrid</option>
+                </select>
+                <small id="error-tipe_bekerja" class="error-text form-text text-danger"></small>
             </div>
 
             <div class="form-group">
