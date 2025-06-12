@@ -66,8 +66,8 @@ class PerusahaanController extends Controller
                     'email',
                     Rule::unique('m_perusahaan_mitra')->ignore($request->perusahaan_id, 'perusahaan_id')
                 ],
-                'telepon' => 'nullable|max:20',
-                'alamat' => 'required',
+                'telp' => 'required|max:20',
+              'alamat' => 'required',
             ]);
 
             PerusahaanModel::create($validated);
