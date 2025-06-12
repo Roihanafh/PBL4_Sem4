@@ -106,15 +106,12 @@
     if (empty(Auth::user()->mahasiswa->file_cv)) { // Assuming file_cv is part of the student data
         $missingFields[] = 'CV';
     }
-    if (empty(Auth::user()->mahasiswa->provinsi)) {
-        $missingFields[] = 'Provinsi';
+    if (empty(Auth::user()->mahasiswa->lokasi)) {
+        $missingFields[] = 'lokasi';
     }
-    if (empty(Auth::user()->mahasiswa->kabupaten)) {
-        $missingFields[] = 'Kabupaten';
-    }
-    if (empty(Auth::user()->mahasiswa->t_minat_mahasiswa->bidang_keahlian_id)) {
-        $missingFields[] = 'Bidang Keahlian';
-    }
+    // if (empty(Auth::user()->mahasiswa->t_minat_mahasiswa->bidang_keahlian_id)) {
+    //     $missingFields[] = 'Bidang Keahlian';
+    // }
 
 
 

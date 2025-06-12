@@ -110,7 +110,7 @@
         Swal.fire({
             icon: 'error',
             title: 'Oops...',
-            text: 'Silakan lengkapi lamaran terlebih dahulu untuk menambahkan aktivitas.',
+            text: 'Belum ada magang yang perlu diisi aktivistasnya.',
             confirmButtonText: 'Tutup',
             confirmButtonColor: '#3085d6'
         });
