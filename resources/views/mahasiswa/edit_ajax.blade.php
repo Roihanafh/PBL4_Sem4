@@ -87,16 +87,32 @@
                 <small id="error-ipk" class="error-text form-text text-danger"></small>
             </div>
 
-           <div class="form-group">
+            <div class="form-group">
                 <label>Bidang Keahlian</label>
-                <select class="form-control" multiple disabled>
+                <div class="row">
                     @foreach($bidangKeahlian as $keahlian)
-                        <option value="{{ $keahlian->id }}"
-                            {{ in_array($keahlian->id, $mahasiswa->bidangKeahlian->pluck('id')->toArray() ?? []) ? 'selected' : '' }}>
-                            {{ $keahlian->nama }}
-                        </option>
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input 
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    id="bidang_keahlian_{{ $keahlian->id }}"
+                                    value="{{ $keahlian->id }}"
+                                    {{ in_array($keahlian->id, old('bidang_keahlian_id', $mahasiswa->bidangKeahlian->pluck('id')->toArray() ?? [])) ? 'checked' : '' }}
+                                    disabled
+                                >
+                                <label class="form-check-label" for="bidang_keahlian_{{ $keahlian->id }}">
+                                    {{ $keahlian->nama }}
+                                </label>
+                                {{-- Hidden input to preserve value if form is submitted --}}
+                                @if(in_array($keahlian->id, old('bidang_keahlian_id', $mahasiswa->bidangKeahlian->pluck('id')->toArray() ?? [])))
+                                    <input type="hidden" name="bidang_keahlian_id[]" value="{{ $keahlian->id }}">
+                                @endif
+                            </div>
+                        </div>
                     @endforeach
-                </select>
+                </div>
+                <small id="error-bidang_keahlian_id" class="text-danger"></small>
             </div>
 
             {{-- Skills (read-only checkbox) --}}
