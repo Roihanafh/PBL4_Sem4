@@ -290,6 +290,7 @@ class MahasiswaController extends Controller
         $mahasiswa->durasi = $request->durasi;
         $mahasiswa->skills()->sync($request->input('skills', []));
         $mahasiswa->save();
+        $mahasiswa->bidang_keahlian_id = $request->bidang_keahlian_id; // Update bidang keahlian
 
         
 
@@ -300,25 +301,6 @@ class MahasiswaController extends Controller
             $user->password = bcrypt($request->password);
         }
         $user->save();
-
-        // Update minat mahasiswa
-        DB::table('t_minat_mahasiswa')
-            ->where('mhs_nim', $old_nim)
-            ->delete();
-
-        if ($request->has('bidang_keahlian_id')) {
-            $minat = collect($request->bidang_keahlian_id)
-                ->map(function ($id) use ($newNim) {
-                    return [
-                        'mhs_nim' => $newNim,
-                        'bidang_keahlian_id' => $id,
-                    ];
-                })->toArray();
-
-            DB::table('t_minat_mahasiswa')->insert($minat);
-        }
-        
-        
 
         DB::commit();
 
