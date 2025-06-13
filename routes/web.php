@@ -253,9 +253,11 @@ Route::middleware(['auth', 'authorize:mahasiswa'])->group(function () {
         Route::delete('/{lamaran_id}/delete_ajax', [PengajuanMagangMhsController::class, 'delete_ajax']);
     });
 
+    Route::get('rekomendasi/check-status/{lowongan_id}', [PengajuanMagangMhsController::class, 'checkStatus'])->name('rekomendasi.checkStatus');
     Route::group(['prefix' => 'rekomendasi'], function () {
 
         Route::get('/{id}/create_ajax', [PengajuanMagangMhsController::class, 'create_ajax']);
         Route::post('/store', [PengajuanMagangMhsController::class, 'store']);
+        
     });
 });

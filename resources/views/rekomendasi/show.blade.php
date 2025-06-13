@@ -103,10 +103,10 @@
     if (empty(Auth::user()->mahasiswa->prodi_id)) {
         $missingFields[] = 'Program Studi';
     }
-    if (empty(Auth::user()->mahasiswa->file_cv)) { // Assuming file_cv is part of the student data
+    if (!empty(Auth::user()->mahasiswa->file_cv)) { // Assuming file_cv is part of the student data
         $missingFields[] = 'CV';
     }
-    if (empty(Auth::user()->mahasiswa->lokasi)) {
+    if (!empty(Auth::user()->mahasiswa->lokasi)) {
         $missingFields[] = 'lokasi';
     }
     // if (empty(Auth::user()->mahasiswa->t_minat_mahasiswa->bidang_keahlian_id)) {
@@ -120,9 +120,9 @@
 @endphp
 
 @if($allDataFilled)
-    <button onclick="loadModal('{{ url('rekomendasi/' . $lowongan->lowongan_id . '/create_ajax') }}')" class="btn btn-primary">
-        Daftar Sekarang
-    </button>
+<button onclick="loadModal('{{ url('rekomendasi/' . $lowongan->lowongan_id . '/create_ajax') }}', '{{ $lowongan->lowongan_id }}')" class="btn btn-primary">
+  Daftar Sekarang
+</button>
 @else
     <!-- Button to trigger the modal -->
     <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#missingDataModal">
@@ -251,60 +251,104 @@
 @push('js')
   <script>
     function loadModal(url) {
-    $('#myModal .modal-content').load(url, function () {
-      $('#myModal').modal('show');
+      // 1. Ambil lowongan_id dari URL
+      const pathArray = window.location.pathname.split('/');
+      const lowonganId = pathArray[pathArray.length - 1];
 
-      // Re-bind the close button event after content loads
-      $(document).off('click', '[data-dismiss="modal"]').on('click', '[data-dismiss="modal"]', function () {
-      $('#myModal').modal('hide');
+      // 2. Cek status lamaran melalui AJAX
+      $.ajax({
+        url: '{{ url("rekomendasi/check-status") }}/' + lowonganId,
+        method: 'GET',
+        dataType: 'json',
+        success: function (response) {
+          if (response.status === 'diterima_existing') {
+            toastr.error('Anda sudah diterima di lowongan ' + response.lowongan_judul + ' dan tidak dapat mengajukan magang lagi.', '', {
+              "closeButton": true,
+              "progressBar": true,
+              "positionClass": "toast-top-right",
+              "timeOut": "10000",
+              "extendedTimeOut": "2000",
+              "backgroundColor": "#ff4444",
+              "textColor": "#ffffff"
+            });
+          } else if (response.status === 'selesai') {
+            toastr.error('Anda sudah menyelesaikan magang dan tidak dapat mengajukan magang lagi.', '', {
+              "closeButton": true,
+              "progressBar": true,
+              "positionClass": "toast-top-right",
+              "timeOut": "10000",
+              "extendedTimeOut": "2000",
+              "backgroundColor": "#ff4444",
+              "textColor": "#ffffff"
+            });
+          } else if (response.status === 'pending') {
+            toastr.error('Anda sudah mengajukan lamaran untuk lowongan ' + response.lowongan_judul + ' dan masih menunggu persetujuan.', '', {
+              "closeButton": true,
+              "progressBar": true,
+              "positionClass": "toast-top-right",
+              "timeOut": "10000",
+              "extendedTimeOut": "2000",
+              "backgroundColor": "#ff4444",
+              "textColor": "#ffffff"
+            });
+          } else {
+            // Load modal if status is 'available'
+            $('#myModal .modal-content').load(url, function () {
+              $('#myModal').modal('show');
+              $(document).off('click', '[data-dismiss="modal"]').on('click', '[data-dismiss="modal"]', function () {
+                $('#myModal').modal('hide');
+              });
+            });
+          }
+        },
+        error: function (xhr) {
+          toastr.error('Terjadi kesalahan saat memeriksa status lamaran. Status: ' + xhr.status + ' (URL: ' + xhr.responseURL + ')', '', {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "5000"
+          });
+          console.log('AJAX Error:', xhr);
+        }
       });
-    });
     }
 
     function modalAction(url = '') {
-    $('#myModal .modal-content').load(url, function () {
-      $('#myModal').modal('show');
-
-      // Re-bind the close button event after content loads
-      $(document).off('click', '[data-dismiss="modal"]').on('click', '[data-dismiss="modal"]', function () {
-      $('#myModal').modal('hide');
+      $('#myModal .modal-content').load(url, function () {
+        $('#myModal').modal('show');
+        $(document).off('click', '[data-dismiss="modal"]').on('click', '[data-dismiss="modal"]', function () {
+          $('#myModal').modal('hide');
+        });
       });
-    });
     }
+
     $(function () {
-
-    // 1) Intercept sidebar‐link clicks (Lowongan Lainnya)
-    $('#single-detail').on('click', '.sidebar-link', function (e) {
-      e.preventDefault();
-
-      // Base detail URL, e.g. "/mahasiswa/rekomendasi/5"
-      let baseUrl = $(this).data('url');
-      // Append ?ajax=1 so the controller returns JSON
-      let ajaxUrl = baseUrl + '?ajax=1';
-
-      $.ajax({
-      url: ajaxUrl,
-      method: 'GET',
-      dataType: 'json',
-      success: function (response) {
-        $('body').html(response.html);
-        // Clean URL:
-        window.history.replaceState(null, '', '/mahasiswa/rekomendasi-magang');
-      },
-      error: function (err) {
-        console.error('Error loading detail via AJAX:', err);
-        // Fallback to full navigation:
-        window.location.href = baseUrl;
-      }
+      // 1) Intercept sidebar‐link clicks (Lowongan Lainnya)
+      $('#single-detail').on('click', '.sidebar-link', function (e) {
+        e.preventDefault();
+        let baseUrl = $(this).data('url');
+        let ajaxUrl = baseUrl + '?ajax=1';
+        $.ajax({
+          url: ajaxUrl,
+          method: 'GET',
+          dataType: 'json',
+          success: function (response) {
+            $('body').html(response.html);
+            window.history.replaceState(null, '', '/mahasiswa/rekomendasi-magang');
+          },
+          error: function (err) {
+            console.error('Error loading detail via AJAX:', err);
+            window.location.href = baseUrl;
+          }
+        });
       });
-    });
     });
 
     function copyLink() {
-    const url = window.location.href;
-    navigator.clipboard.writeText(url)
-      .then(() => alert('Tautan berhasil disalin ke clipboard!'))
-      .catch(err => console.error('Gagal menyalin tautan:', err));
+      const url = window.location.href;
+      navigator.clipboard.writeText(url)
+        .then(() => alert('Tautan berhasil disalin ke clipboard!'))
+        .catch(err => console.error('Gagal menyalin tautan:', err));
     }
   </script>
 @endpush
