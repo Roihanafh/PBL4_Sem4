@@ -12,7 +12,27 @@
         <p class="small mb-1">
           <span class="badge bg-success">Umum</span>
           <span class="badge bg-secondary">{{ $l->durasi ?? '-' }} bulan</span>
-          <span class="badge bg-dark">Onsite</span>
+          @php
+  // Normalize and human-readable text, e.g. "on_site" → "On Site"
+    $typeText = ucfirst(str_replace('_', ' ', $l->tipe_bekerja));
+      @endphp
+
+      @switch($l->tipe_bekerja)
+        @case('on_site')
+          <span class="badge bg-primary">{{ $typeText }}</span>
+          @break
+
+        @case('remote')
+          <span class="badge bg-success">{{ $typeText }}</span>
+          @break
+
+        @case('hybrid')
+          <span class="badge bg-warning text-dark">{{ $typeText }}</span>
+          @break
+
+        @default
+          <span class="badge bg-secondary">{{ $typeText }}</span>
+      @endswitch
         </p>
         <p class="text-danger small mb-2">
           Penutupan: {{ $l->deadline_lowongan->format('d M Y') }}

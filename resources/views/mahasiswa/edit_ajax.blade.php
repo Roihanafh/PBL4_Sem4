@@ -87,17 +87,76 @@
                 <small id="error-ipk" class="error-text form-text text-danger"></small>
             </div>
 
-           <div class="form-group">
+            <div class="form-group">
                 <label>Bidang Keahlian</label>
-                <select class="form-control" multiple disabled>
+                <div class="row">
                     @foreach($bidangKeahlian as $keahlian)
-                        <option value="{{ $keahlian->id }}"
-                            {{ in_array($keahlian->id, $mahasiswa->bidangKeahlian->pluck('id')->toArray() ?? []) ? 'selected' : '' }}>
-                            {{ $keahlian->nama }}
-                        </option>
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input 
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    id="bidang_keahlian_{{ $keahlian->id }}"
+                                    value="{{ $keahlian->id }}"
+                                    {{ in_array($keahlian->id, old('bidang_keahlian_id', $mahasiswa->bidangKeahlian->pluck('id')->toArray() ?? [])) ? 'checked' : '' }}
+                                    disabled
+                                >
+                                <label class="form-check-label" for="bidang_keahlian_{{ $keahlian->id }}">
+                                    {{ $keahlian->nama }}
+                                </label>
+                                {{-- Hidden input to preserve value if form is submitted --}}
+                                @if(in_array($keahlian->id, old('bidang_keahlian_id', $mahasiswa->bidangKeahlian->pluck('id')->toArray() ?? [])))
+                                    <input type="hidden" name="bidang_keahlian_id[]" value="{{ $keahlian->id }}">
+                                @endif
+                            </div>
+                        </div>
                     @endforeach
-                </select>
+                </div>
+                <small id="error-bidang_keahlian_id" class="text-danger"></small>
             </div>
+
+            {{-- Skills (read-only checkbox) --}}
+        <div class="form-group">
+            <label>Skills</label>
+            <div class="row">
+                @foreach($allSkills as $skill)
+                    <div class="col-md-4">
+                        <div class="form-check">
+                            <input 
+                                class="form-check-input"
+                                type="checkbox"
+                                id="skill_{{ $skill->id }}"
+                                value="{{ $skill->id }}"
+                                {{ in_array($skill->id, $mahasiswa->skills->pluck('id')->toArray()) ? 'checked' : '' }}
+                                disabled
+                            >
+                            <label class="form-check-label" for="skill_{{ $skill->id }}">
+                                {{ $skill->nama }}
+                            </label>
+
+                            {{-- Hidden input to preserve value if form is submitted --}}
+                            @if(in_array($skill->id, $mahasiswa->skills->pluck('id')->toArray()))
+                                <input type="hidden" name="skills[]" value="{{ $skill->id }}">
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        {{-- Durasi Magang (read-only select) --}}
+        <div class="form-group">
+            <label>Durasi Magang (bulan)</label>
+            <select class="form-control" disabled>
+                <option value="">— Pilih Durasi —</option>
+                <option value="3" {{ $mahasiswa->durasi == 3 ? 'selected' : '' }}>3 bulan</option>
+                <option value="6" {{ $mahasiswa->durasi == 6 ? 'selected' : '' }}>6 bulan</option>
+            </select>
+
+            {{-- Hidden input to preserve selected value --}}
+            <input type="hidden" name="durasi" value="{{ $mahasiswa->durasi }}">
+        </div>
+
 
             <div class="form-group">
                 <label>File CV</label><br>

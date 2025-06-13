@@ -215,9 +215,11 @@ class LogAktivitasMhsController extends Controller
         // Ambil daftar aktivitas berdasarkan mhs_nim dari mahasiswa yang login
         $aktivitas = LogAktivitasMhsModel::with(['lamaran'])
             ->whereHas('lamaran', function ($query) use ($mhsNim) {
-                $query->where('mhs_nim', $mhsNim);
+                $query->where('mhs_nim', $mhsNim)
+                ->where('status', 'diterima')
+                ->orWhere('status', 'selesai');
             })
-            ->orderBy('waktu');
+            ->orderBy('waktu'); // atau metode lain seperti first(), paginate(), dll.
 
         return DataTables::of($aktivitas)
             ->addIndexColumn()

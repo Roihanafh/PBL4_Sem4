@@ -4,6 +4,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BidangKeahlianModel;
 use Illuminate\Http\Request;
 use App\Models\LowonganModel;
 use App\Models\PerusahaanModel;
@@ -11,6 +12,7 @@ use App\Models\PeriodeMagangModel;
 use Illuminate\Support\Facades\Auth;
 use App\Models\MahasiswaModel;
 use App\Models\ProvinsiModel;
+use App\Models\SkillModel;
 use Carbon\Carbon;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
@@ -259,13 +261,29 @@ public function rekomendasi(Request $request, SmartRecommendationService $smart)
     // ---------------------------
     // 1. Ambil data mahasiswa
     // ---------------------------
-    $mhs = MahasiswaModel::where('user_id', Auth::id())->firstOrFail();
+    $mhs = MahasiswaModel::where('user_id', Auth::id())
+         ->with('provinsipref', 'skills')
+         ->firstOrFail();
 
     // Pecah keyword pref & skill
-    $prefKeywords  = array_filter(array_map('trim', explode(',', $mhs->pref)));
-    $skillKeywords = array_filter(array_map('trim', explode(',', $mhs->skill)));
+    // $prefKeywords  = array_filter(array_map('trim', explode(',', $mhs->pref)));
+    $prefFrases = array_filter(array_map('trim', explode(',', $mhs->pref)));
+    $prefKeywords = [];
+    foreach ($prefFrases as $frase) {
+        // explode on whitespace—bisa multi space, tab, dll
+        foreach (preg_split('/\s+/', $frase) as $kata) {
+            $kata = strtolower(trim($kata));
+            if ($kata !== '') {
+                $prefKeywords[] = $kata;
+            }
+        }
+    }
+    $prefKeywords = array_values(array_unique($prefKeywords));
+    // now from pivot instead of comma‐string:
+    $skillKeywords = $mhs->skills->pluck('nama')->map(fn($s)=>trim($s))->filter()->toArray();
     $totalPref     = count($prefKeywords) ?: 1;
     $totalSkill    = count($skillKeywords) ?: 1;
+    $prefFrases = array_filter(array_map('trim', explode(',', $mhs->pref)));
 
     // Durasi & tipe_bekerja preferensi mahasiswa
     $durasiPreferensiMhs = (float) $mhs->durasi; // misal 3 atau 6
@@ -320,17 +338,17 @@ public function rekomendasi(Request $request, SmartRecommendationService $smart)
             $durasiPreferensiMhs,
             $tipeBekerjaMhs
         ) {
-            // PREF
-            $prefMatches = 0;
-            foreach ($prefKeywords as $kw) {
-                if ($kw !== '' && (
-                    stripos($l->judul, $kw) !== false ||
-                    stripos($l->deskripsi, $kw) !== false
-                )) {
-                    $prefMatches++;
+            // Hitung kemunculan kata‐kata pref di judul+deskripsi
+            $judulDesc = strtolower($l->judul . ' ' . $l->deskripsi);
+            $matchCount = 0;
+            foreach ($prefKeywords as $kata) {
+                if (strpos($judulDesc, $kata) !== false) {
+                    $matchCount++;
                 }
             }
-            $prefValue = $prefMatches / $totalPref;
+
+            // Skor pref = jumlah kata yang match / total kata
+            $prefValue = $matchCount / $totalPref;
 
             // SKILL
             $skillMatches = 0;
@@ -359,8 +377,11 @@ public function rekomendasi(Request $request, SmartRecommendationService $smart)
                 }
             
             // TIPE_BEKERJA (binary match)
-            $tipeBekerjaLowongan = strtolower($l->tipe_bekerja ?? '');
-            $tipeBekerjaValue    = ($tipeBekerjaLowongan === $tipeBekerjaMhs) ? 1.0 : 0.0;
+            $clean = fn($s) => strtolower(str_replace([' ', '-'], '_', trim($s)));
+
+            $mhsType  = $clean($mhs->tipe_bekerja);
+            $lowType  = $clean($l->tipe_bekerja);
+            $tipeBekerjaValue = ($mhsType === $lowType) ? 1.0 : 0.0;
 
             // DURASI (normalized difference)
             $durasiLowongan = (float) $l->durasi;
@@ -411,6 +432,10 @@ public function rekomendasi(Request $request, SmartRecommendationService $smart)
     }
     $provinsi = ProvinsiModel::all(); 
 
+    $allSkills = SkillModel::orderBy('nama')->get();
+
+    $allBidang      = BidangKeahlianModel::orderBy('nama')->get();
+
     // 9. Bukan AJAX → kembalikan view penuh:
     return view('rekomendasi.index', [
         'breadcrumb' => (object)[
@@ -421,65 +446,93 @@ public function rekomendasi(Request $request, SmartRecommendationService $smart)
         'activeMenu' => 'rekomendasi',
         'provinsi'  => $provinsi,
         'lowongan'   => $ranked,
+        'allBidang'    => $allBidang, 
         'mhs'        => $mhs,
+        'allSkills'  => $allSkills,
     ]);
 }
 
 public function show(Request $request, SmartRecommendationService $smart, $lowongan_id)
 {
-    // 1) Ambil data lowongan utama (detail) yang akan ditampilkan
-    $lowongan = LowonganModel::with(['perusahaan', 'periode', 'lamaran', 'mahasiswa', 'provinsi'])
+    // 1) Ambil data lowongan utama (detail)
+    $lowongan = LowonganModel::with([
+            'perusahaan', 
+            'periode', 
+            'lamaran', 
+            'mahasiswa', 
+            'provinsi'
+        ])
         ->findOrFail($lowongan_id);
 
-    // 2) Ambil statistik
-    $totalJobs    = LowonganModel::where('status', 'aktif')->count();
+    // 2) Statistik ringkas
+    $totalJobs      = LowonganModel::where('status', 'aktif')->count();
     $totalCompanies = LowonganModel::where('status', 'aktif')
-        ->distinct('perusahaan_id')->count('perusahaan_id');
+                         ->distinct('perusahaan_id')
+                         ->count('perusahaan_id');
     $totalPositions = LowonganModel::where('status', 'aktif')->sum('kuota');
 
-    // 3) Ambil data mahasiswa yang login
-    $mhs = MahasiswaModel::where('user_id', Auth::id())->firstOrFail();
+    // 3) Ambil data mahasiswa dengan provinsi & skills pivot
+    $mhs = MahasiswaModel::where('user_id', Auth::id())
+            ->with(['provinsipref','skills'])
+            ->firstOrFail();
 
-    // 4) Siapkan query lowongan lain untuk sidebar (sama filter-nya)
-    $q = LowonganModel::with(['perusahaan', 'periode'])
-        ->where('status', 'aktif');
+    // 4) Siapkan query untuk sidebar (lowongan lain) dengan filter yang sama
+    $q = LowonganModel::with(['perusahaan','periode','provinsi'])
+            ->where('status','aktif');
 
     if ($request->filled('posisi')) {
-        $q->where('judul', 'like', '%' . $request->posisi . '%');
+        $q->where('judul','like','%'.$request->posisi.'%');
     }
-    if ($request->filled('skill')) {
-        $q->where('deskripsi', 'like', '%' . $request->skill . '%');
+    if ($request->has('skills')) {
+        $selected = array_filter($request->input('skills'));
+        $q->where(function($sub) use($selected){
+            foreach($selected as $skill){
+                $sub->orWhere('deskripsi','like','%'.$skill.'%');
+            }
+        });
     }
-    if ($request->filled('lokasi')) {                // lokasinya bisa id ATAU teks
+    if ($request->filled('lokasi')) {
         $lok = $request->lokasi;
-        $q->whereHas('provinsi', function ($q2) use ($lok) {
-            $q2->where('alt_name', 'like', "%$lok%")
-                ->orWhere('id', $lok);
+        $q->whereHas('provinsi', function($q2) use($lok){
+            $q2->where('alt_name','like',"%$lok%")
+               ->orWhere('id',$lok);
         });
     }
     if ($request->filled('tipe_bekerja')) {
-        $q->where('tipe_bekerja', $request->tipe_bekerja);
+        $q->where('tipe_bekerja',$request->tipe_bekerja);
     }
     if ($request->filled('durasi')) {
-        $q->where('durasi', $request->durasi);
+        $q->where('durasi',$request->durasi);
     }
 
-    // 5) Eksekusi → daftar lowongan lain
+    // 5) Eksekusi dan SPK mapping
     $lowonganList = $q->get();
 
+    // Siapkan kata‐kata pref dan skill pivot
+    $prefFrases    = array_filter(array_map('trim', explode(',', $mhs->pref)));
+    $prefKeywords  = [];
+    foreach ($prefFrases as $frase) {
+        foreach (preg_split('/\s+/', $frase) as $kata) {
+            $kata = strtolower(trim($kata));
+            if ($kata !== '') {
+                $prefKeywords[] = $kata;
+            }
+        }
+    }
+    $prefKeywords       = array_values(array_unique($prefKeywords));
+    $skillKeywords      = $mhs->skills->pluck('nama')
+                              ->map(fn($s)=> trim($s))
+                              ->filter()
+                              ->toArray();
+    $durasiPreferensiMhs = (float) $mhs->durasi;
+    $tipeBekerjaMhs      = strtolower(str_replace([' ','-'], '_', trim($mhs->tipe_bekerja ?? '')));
+    $totalPref           = count($prefKeywords) ?: 1;
+    $totalSkill          = count($skillKeywords) ?: 1;
+
     if ($lowonganList->isEmpty()) {
-        // tidak ada lowongan lain, kirimkan partial kosong
         $lowonganListSorted = collect([]);
     } else {
-        // Hitung SMART sama seperti sebelumnya
-        $prefKeywords  = array_filter(array_map('trim', explode(',', $mhs->pref)));
-        $skillKeywords = array_filter(array_map('trim', explode(',', $mhs->skill)));
-        $totalPref     = count($prefKeywords) ?: 1;
-        $totalSkill    = count($skillKeywords) ?: 1;
-        $durasiPreferensiMhs  = (float) $mhs->durasi;
-        $tipeBekerjaMhs       = strtolower($mhs->tipe_bekerja ?? '');
-
-        $raw = $lowonganList->map(function ($l) use (
+        $raw = $lowonganList->map(function($l) use(
             $mhs,
             $prefKeywords,
             $skillKeywords,
@@ -488,17 +541,17 @@ public function show(Request $request, SmartRecommendationService $smart, $lowon
             $durasiPreferensiMhs,
             $tipeBekerjaMhs
         ) {
-            $prefMatches = 0;
-            foreach ($prefKeywords as $kw) {
-                if ($kw !== '' && (
-                    stripos($l->judul, $kw) !== false ||
-                    stripos($l->deskripsi, $kw) !== false
-                )) {
-                    $prefMatches++;
+            // PREF
+            $judulDesc  = strtolower($l->judul . ' ' . $l->deskripsi);
+            $matchCount = 0;
+            foreach ($prefKeywords as $kata) {
+                if (strpos($judulDesc, $kata) !== false) {
+                    $matchCount++;
                 }
             }
-            $prefValue = $prefMatches / $totalPref;
+            $prefValue = $matchCount / $totalPref;
 
+            // SKILL
             $skillMatches = 0;
             foreach ($skillKeywords as $kw) {
                 if ($kw !== '' && stripos($l->deskripsi, $kw) !== false) {
@@ -507,53 +560,56 @@ public function show(Request $request, SmartRecommendationService $smart, $lowon
             }
             $skillValue = $skillMatches / $totalSkill;
 
+            // LOKASI (Haversine)
             $lokasiValue = 0.0;
-            if (strtolower($l->lokasi) === strtolower($mhs->lokasi)) {
-                $lokasiValue = 1.0;
-            } elseif (
-                substr(strtolower($l->lokasi), 0, 2) === substr(strtolower($mhs->lokasi), 0, 2)
-            ) {
-                $lokasiValue = 0.5;
+            if ($prov = $mhs->provinsipref && $lowProv = $l->provinsi) {
+                $dist = ProvinsiModel::haversineKm(
+                    $mhs->provinsipref->latitude,
+                    $mhs->provinsipref->longitude,
+                    $lowProv->latitude,
+                    $lowProv->longitude
+                );
+                $lokasiValue = ProvinsiModel::lokasiScore($dist, 1000);
             }
 
             // TIPE_BEKERJA (binary match)
-            $tipeBekerjaLowongan = strtolower($l->tipe_bekerja ?? '');
-            $tipeBekerjaValue    = ($tipeBekerjaLowongan === $tipeBekerjaMhs) ? 1.0 : 0.0;
+            $lowType = strtolower(str_replace([' ','-'], '_', trim($l->tipe_bekerja ?? '')));
+            $tipeBekerjaValue = ($tipeBekerjaMhs === $lowType) ? 1.0 : 0.0;
 
-            $durasiLowongan = (float) $l->durasi;
-            $minDurasi = 3.0;
-            $maxDurasi = 6.0;
-            $rangeDurasi = $maxDurasi - $minDurasi;
-            $diff = abs($durasiLowongan - $durasiPreferensiMhs);
-            $durasiValue = ($rangeDurasi > 0)
+            // DURASI (normalized)
+            $durasiLow     = (float) $l->durasi;
+            $minDurasi     = 3.0;
+            $maxDurasi     = 6.0;
+            $rangeDurasi   = $maxDurasi - $minDurasi;
+            $diff          = abs($durasiLow - $durasiPreferensiMhs);
+            $durasiValue   = $rangeDurasi > 0
                 ? 1.0 - ($diff / $rangeDurasi)
                 : 1.0;
-            $durasiValue = max(0.0, min(1.0, $durasiValue));
+            $durasiValue   = max(0.0, min(1.0, $durasiValue));
 
             return [
-                'id'            => $l->lowongan_id,
-                'pref'          => $prefValue,
-                'skill'         => $skillValue,
-                'lokasi'        => $lokasiValue,
-                'tipe_bekerja'  => $tipeBekerjaValue,
-                'durasi'        => $durasiValue,
+                'id'           => $l->lowongan_id,
+                'pref'         => $prefValue,
+                'skill'        => $skillValue,
+                'lokasi'       => $lokasiValue,
+                'tipe_bekerja' => $tipeBekerjaValue,
+                'durasi'       => $durasiValue,
             ];
         })->toArray();
 
-        $ranking = $smart->rank($raw);
-
+        // 6) Hitung dan urutkan SMART
+        $ranking            = $smart->rank($raw);
         $lowonganListSorted = collect($ranking)
-            ->map(fn($r) =>
-                $lowonganList
-                    ->firstWhere('lowongan_id', $r['id'])
-                    ->setAttribute('smart_score', $r['score'])
+            ->map(fn($r) => $lowonganList
+                ->firstWhere('lowongan_id', $r['id'])
+                ->setAttribute('smart_score', $r['score'])
             )
             ->sortByDesc('smart_score')
             ->values();
     }
 
+    // 7) AJAX detail partial?
     if ($request->query('ajax') === '1') {
-        // render the full “show” HTML into a string
         $html = view('rekomendasi.show', [
             'lowongan'       => $lowongan,
             'lowonganList'   => $lowonganListSorted,
@@ -562,7 +618,7 @@ public function show(Request $request, SmartRecommendationService $smart, $lowon
             'totalPositions' => $totalPositions,
             'breadcrumb'     => (object)[
                 'title' => 'Detail Lowongan',
-                'list'  => ['Dashboard Mahasiswa','Rekomendasi Magang','Detail']
+                'list'  => ['Dashboard Mahasiswa', 'Rekomendasi Magang', 'Detail']
             ],
             'page'       => (object)['title' => 'Detail Lowongan'],
             'activeMenu' => 'rekomendasi',
@@ -572,7 +628,7 @@ public function show(Request $request, SmartRecommendationService $smart, $lowon
         return response()->json(['html' => $html]);
     }
 
-    // Non-AJAX (or no ?ajax=1 in URL): render the normal Blade layout
+    // 8) Tampilkan full view
     return view('rekomendasi.show', [
         'lowongan'       => $lowongan,
         'lowonganList'   => $lowonganListSorted,
@@ -581,11 +637,12 @@ public function show(Request $request, SmartRecommendationService $smart, $lowon
         'totalPositions' => $totalPositions,
         'breadcrumb'     => (object)[
             'title' => 'Detail Lowongan',
-            'list'  => ['Dashboard Mahasiswa','Rekomendasi Magang','Detail']
+            'list'  => ['Dashboard Mahasiswa', 'Rekomendasi Magang', 'Detail']
         ],
         'page'       => (object)['title' => 'Detail Lowongan'],
         'activeMenu' => 'rekomendasi',
         'mhs'        => $mhs,
     ]);
 }
+
 }

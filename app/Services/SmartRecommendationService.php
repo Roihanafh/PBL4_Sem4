@@ -5,23 +5,15 @@ namespace App\Services;
 class SmartRecommendationService
 {
     protected array $weights = [
-        'pref'          => 0.25,
+        'pref'          => 0.35,
         'skill'         => 0.20,
         'lokasi'        => 0.20,
-        'tipe_bekerja'  => 0.20,   // new
-        'durasi'        => 0.15,
+        'tipe_bekerja'  => 0.15,   
+        'durasi'        => 0.10,
     ];
 
     /**
      * @param array $data
-     *   Each item should have:
-     *     'id'            => lowongan_id,
-     *     'pref'          => 0..1,
-     *     'skill'         => 0..1,
-     *     'lokasi'        => 0..1,
-     *     'tipe_bekerja'  => 0 or 1,
-     *     'durasi'        => 0..1,
-     *
      * @return array sorted by ['id','score']
      */
     public function rank(array $data): array

@@ -48,7 +48,27 @@
         <div class="small mb-2">
         <span class="badge bg-success">Umum</span>
         <span class="badge bg-secondary">{{ $l->durasi ?? '-' }} bln</span>
-        <span class="badge bg-dark">Onsite</span>
+        @php
+  // Normalize and human-readable text, e.g. "on_site" → "On Site"
+      $typeText = ucfirst(str_replace('_', ' ', $l->tipe_bekerja));
+    @endphp
+
+    @switch($l->tipe_bekerja)
+      @case('on_site')
+        <span class="badge bg-primary">{{ $typeText }}</span>
+        @break
+
+      @case('remote')
+        <span class="badge bg-success">{{ $typeText }}</span>
+        @break
+
+      @case('hybrid')
+        <span class="badge bg-warning text-dark">{{ $typeText }}</span>
+        @break
+
+      @default
+        <span class="badge bg-secondary">{{ $typeText }}</span>
+    @endswitch
         </div>
 
         <small class="text-danger d-block">
@@ -159,10 +179,20 @@
         <h4>{{ $lowongan->judul }}</h4>
         <h6 class="text-muted">{{ $lowongan->perusahaan->nama }}</h6>
         <p class="text-secondary mb-4">
-        <i class="fas fa-map-marker-alt"></i> {{ $l->provinsi->alt_name ?? '-' }}
-        &nbsp;&bull;&nbsp;
-        <i class="fas fa-briefcase"></i> Onsite
-        </p>
+        <small class="text-secondary d-block mb-1">
+          <i class="fas fa-map-marker-alt"></i>
+          {{ $lowongan->provinsi->alt_name ?? '-' }}
+        </small>
+
+        @php
+          // Humanize “on_site” → “On Site”, etc.
+          $typeText = ucfirst(str_replace('_',' ',$lowongan->tipe_bekerja));
+        @endphp
+
+        <small class="text-secondary d-block mb-3">
+          <i class="fas fa-briefcase"></i>
+          {{ $typeText }}
+        </small>
 
         {{-- Tabs Deskripsi / Perusahaan --}}
         <ul class="nav nav-tabs mb-4">
@@ -207,9 +237,35 @@
         {{-- Tab Perusahaan --}}
         <div class="tab-pane fade" id="perusahaan">
           <h5><i class="fas fa-building"></i> {{ $lowongan->perusahaan->nama }}</h5>
-          <p>{{ $lowongan->perusahaan->deskripsi ?? '—' }}</p>
+
+          <p>
+            <strong><i class="fas fa-map-marker-alt"></i> Alamat:</strong><br>
+            {{ $lowongan->perusahaan->alamat ?? '—' }}
+          </p>
+
+          <p>
+            <strong><i class="fas fa-envelope"></i> Email:</strong><br>
+            @if($lowongan->perusahaan->email)
+              <a href="mailto:{{ $lowongan->perusahaan->email }}">
+                {{ $lowongan->perusahaan->email }}
+              </a>
+            @else
+              —
+            @endif
+          </p>
+
+          <p>
+            <strong><i class="fas fa-phone"></i> Telepon:</strong><br>
+            @if($lowongan->perusahaan->telp)
+              <a href="tel:{{ $lowongan->perusahaan->telp }}">
+                {{ $lowongan->perusahaan->telp }}
+              </a>
+            @else
+              —
+            @endif
+          </p>
         </div>
-        </div>
+
 
         {{-- Share link --}}
         <div class="mt-4">
