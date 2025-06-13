@@ -133,7 +133,7 @@
         }
 
         $.ajax({
-            url: '/PBL4_Sem4/public/pengajuan-magang/' + lamaranId + '/update',
+            url: '/pengajuan-magang/' + lamaranId + '/update',
             type: 'POST',
             data: {
                 _token: '{{ csrf_token() }}',

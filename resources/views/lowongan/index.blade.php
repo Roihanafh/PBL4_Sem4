@@ -84,7 +84,20 @@ $(function(){
     columns: [
       { data: 'DT_RowIndex',      name: 'DT_RowIndex',   orderable: false, searchable: false },
       { data: 'judul',            name: 'judul' },
-      { data: 'deskripsi',        name: 'deskripsi',     className: 'text-truncate', width: '150px' },
+      { 
+        data: 'deskripsi',        
+        name: 'deskripsi',     
+        className: 'text-truncate', 
+        width: '150px',
+        render: function (data) {
+          // Batasi panjang teks menjadi 50 karakter
+          const maxLength = 50;
+          if (data && data.length > maxLength) {
+            return `<span title="${data.replace(/"/g, '&quot;')}" data-toggle="tooltip">${data.substring(0, maxLength)}...</span>`;
+          }
+          return data;
+        }
+      },
       { data: 'perusahaan',       name: 'perusahaan',    orderable: false, searchable: false, className: 'text-truncate', width: '120px' },
       { data: 'lokasi',           name: 'lokasi' },
       {
@@ -110,13 +123,17 @@ $(function(){
       { data: 'kuota',            name: 'kuota' },
       { data: 'durasi',           name: 'durasi' },
       { data: 'tipe_bekerja',     name: 'tipe_bekerja' },
-      { data: 'aksi',   orderable: false, searchable: false }
+      { data: 'aksi',             name: 'aksi',          orderable: false, searchable: false }
     ],
     columnDefs: [
       { targets: '_all', defaultContent: '' }
     ],
     language: {
       searchPlaceholder: "Search…"
+    },
+    // Inisialisasi tooltip untuk Bootstrap
+    drawCallback: function () {
+      $('[data-toggle="tooltip"]').tooltip();
     }
   });
 });

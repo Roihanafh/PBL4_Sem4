@@ -122,7 +122,7 @@
 
             <!-- Charts Row -->
             <div class="row mt-4">
-                <!-- Bidang Peminatan Chart -->
+                {{-- <!-- Bidang Peminatan Chart -->
                 <div class="col-md-6">
                     <div class="card">
                         <div class="card-header">
@@ -132,7 +132,7 @@
                             <canvas id="bidangChart" height="200"></canvas>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
                 <!-- Prodi Distribution Chart -->
                 <div class="col-md-6">
@@ -142,6 +142,18 @@
                         </div>
                         <div class="card-body">
                             <canvas id="prodiChart" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tren Pendaftaran -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Tren Pendaftaran 6 Bulan Terakhir</h4>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="trenChart" height="200"></canvas>
                         </div>
                     </div>
                 </div>
@@ -175,17 +187,7 @@
                     </div>
                 </div>
 
-                <!-- Tren Pendaftaran -->
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header">
-                            <h4 class="card-title">Tren Pendaftaran 6 Bulan Terakhir</h4>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="trenChart" height="200"></canvas>
-                        </div>
-                    </div>
-                </div>
+                
             </div>
         </div>
     </div>
@@ -200,44 +202,44 @@
 @push('js')
     <script>
         $(document).ready(function () {
-            // Bidang Peminatan Chart
-            var bidangCtx = document.getElementById('bidangChart').getContext('2d');
-            var bidangChart = new Chart(bidangCtx, {
-                type: 'bar',
-                data: {
-                    labels: {!! json_encode($bidangPeminatan->pluck('bidang')) !!},
-                    datasets: [{
-                        label: 'Jumlah Dosen Pembimbing',
-                        data: {!! json_encode($bidangPeminatan->pluck('dosen_count')) !!},
-                        backgroundColor: [
-                            'rgba(54, 162, 235, 0.6)',
-                            'rgba(255, 99, 132, 0.6)',
-                            'rgba(75, 192, 192, 0.6)',
-                            'rgba(255, 206, 86, 0.6)',
-                            'rgba(153, 102, 255, 0.6)'
-                        ],
-                        borderColor: [
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(153, 102, 255, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                stepSize: 1
-                            }
-                        }
-                    }
-                }
-            });
+            // // Bidang Peminatan Chart
+            // var bidangCtx = document.getElementById('bidangChart').getContext('2d');
+            // var bidangChart = new Chart(bidangCtx, {
+            //     type: 'bar',
+            //     data: {
+            //         labels: {!! json_encode($bidangPeminatan->pluck('bidang')) !!},
+            //         datasets: [{
+            //             label: 'Jumlah Dosen Pembimbing',
+            //             data: {!! json_encode($bidangPeminatan->pluck('dosen_count')) !!},
+            //             backgroundColor: [
+            //                 'rgba(54, 162, 235, 0.6)',
+            //                 'rgba(255, 99, 132, 0.6)',
+            //                 'rgba(75, 192, 192, 0.6)',
+            //                 'rgba(255, 206, 86, 0.6)',
+            //                 'rgba(153, 102, 255, 0.6)'
+            //             ],
+            //             borderColor: [
+            //                 'rgba(54, 162, 235, 1)',
+            //                 'rgba(255, 99, 132, 1)',
+            //                 'rgba(75, 192, 192, 1)',
+            //                 'rgba(255, 206, 86, 1)',
+            //                 'rgba(153, 102, 255, 1)'
+            //             ],
+            //             borderWidth: 1
+            //         }]
+            //     },
+            //     options: {
+            //         responsive: true,
+            //         scales: {
+            //             y: {
+            //                 beginAtZero: true,
+            //                 ticks: {
+            //                     stepSize: 1
+            //                 }
+            //             }
+            //         }
+            //     }
+            // });
 
             // Prodi Distribution Chart
             var prodiCtx = document.getElementById('prodiChart').getContext('2d');

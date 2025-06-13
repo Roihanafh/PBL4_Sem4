@@ -203,8 +203,8 @@ class LogAktivitasMhsController extends Controller
     //user mahasiswa
     public function list_pov_mhs(Request $request)
     {
-        $user = Auth::user();
-        $mahasiswa = MahasiswaModel::where('user_id', $user->user_id)->first();
+        $user = auth()->user()->mahasiswa->mhs_nim;
+        $mahasiswa = MahasiswaModel::where('mhs_nim', $user)->first();
 
         if (!$mahasiswa) {
             return response()->json(['data' => [], 'recordsTotal' => 0, 'recordsFiltered' => 0]);
@@ -216,10 +216,13 @@ class LogAktivitasMhsController extends Controller
         $aktivitas = LogAktivitasMhsModel::with(['lamaran'])
             ->whereHas('lamaran', function ($query) use ($mhsNim) {
                 $query->where('mhs_nim', $mhsNim)
-                ->where('status', 'diterima')
-                ->orWhere('status', 'selesai');
+                    ->where(function($q) {
+                        $q->where('status', 'diterima')
+                            ->orWhere('status', 'selesai');
+                    });
             })
-            ->orderBy('waktu'); // atau metode lain seperti first(), paginate(), dll.
+            ->orderBy('waktu');
+
 
         return DataTables::of($aktivitas)
             ->addIndexColumn()

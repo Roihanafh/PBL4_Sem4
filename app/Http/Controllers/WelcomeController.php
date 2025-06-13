@@ -40,7 +40,11 @@ class WelcomeController extends Controller
             ->count('mhs_nim');
 
         // 4. Total Dosen Pembimbing
-        $totalDosenPembimbing = LamaranMagangModel::has('dosen')->count();
+        $totalDosenPembimbing = LamaranMagangModel::whereHas('dosen')
+            ->select('dosen_id')
+            ->distinct()
+            ->count('dosen_id');
+
 
         // 5. Rasio Dosen:Mhs (format: 1:X)
         $rasioDosenMhs = $totalDosenPembimbing > 0 ?
