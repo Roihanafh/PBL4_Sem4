@@ -166,6 +166,7 @@
 <script>
     function submitLamaran(lamaranId, status) {
         let dosenId = $('select[name="dosen_id"]').val();
+        let baseUrl = "{{ url('/') }}";
 
         if (status === 'diterima' && (!dosenId || dosenId === '')) {
             Swal.fire({
@@ -177,7 +178,7 @@
         }
 
         $.ajax({
-            url: '/pengajuan-magang/' + lamaranId + '/update_status',
+            url: baseUrl + '/pengajuan-magang/' + lamaranId + '/update_status',
             type: 'POST',
             data: {
                 _token: '{{ csrf_token() }}',

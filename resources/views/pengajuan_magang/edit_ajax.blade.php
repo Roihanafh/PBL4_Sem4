@@ -122,7 +122,7 @@
     function updateLamaran(lamaranId) {
         let status = $('select[name="status"]').val();
         let dosenId = $('select[name="dosen_id"]').val();
-
+        let baseUrl = "{{ url('/') }}";
         if ((status === 'diterima' || status === 'selesai')  && (!dosenId || dosenId === '')) {
             Swal.fire({
                 icon: 'warning',
@@ -133,7 +133,7 @@
         }
 
         $.ajax({
-            url: '/pengajuan-magang/' + lamaranId + '/update',
+            url: baseUrl + '/pengajuan-magang/' + lamaranId + '/update',
             type: 'POST',
             data: {
                 _token: '{{ csrf_token() }}',
